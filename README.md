@@ -1,2 +1,2 @@
-# Leitor_Editais
+# Sumarizador de Editais
 Projeto de IC
