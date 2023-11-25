@@ -28,15 +28,15 @@ def print_word(documents : list) -> None:
     docx_document = Document()
 
     # Adicionando uma tabela ao documento
-    table = docx_document.add_table(rows = len(documents) + 1, cols=4)
+    table = docx_document.add_table(rows = len(documents) + 1, cols=5)
     table.style = 'TableGrid'
 
     header_row = table.rows[0]
       
     # Adicionando cabeçalho à tabela
     # Ajustando a largura das colunas
-    text_header = ['Doc.', 'Tipo', 'Descrição', '#Folhas']
-    inche_cells = [Inches(0.25), Inches(1.25), Inches(4.25), Inches(0.25)]
+    text_header = ['Doc.', 'Tipo', 'Descrição', 'Data', '#Folhas']
+    inche_cells = [Inches(0.25), Inches(1), Inches(4.25), Inches(0.25), Inches(0.25)]
     for cell, text, inche in zip(header_row.cells, text_header, inche_cells):
         cell.width = inche
         cell.text = text
@@ -74,7 +74,8 @@ def print_word(documents : list) -> None:
         
         row_cells[1].text = current_doc.type
         row_cells[2].text = current_doc.summary
-        row_cells[3].text = current_doc.get_str_num_pages()
+        row_cells[3].text = current_doc.get_str_date()
+        row_cells[4].text = current_doc.get_str_num_pages()
         
         for cell, inche in zip(row_cells, inche_cells):
             cell.width = inche
