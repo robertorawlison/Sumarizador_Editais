@@ -1,13 +1,10 @@
 # -*- coding: utf-8 -*-
 import tkinter as tk
 from tkinter import ttk, filedialog
+import threading
 
 from frames import FeedbackWindow, CatalogFrame, ClassifierFrame, PFFrame
-from tools import print_word, fill_summary_numpages_from_pdf
-
-import time
-import threading
-    
+from tools import print_word, fill_summary_numpages_from_pdf    
 
 def click_report():
     if(cf != None):
@@ -52,12 +49,9 @@ def minha_thread(documents : list):
     
     #Pegando o sumário e o número de folhas de cada documento
     for doc in documents:
-        #doc.create_summary_numpages(fw)
         fill_summary_numpages_from_pdf(doc, fw)
-        
-        time.sleep(3)
     
-        cf.add([doc])
+        cf.add(doc)
         fw.update_count_docs()
     
     fw.destroy()
@@ -76,7 +70,6 @@ def click_catalog():
     largura_tela = root.winfo_screenwidth()
     cf = CatalogFrame(root, width=largura_tela)
     cf.pack()
-    cf.add([])
     
     th = threading.Thread(target=minha_thread, args=(docs,))
     th.start()

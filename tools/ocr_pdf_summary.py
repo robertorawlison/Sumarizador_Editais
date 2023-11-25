@@ -56,7 +56,9 @@ def fill_summary_numpages_from_pdf(doc : Document, fd : FeedbackWindow) -> (str,
     fd.in_summary()
     
     summarizer = Parser.create_summarizer(doc)
-    doc.summary = summarizer.summarize(text)
+    result = summarizer.summarize(text)
+    doc.summary = result[0]
+    doc.date = result[1]
     
     
 

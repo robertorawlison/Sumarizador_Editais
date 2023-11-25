@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import re
+from datetime import datetime
 from .summarizer import Summarizer
 
 class EditalSummarizer(Summarizer):
@@ -9,7 +10,9 @@ class EditalSummarizer(Summarizer):
         prazo = self._encontra_prazos(text)
         tipo = self._encontrar_tipo(text)
 
-        return f"Edital de licitação na modalidade  {tipo[0]}, cujo objeto trata-se da {objetos[0]}, com valor previsto de {valor} e prazo de execução previsto de {prazo}"
+        summary = f"Edital de licitação na modalidade  {tipo[0]}, cujo objeto trata-se da {objetos[0]}, com valor previsto de {valor} e prazo de execução previsto de {prazo}"
+        date = datetime(2013, 10, 20)
+        return (summary, date) 
 
 
     def _encontra_objeto(self, total_text):

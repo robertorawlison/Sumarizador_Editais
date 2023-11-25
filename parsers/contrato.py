@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import re
+from datetime import datetime
 from .summarizer import Summarizer
 
 class ContratoSummarizer(Summarizer):
@@ -8,8 +9,10 @@ class ContratoSummarizer(Summarizer):
         objeto = self._encontra_objeto(text)
         valor = self._encontra_valor(text).split('(')[0].strip()
         data = self._encontra_data(text)
-           
-        return f"""Contrato entre {partes[0]} e {partes[1]} estabelecido em {data} no valor de {valor[:-2]} com o objetivo de {objeto}"""
+        
+        summary = f"""Contrato entre {partes[0]} e {partes[1]} estabelecido em {data} no valor de {valor[:-2]} com o objetivo de {objeto}""" 
+        date = datetime(2022, 11, 21)
+        return (summary, date)
         
 
         return "Resumo Contrato"

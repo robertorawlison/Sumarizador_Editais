@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 import tkinter as tk
 from tkinter import ttk
+from bisect import insort
+
 from .document_frame import DocumentFrame, HeaderFrame
+from document import Document
 
 class CatalogFrame(tk.Frame):
     '''Widget personalizado para um catálogo de documentos periciais na interface gráfica
@@ -24,6 +27,7 @@ class CatalogFrame(tk.Frame):
         #Cria o frame para adicionar os DocumentFrames
         super().__init__(self.canvas, width=diff, bg="white", highlightbackground="black", highlightthickness=1)  
         self.doc_frames = [] #Frames dos documentos periciais
+        self.documents = [] #Documentos periciais
       
         
     def pack(self):
@@ -50,15 +54,26 @@ class CatalogFrame(tk.Frame):
     def _on_configure(self, event):
         self.canvas.configure(scrollregion=self.canvas.bbox("all"))
         
-    def add(self, documents : list) -> None:
+    def _clear_doc_frames(self):
+        for docf in self.doc_frames:
+            docf.destroy()
+        self.doc_frames = []
+        
+    def add(self, document : Document) -> None:
         '''Desenha uma tabela contendo o catálogo de documentos periciais analisados (CatologFrame).
         ''Para cada objeto Document cria uma linha através do DocumentFrame a ser desenhado no CatologFrame
         '''
+        self._clear_doc_frames()
+        
         #self.canvas.delete("all")
-        for doc in documents:
+        
+        insort(self.documents, document, key=lambda document: document.date)
+            
+        for doc in self.documents:
             df = DocumentFrame(self, doc)
             df.draw()
             self.doc_frames.append(df)
+            
         
         self.canvas.config(scrollregion=self.canvas.bbox("all"))
         self.canvas.update_idletasks()

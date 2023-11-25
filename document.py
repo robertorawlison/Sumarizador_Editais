@@ -2,6 +2,7 @@
 from PIL import Image
 import os
 import fitz
+from datetime import datetime
 
 
 class Document:
@@ -20,6 +21,7 @@ class Document:
         self._type = Document.DESCONHECIDO #Tipo do documento
         self._summary = ""  # Resumo do documento
         self._num_pages = 0  # Número de páginas
+        self.date = datetime.now().date() #Data de emissão do documento
         
     def to_string(self) -> str:
         str_doc = "Documento: " + self._file_name +"\n"
@@ -52,6 +54,9 @@ class Document:
         else:
             num_p_str += " fl."
         return num_p_str
+    
+    def get_str_date(self) -> str:
+        return self._date.strftime("%d/%m/%Y")
     
     def get_basename(self):
         return os.path.basename(self.file_name)
@@ -104,3 +109,10 @@ class Document:
     def image(self, value : Image):
         self._image = value
 
+    @property
+    def date(self) -> datetime:
+        return self._date
+
+    @date.setter
+    def date(self, value : datetime):
+        self._date = value

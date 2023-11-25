@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
-
 import re
+from datetime import datetime
 from .summarizer import Summarizer
 
 class AditivoSummarizer(Summarizer):
     def summarize(self, text : str) -> str:
-        return " "
+        summary = " "
+        date = datetime.now().date()
+        return (summary, date) 

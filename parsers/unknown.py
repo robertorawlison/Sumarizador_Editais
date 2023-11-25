@@ -4,6 +4,7 @@ from sumy.nlp.tokenizers import Tokenizer
 from sumy.summarizers.luhn import LuhnSummarizer
 
 from .summarizer import Summarizer
+from datetime import datetime
 
 class UnknownSummarizer(Summarizer):
     def summarize(self, text : str) -> str:
@@ -13,7 +14,6 @@ class UnknownSummarizer(Summarizer):
         # Escolha um método de sumarização (LSA neste exemplo)
         summarizer = LuhnSummarizer()
     
-    
-        # Obtém um resumo com 1 frase
-        return str(summarizer(parser.document, 1)[0])
-
+        summary = str(summarizer(parser.document, 1)[0]) # Obtém um resumo com 1 frase
+        date = datetime.now().date()
+        return (summary, date)

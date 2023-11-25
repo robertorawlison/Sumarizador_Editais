@@ -11,7 +11,8 @@ from .line_frame import LineFrame
 IMG_COL = 0
 TYPE_COL = 1
 SUMM_COL = 2
-NUMP_COL = 3
+DATE_COL = 3
+NUMP_COL = 4
 
 class CatalogLineFrame(LineFrame):
     '''Widget personalizado para representar uma linha do catálogo de documentos periciais na interface gráfica
@@ -20,10 +21,11 @@ class CatalogLineFrame(LineFrame):
         self.height = height
         self.bg = bg
         L = frame_master.winfo_reqwidth()
-        num_cols = 4
+        num_cols = 5
         col_widths = [math.floor(0.1 * L),
-                      math.floor(0.15 * L),
-                      math.floor(0.65 * L),
+                      math.floor(0.1 * L),
+                      math.floor(0.6 * L),
+                      math.floor(0.1 * L),
                       math.floor(0.1 * L)]
         super().__init__(frame_master, self.height, self.bg, num_cols, col_widths)
         
@@ -86,6 +88,10 @@ class DocumentFrame(CatalogLineFrame):
         self.cell_frames[SUMM_COL].bind("<Button-1>", self._show_text_doc)
         text_label.bind("<Button-1>", self._show_text_doc)
         
+        #Texto da data do documento
+        date = tk.Label(self.cell_frames[DATE_COL], text=self.document.get_str_date(), font=self.font, justify="center",  bg=self.bg)
+        date.pack(pady=60)
+        
         #Texto do número de folhas
         numero = tk.Label(self.cell_frames[NUMP_COL], text=self.document.get_str_num_pages(), font=self.font, justify="center",  bg=self.bg)
         numero.pack(pady=60)
@@ -99,14 +105,15 @@ class HeaderFrame(CatalogLineFrame):
         super().__init__(frame_master, height = 40, bg = "gray90")
         
     def _draw_cell(self, id_cell : int, text : str):
-        label = tk.Label(self.cell_frames[id_cell], text=text, font=self.font, justify="center",  bg=self.bg)
+        font = tkFont.Font(family="Arial", size=18)
+        label = tk.Label(self.cell_frames[id_cell], text=text, font=font, justify="center",  bg=self.bg)
         label.pack()
        
     def draw(self) -> None:
         super().draw()
         
         #Rótulos do cabeçalho
-        texts = ["Doc.", "Tipo", "Descrição", "# folhas"]
+        texts = ["Doc.", "Tipo", "Descrição", "Data", "# folhas"]
         
         for _id, text in zip(range(len(texts)), texts):
             self._draw_cell(_id, text)
