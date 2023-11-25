@@ -21,7 +21,7 @@ class Document:
         self._type = Document.DESCONHECIDO #Tipo do documento
         self._summary = ""  # Resumo do documento
         self._num_pages = 0  # Número de páginas
-        self.date = datetime.now().date() #Data de emissão do documento
+        self._date = None #Data de emissão do documento
         
     def to_string(self) -> str:
         str_doc = "Documento: " + self._file_name +"\n"

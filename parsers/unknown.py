@@ -15,5 +15,5 @@ class UnknownSummarizer(Summarizer):
         summarizer = LuhnSummarizer()
     
         summary = str(summarizer(parser.document, 1)[0]) # Obtém um resumo com 1 frase
-        date = datetime.now().date()
+        date = datetime.now()
         return (summary, date)
