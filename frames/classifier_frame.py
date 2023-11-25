@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import tkinter as tk
 from tkinter import ttk
-from classifier_document_frame import ClassifierDocumentFrame, ClassifierHeaderFrame
+
+from .classifier_document_frame import ClassifierDocumentFrame, ClassifierHeaderFrame
 from document import Document
 
 class ClassifierFrame(tk.Frame):

@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import tabula
-import numpy as np
-from budget import Budget
+from .budget import Budget
 
 class BudgetPDFReader:
     def __init__(self, file_name):

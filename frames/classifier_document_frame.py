@@ -4,9 +4,10 @@ import tkinter as tk
 from tkinter import ttk
 import tkinter.font as tkFont
 import subprocess
-from document import Document
-from line_frame import LineFrame
 from PIL import ImageTk
+
+from document import Document
+from .line_frame import LineFrame
         
 
 DOC_COL = 0

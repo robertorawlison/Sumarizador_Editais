@@ -7,8 +7,8 @@ import os
 
 
 from document import Document
-from parsers import Summarizer
-from feedback_window import FeedbackWindow
+from parsers import Parser
+from frames import FeedbackWindow
 
 
 #from transformers import pipeline,  DistilBertTokenizer, DistilBertForQuestionAnswering
@@ -44,7 +44,7 @@ def fill_summary_numpages_from_pdf(doc : Document, fd : FeedbackWindow) -> (str,
         largura, altura = img.size
         new_width = largura * 2  # Ajuste conforme necessário
         new_height = altura * 2
-        img = img.resize((new_width, new_height), Image.ANTIALIAS)
+        img = img.resize((new_width, new_height), Image.BICUBIC)
         
         enhancer = ImageEnhance.Contrast(img)
         image = enhancer.enhance(2)  # Ajuste de contraste
@@ -55,7 +55,7 @@ def fill_summary_numpages_from_pdf(doc : Document, fd : FeedbackWindow) -> (str,
     #Resumindo o texto lido do pdf
     fd.in_summary()
     
-    summarizer = Summarizer.create_instance(doc)
+    summarizer = Parser.create_summarizer(doc)
     doc.summary = summarizer.summarize(text)
     
     

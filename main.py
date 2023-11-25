@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from budget_PDF_reader import BudgetPDFReader
-from budget_XLSX_writer import BudgetXLSXWriter
+from budget import BudgetPDFReader
+from budget import BudgetXLSXWriter
 
 
 import tkinter as tk

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import tkinter as tk
 from tkinter import ttk
-from document_frame import DocumentFrame, HeaderFrame
+from .document_frame import DocumentFrame, HeaderFrame
 
 class CatalogFrame(tk.Frame):
     '''Widget personalizado para um catálogo de documentos periciais na interface gráfica

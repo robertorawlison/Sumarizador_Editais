@@ -29,7 +29,7 @@ def get_inflection_point(x, y):
 
 
 
-class CurvaABC:
+class ABCCurve:
     def __init__(self):
         self.data = None
 

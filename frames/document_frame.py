@@ -2,10 +2,11 @@
 import tkinter as tk
 import tkinter.font as tkFont
 import subprocess
-from document import Document
-from line_frame import LineFrame
 import math
-from PIL import ImageTk        
+from PIL import ImageTk 
+
+from document import Document
+from .line_frame import LineFrame       
 
 IMG_COL = 0
 TYPE_COL = 1

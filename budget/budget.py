@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import pandas as pd
-from benford_law import BenfordLaw
-from curva_abc import CurvaABC
+from .benford_law import BenfordLaw
+from .abc_curve import ABCCurve
 
 class Budget:
   def __init__(self, matrix):
@@ -14,7 +14,7 @@ class Budget:
     
     
   def compute_metrics(self):
-    self.abc = CurvaABC()
+    self.abc = ABCCurve()
     self.abc.fit(self.matrix)
     
     self.benford = BenfordLaw()

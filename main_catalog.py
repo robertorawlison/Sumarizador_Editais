@@ -1,27 +1,13 @@
 # -*- coding: utf-8 -*-
 import tkinter as tk
 from tkinter import ttk, filedialog
-from feedback_window import FeedbackWindow
-from catalog_frame import CatalogFrame
-from classifier_frame import ClassifierFrame
-from report_word import print_word
-from ocr_pdf_summary import fill_summary_numpages_from_pdf
+
+from frames import FeedbackWindow, CatalogFrame, ClassifierFrame, PFFrame
+from tools import print_word, fill_summary_numpages_from_pdf
 
 import time
 import threading
-
-class PFFrame(tk.Frame):
-    '''Frame personalizado com a imagem da PF como plano de fundo
-    '''
-    def __init__(self, frame_master : tk.Frame, image_pf : tk.PhotoImage, shift_y : int):
-        super().__init__(frame_master, width=(frame_master.winfo_reqwidth() - shift_y), 
-                         height=frame_master.winfo_reqheight(), bg="white")
-        self.label_pf = tk.Label(self, image=image_pf, bg="white")
-        
-    def pack(self):
-        super().pack()
-        self.label_pf.pack(anchor="center")
-     
+    
 
 def click_report():
     if(cf != None):
@@ -29,8 +15,7 @@ def click_report():
         #Gerando a versão word do catálogo de documentos periciais
         print_word(documents)
             
-            
-        
+               
 def click_add():
     global cf, class_f, pff
         
@@ -192,8 +177,6 @@ if __name__ == "__main__":
     
     
     # Cria um widget Label com a imagem de fundo
-    #label_fundo = tk.Label(root, image=image_pf)
-    #label_fundo.place(x=0, y=0, relwidth=1, relheight=1)
     barra_de_tarefas.update_idletasks()
     shift_y = 2 * barra_horizontal.winfo_reqheight() + barra_de_tarefas.winfo_reqheight()
     pff = PFFrame(root, image_pf, shift_y)

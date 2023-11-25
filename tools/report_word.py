@@ -7,6 +7,7 @@ from docx.shared import Inches, Pt
 from io import BytesIO
 import subprocess
 import ctypes
+#import tempfile
 
 def get_ppi_windows():
     hdc = ctypes.windll.user32.GetDC(0)
