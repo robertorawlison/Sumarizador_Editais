@@ -21,8 +21,8 @@ class ClassifierLineFrame(LineFrame):
         self.bg = bg
         num_cols = 2
         L = frame_master.winfo_reqwidth() - 1 #Um pixel da coluna
-        col_widths = [round(0.5 * L),
-                      round(0.5 * L)]
+        col_widths = [round(0.45 * L),
+                      round(0.55 * L)]
         
         super().__init__(frame_master, self.height, self.bg, num_cols, col_widths)
         
@@ -65,7 +65,7 @@ class ClassifierDocumentFrame(ClassifierLineFrame):
         
         #Checkbox
         checkbox = tk.Checkbutton(self.cell_frames[DOC_COL], bg=self.bg, var = self.var_checkbox)
-        checkbox.pack(side="left", padx=120)
+        checkbox.pack(side="left", padx=60)
         
         frame_img = tk.Frame(self.cell_frames[DOC_COL], height=self.cell_frames[DOC_COL].winfo_reqheight(), bg = "white")
         frame_img.pack(pady=10, padx=10)

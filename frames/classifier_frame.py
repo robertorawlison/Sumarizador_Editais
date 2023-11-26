@@ -27,20 +27,20 @@ class ClassifierFrame(tk.Frame):
         self.class_doc_frames = [] #Frames dos documentos periciais
       
         
-    def pack(self):
+    def pack(self) -> None:
         self.frame_master.pack(expand=True)
         self.scrollbar.pack(side="right", fill="y",)
         self.canvas.pack(side="left", fill="y", expand=True)
         self.canvas.create_window((0, 0), window=self, anchor="nw")
         
        
-    def destroy(self):
+    def destroy(self) -> None:
         self.frame_master.pack_forget()
         
     def _on_configure(self, event):
         self.canvas.configure(scrollregion=self.canvas.bbox("all"))
         
-    def create_documents(self, file_names : list):
+    def create_documents(self, file_names : list) -> None:
         self.documents = []
         
         for file in file_names:
@@ -49,11 +49,10 @@ class ClassifierFrame(tk.Frame):
             self.documents.append(doc)
         
         
-    def draw(self):
+    def draw(self) -> None:
         '''Desenha uma tabela contendo os documentos periciais analisados (CatologFrame).
         ''Para cada objeto Document cria uma linha através do DocumentFrame a ser desenhado no CatologFrame
         '''
-        
         chf = ClassifierHeaderFrame(self)
         chf.draw()
         

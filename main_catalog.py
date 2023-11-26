@@ -30,7 +30,7 @@ def click_add():
             cf.destroy()
             cf = None
         
-        class_f = ClassifierFrame(root, width=1000)
+        class_f = ClassifierFrame(root, width=700)
         class_f.pack()
         
         class_f.create_documents(file_names)
