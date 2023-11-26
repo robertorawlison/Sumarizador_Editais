@@ -6,7 +6,7 @@ from PIL import Image, ImageEnhance, ImageFilter
 import os
 
 
-from document import Document
+from entity import Document
 from parsers import Parser
 from frames import FeedbackWindow
 

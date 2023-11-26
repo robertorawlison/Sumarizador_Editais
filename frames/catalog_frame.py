@@ -4,7 +4,7 @@ from tkinter import ttk
 from bisect import insort
 
 from .document_frame import DocumentFrame, HeaderFrame
-from document import Document
+from entity import Document
 
 class CatalogFrame(tk.Frame):
     '''Widget personalizado para um catálogo de documentos periciais na interface gráfica

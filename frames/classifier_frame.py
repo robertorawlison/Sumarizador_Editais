@@ -3,7 +3,7 @@ import tkinter as tk
 from tkinter import ttk
 
 from .classifier_document_frame import ClassifierDocumentFrame, ClassifierHeaderFrame
-from document import Document
+from entity import Document
 
 class ClassifierFrame(tk.Frame):
     '''Widget personalizado para a interface de classificação de documentos periciais na interface gráfica

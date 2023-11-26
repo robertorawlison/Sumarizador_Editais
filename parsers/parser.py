@@ -2,7 +2,7 @@
 """
 Instanciador do resumidor específico. O objeto Document define o tipo de summarizador
 """
-from document import Document
+from entity import Document
 
 from .unknown import UnknownSummarizer
 from .edital import EditalSummarizer

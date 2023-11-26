@@ -6,7 +6,7 @@ import tkinter.font as tkFont
 import subprocess
 from PIL import ImageTk
 
-from document import Document
+from entity import Document
 from .line_frame import LineFrame
         
 
@@ -79,13 +79,13 @@ class ClassifierDocumentFrame(ClassifierLineFrame):
         #Texto do tipo do documento
         l_type = tk.Label(frame_img, text=self.document.get_basename(), justify="center",  
                           wraplength=self.cell_frames[0].winfo_reqwidth(), bg = "white", 
-                          font = tkFont.Font(family="Arial", size=18)
+                          font = tkFont.Font(family="Arial", size=14)
                           )
         l_type.pack(side="bottom")
              
         self.combo = ttk.Combobox(self.cell_frames[CLASS_COL], values=Document.type_list, font=self.font, state="readonly")
         self.combo.set(Document.DESCONHECIDO)
-        self.combo.pack(pady=70)
+        self.combo.pack(pady=75)
         #self.combo.grid(row=0, column=0, sticky="nsew", padx=10)
  
         

@@ -5,7 +5,7 @@ import subprocess
 import math
 from PIL import ImageTk 
 
-from document import Document
+from entity import Document
 from .line_frame import LineFrame       
 
 IMG_COL = 0
