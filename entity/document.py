@@ -15,13 +15,13 @@ class Document:
     type_list = [EDITAL, CONTRATO, DESCONHECIDO]
     
     def __init__(self, file_name : str):
-        self._file_name = file_name  # Nome do arquivo contendo o documento
-        self._image_file = None  # Nome do arquivo contendo a imagem da capa do documento
-        self._image = None #Imagem na memória
-        self._type = Document.DESCONHECIDO #Tipo do documento
-        self._summary = ""  # Resumo do documento
-        self._num_pages = 0  # Número de páginas
-        self._date = None #Data de emissão do documento
+        self._file_name: str = file_name  # Nome do arquivo contendo o documento
+        self._image_file : str = None  # Nome do arquivo contendo a imagem da capa do documento
+        self._image : Image = None #Imagem na memória
+        self._type : str = Document.DESCONHECIDO #Tipo do documento
+        self._summary : str = ""  # Resumo do documento
+        self._num_pages : int = 0  # Número de páginas
+        self._date : datetime = None #Data de emissão do documento
         
     def to_string(self) -> str:
         str_doc = "Documento: " + self._file_name +"\n"
