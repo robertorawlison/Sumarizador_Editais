@@ -5,7 +5,7 @@ import threading
 
 from frames import FeedbackWindow, CatalogFrame, ClassifierFrame, PFFrame
 from tools import print_word, fill_summary_numpages_from_pdf
-
+from entity import Document  
 
 def click_report():
     if(cf != None):

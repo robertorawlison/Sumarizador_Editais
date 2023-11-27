@@ -1,0 +1,16 @@
+Instalar o Tesseract no Windows:
+
+https://github.com/UB-Mannheim/tesseract/wiki
+
+Ao instalar, checar se no arquivo test_tesseract.py o caminho do executável do Tesseract está igual ao local onde foi instalado em tua máquina.
+
+pytesseract.pytesseract.tesseract_cmd = r'C:\Arquivos de Programas\Tesseract-OCR\tesseract.exe'
+
+Baixar o arquivo OCR de português treinado no link:
+
+https://github.com/tesseract-ocr/tessdata
+
+Adicionar o arquivo por.traineddata mp diretório .\Tesseract-OCR\tessdata
+
+Configurar a variável de ambiente no arquivo ocr_summary_pdf.py
+os.environ['TESSDATA_PREFIX'] = r'C:\Arquivos de Programas\Tesseract-OCR\tessdata'

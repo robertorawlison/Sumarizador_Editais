@@ -5,7 +5,7 @@ import threading
 
 from frames import FeedbackWindow, CatalogFrame, ClassifierFrame, PFFrame
 from tools import print_word, fill_summary_numpages_from_pdf
-
+from entity import Document  
 
 def click_report():
     if(cf != None):
@@ -42,7 +42,7 @@ def click_add():
         botao_de_rep.configure(state="disable")
    
 
-def minha_thread(documents : list):
+def minha_thread(documents : list[Document]):
     global cf, class_f
 
     fw = FeedbackWindow(root, image_gear, len( documents))
