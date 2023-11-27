@@ -68,7 +68,7 @@ class CatalogFrame(tk.Frame):
         #self.canvas.delete("all")
         
         #Ordena a lista de documentos pela data de emissão do documento
-        insort(self.documents, document, key=lambda document: document.date)
+        insort(self.documents, document, key=lambda doc: doc.date)
             
         for doc in self.documents:
             df = DocumentFrame(self, doc)
