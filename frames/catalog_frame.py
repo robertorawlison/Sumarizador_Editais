@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import tkinter as tk
 from tkinter import ttk
-from bisect import insort
+from sortedcontainers import SortedList
 
 from .document_frame import DocumentFrame, HeaderFrame
 from entity import Document
@@ -27,7 +27,7 @@ class CatalogFrame(tk.Frame):
         #Cria o frame para adicionar os DocumentFrames
         super().__init__(self.canvas, width=diff, bg="white", highlightbackground="black", highlightthickness=1)  
         self.doc_frames = [] #Frames dos documentos periciais
-        self.documents = [] #Documentos periciais
+        self.documents = SortedList(key=lambda doc: doc.date) #Documentos periciais ordenados por sua data de emissão 
       
         
     def pack(self):
@@ -68,7 +68,7 @@ class CatalogFrame(tk.Frame):
         #self.canvas.delete("all")
         
         #Ordena a lista de documentos pela data de emissão do documento
-        insort(self.documents, document, key=lambda doc: doc.date)
+        self.documents.add(document)
             
         for doc in self.documents:
             df = DocumentFrame(self, doc)
