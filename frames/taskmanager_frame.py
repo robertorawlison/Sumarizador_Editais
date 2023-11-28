@@ -3,12 +3,14 @@
 import tkinter as tk
 from tkinter import ttk, filedialog
 import threading
+from tools import print_word, fill_summary_numpages_from_pdf
+
 
 from .feedback_window import FeedbackWindow 
 from .catalog_frame import CatalogFrame 
 from .classifier_frame import ClassifierFrame
 from .pf_frame import PFFrame
-from tools import print_word, fill_summary_numpages_from_pdf
+from .button import AddButton, CatalogButton, ReportButton 
 
 class TaskManagerFrame(tk.Frame):
     '''Widget personalizado para representar a interface de gerenciamento das tarefas do sistema.
@@ -34,46 +36,19 @@ class TaskManagerFrame(tk.Frame):
         
         
     def pack(self):
-        botoes = tk.Frame(self, bg="royal blue")
-        botoes.pack(anchor="center")
-
-        # Botão para adição de novos documentos.
-        img_add = tk.PhotoImage(file="imagens/add.png")
-        self.botao_de_add = tk.Button(botoes, text="Adicionar documentos", image=img_add, command=self.click_add)
-        self.botao_de_add.image = img_add
-        self.botao_de_add.grid(row=0, column=0, pady=20, padx=10)
+        botoes_frame = tk.Frame(self, bg="royal blue")
+        botoes_frame.pack(anchor="center")
         
-        # Associando os eventos ao botão
-        self.botao_de_add.bind("<Enter>", self.on_enter_add)
-        self.botao_de_add.bind("<Leave>", self.on_leave_add)
+        self.add_button = AddButton(botoes_frame, self.click_add)
+        self.add_button.pack()
         
-        self.tooltip_add = ttk.Label(self.master_frame, text="Adicionar novos documentos periciais.", background="#FFFFE0", relief="solid")
+        self.catalog_button = CatalogButton(botoes_frame, self.click_catalog)
+        self.catalog_button.pack()
+        self.catalog_button.disactive()
         
-        # Botão para geração de relatório no word.
-        img_cat = tk.PhotoImage(file="imagens/catalog.png")
-        self.botao_de_cat = tk.Button(botoes, text="Gerar catálogo de documentos periciais.", image=img_cat, command=self.click_catalog)
-        self.botao_de_cat.image = img_cat
-        self.botao_de_cat.grid(row=0, column=1, pady=20, padx=10)
-        self.botao_de_cat.configure(state="disabled")
-        
-        # Associando os eventos ao botão
-        self.botao_de_cat.bind("<Enter>", self.on_enter_cat)
-        self.botao_de_cat.bind("<Leave>", self.on_leave_cat)
-        
-        self.tooltip_cat = ttk.Label(self.master_frame, text="Gerar catálogo dos documentos periciais.", background="#FFFFE0", relief="solid")
-        
-        # Botão para geração de relatório no word.
-        img_rep = tk.PhotoImage(file="imagens/word.png")
-        self.botao_de_rep = tk.Button(botoes, text="Gerar relatório", image=img_rep, command=self.click_report)
-        self.botao_de_rep.image = img_rep
-        self.botao_de_rep.grid(row=0, column=2, pady=20, padx=10)
-        self.botao_de_rep.configure(state="disabled")
-        
-        # Associando os eventos ao botão
-        self.botao_de_rep.bind("<Enter>", self.on_enter_rep)
-        self.botao_de_rep.bind("<Leave>", self.on_leave_rep)
-        
-        self.tooltip_rep = ttk.Label(self.master_frame, text="Gerar relatório em word.", background="#FFFFE0", relief="solid")
+        self.report_button = ReportButton(botoes_frame, self.click_report)
+        self.report_button.pack()
+        self.report_button.disactive()
         
         self.update_idletasks()
         
@@ -109,10 +84,10 @@ class TaskManagerFrame(tk.Frame):
             self.class_f.create_documents(file_names)
             self.class_f.draw()
             
-            self.botao_de_cat.configure(state="normal")
-            self.botao_de_add.configure(state="disable")
-            self.botao_de_rep.configure(state="disable")
-       
+            self.catalog_button.active()
+            self.add_button.disactive()
+            self.report_button.disactive()
+            
 
     def minha_thread(self, documents : list):
         fw = FeedbackWindow(self.master_frame, self.image_gear, len( documents))
@@ -126,8 +101,8 @@ class TaskManagerFrame(tk.Frame):
             fw.update_count_docs()
         
         fw.destroy()
-        self.botao_de_rep.configure(state="normal")
-        self.botao_de_add.configure(state="normal")
+        self.report_button.active()
+        self.add_button.active()
         
 
     def click_catalog(self):
@@ -144,24 +119,4 @@ class TaskManagerFrame(tk.Frame):
         th = threading.Thread(target=self.minha_thread, args=(docs,))
         th.start()
 
-        self.botao_de_cat.configure(state="disable")
-        
-
-    def on_enter_add(self, event):
-        self.tooltip_add.place(in_=self.botao_de_add, anchor="c", bordermode="outside", relx=0.5, rely=1.1)
-
-    def on_leave_add(self, event):
-        self.tooltip_add.place_forget()
-
-    def on_enter_rep(self, event):
-        self.tooltip_rep.place(in_=self.botao_de_rep, anchor="c", bordermode="outside", relx=0.5, rely=1.1)
-
-    def on_leave_rep(self, event):
-        self.tooltip_rep.place_forget()
-
-    def on_enter_cat(self, event):
-        self.tooltip_cat.place(in_=self.botao_de_cat, anchor="c", bordermode="outside", relx=0.5, rely=1.1)
-
-    def on_leave_cat(self, event):
-        self.tooltip_cat.place_forget()
-        
+        self.catalog_button.disactive() 
