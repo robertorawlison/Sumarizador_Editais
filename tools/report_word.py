@@ -5,9 +5,7 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.table import WD_ALIGN_VERTICAL
 from docx.shared import Inches, Pt
 from io import BytesIO
-import subprocess
-import ctypes
-#import tempfile
+import subprocess, ctypes
 
 def get_ppi_windows():
     hdc = ctypes.windll.user32.GetDC(0)
@@ -95,8 +93,8 @@ def print_word(documents : list) -> None:
         
         
         
-    # Salvando o arquivo do Word
-    docx_document.save("relatorio_documentos.docx")
+    # Salvando o arquivo temporário no formato do Word
+    docx_document.save("temp.docx")
 
     # Abrindo o arquivo gerado
-    subprocess.Popen(['start', 'relatorio_documentos.docx'], shell=True)
+    subprocess.Popen(['start', "temp.docx"], shell=True)
