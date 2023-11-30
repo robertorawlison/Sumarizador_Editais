@@ -8,7 +8,7 @@ class ForensicFrame(tk.Frame):
     '''Widget personalizado para criar ou editar uma perícia na interface gráfica
     '''    
     def __init__(self, root : tk.Frame):
-        super().__init__(root, width=(root.winfo_reqwidth()*0.7), bg="white", highlightbackground="black", highlightthickness=1)  
+        super().__init__(root, width=(root.winfo_screenwidth()*0.4), bg="white", highlightbackground="black", highlightthickness=1)  
         self.forensic = Forensic()
         self.forensic.description = "Perícia policial"
         self.forensic.author = "nome do perito"
@@ -49,7 +49,7 @@ class ForensicFrame(tk.Frame):
         self.top_frame = tk.Frame(self, width=self.winfo_reqwidth(), bg="white")
         self.top_frame.pack(side="top")
         
-        image_forensic = tk.PhotoImage(file="imagens/forensic.png")
+        image_forensic = tk.PhotoImage(file="imagens/forensic2.png")
         self.label_forensic = tk.Label(self.top_frame, image=image_forensic, bg="white")
         self.label_forensic.image = image_forensic 
         self.label_forensic.pack(side="left")

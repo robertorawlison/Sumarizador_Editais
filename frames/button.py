@@ -38,6 +38,18 @@ class Button(tk.Button):
     def on_leave(self, event):
         self.tooltip.place_forget()
         
+
+
+class CreateButton(Button):
+    """
+    Botão para adição de novos documentos.
+    """
+    def __init__(self, master_frame : tk.Frame, on_click):
+        super().__init__(master_frame, 
+                     img_file_name = "imagens/create.png",
+                     text = "Criar uma nova perícia.",
+                     on_click = on_click)
+
         
 class AddButton(Button):
     """
