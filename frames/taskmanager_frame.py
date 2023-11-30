@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import tkinter as tk
-from tkinter import ttk, filedialog
+from tkinter import filedialog
 import threading
 from tools import print_word, fill_summary_numpages_from_pdf
 
@@ -10,6 +10,7 @@ from .feedback_window import FeedbackWindow
 from .catalog_frame import CatalogFrame 
 from .classifier_frame import ClassifierFrame
 from .pf_frame import PFFrame
+from .forensic_frame import ForensicFrame
 from .button import AddButton, CatalogButton, ReportButton 
 
 class TaskManagerFrame(tk.Frame):
@@ -20,9 +21,6 @@ class TaskManagerFrame(tk.Frame):
         self.cf : CatalogFrame = None #CatalogFrame
         self.class_f : ClassifierFrame = None #ClassifierFrame
         self.pff : PFFrame = None #PFFrame
-        
-        self.image_gear = tk.PhotoImage(file="imagens/gear.png")
-        self.image_pf = tk.PhotoImage(file="imagens/pf-cinza.png")
         
         barra_horizontal = tk.Frame(self.master_frame, height=5, bg="#0000FF")
         barra_horizontal.pack(fill="x")
@@ -53,7 +51,7 @@ class TaskManagerFrame(tk.Frame):
         self.update_idletasks()
         
         shift_y = self.winfo_reqheight()
-        self.pff = PFFrame(self.master_frame, self.image_pf, shift_y)
+        self.pff = PFFrame(self.master_frame, shift_y)
         self.pff.pack()
         
     def click_report(self):
@@ -64,7 +62,13 @@ class TaskManagerFrame(tk.Frame):
                 
                    
     def click_add(self):
-        # Abre a janela de seleção de arquivos
+        #Abre a janela de seleção de arquivos
+        
+        self.pff.destroy()
+        ff = ForensicFrame(self.master_frame)
+        ff.pack()
+        return        
+        
         file_names = filedialog.askopenfilenames(
             initialdir="./",
             title="Selecione Arquivos",
@@ -90,7 +94,7 @@ class TaskManagerFrame(tk.Frame):
             
 
     def minha_thread(self, documents : list):
-        fw = FeedbackWindow(self.master_frame, self.image_gear, len( documents))
+        fw = FeedbackWindow(self.master_frame, len( documents))
         fw.center()
         
         #Pegando o sumário e o número de folhas de cada documento

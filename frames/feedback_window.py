@@ -6,14 +6,14 @@ from PIL import Image, ImageTk
 class FeedbackWindow(tk.Frame):
     '''Widget personalizado para informar que a atividade está sendo processada
     '''
-    def __init__(self, frame_master : tk.Frame, image_gear : tk.PhotoImage, num_docs : int):
+    def __init__(self, frame_master : tk.Frame, num_docs : int):
         super().__init__(frame_master, relief="solid", borderwidth=10)
         self.lift() #Frame fica por cima dos outros
         
 
         # Adiciona a imagem como plano de fundo usando um rótulo
-        self.label_gear = tk.Label(self, image=image_gear)
-        self.image = image_gear
+        self.image = tk.PhotoImage(file="imagens/gear.png")
+        self.label_gear = tk.Label(self, image=self.image)
         self.label_gear.pack(expand=True, fill="both")
         
         #Frame para as barras de progressão

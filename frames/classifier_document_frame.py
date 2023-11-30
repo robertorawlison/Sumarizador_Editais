@@ -6,7 +6,7 @@ import tkinter.font as tkFont
 import subprocess
 from PIL import ImageTk
 
-from entity import Document
+from entity import Document, TypeDocument
 from .line_frame import LineFrame
         
 
@@ -20,7 +20,7 @@ class ClassifierLineFrame(LineFrame):
         self.height = height
         self.bg = bg
         num_cols = 2
-        L = frame_master.winfo_reqwidth() - 1 #Um pixel da coluna
+        L = frame_master.winfo_reqwidth()# - 1 #Um pixel da coluna
         col_widths = [round(0.45 * L),
                       round(0.55 * L)]
         
@@ -82,12 +82,11 @@ class ClassifierDocumentFrame(ClassifierLineFrame):
                           font = tkFont.Font(family="Arial", size=14)
                           )
         l_type.pack(side="bottom")
-             
-        self.combo = ttk.Combobox(self.cell_frames[CLASS_COL], values=Document.type_list, font=self.font, state="readonly")
-        self.combo.set(Document.DESCONHECIDO)
+        
+        type_labels = [_type['label'] for _type in TypeDocument.list]
+        self.combo = ttk.Combobox(self.cell_frames[CLASS_COL], values=type_labels, font=self.font, state="readonly")
+        self.combo.set(TypeDocument.DESCONHECIDO['label'])
         self.combo.pack(pady=75)
-        #self.combo.grid(row=0, column=0, sticky="nsew", padx=10)
- 
         
         
 

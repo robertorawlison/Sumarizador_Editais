@@ -8,24 +8,18 @@ from datetime import datetime
 class Document:
     '''Representa os dados dos documentos periciais avaliados
     '''
-    #Tipos de documentos periciais
-    DESCONHECIDO = "desconhecido"
-    EDITAL = "edital"
-    CONTRATO = "contrato"
-    type_list = [EDITAL, CONTRATO, DESCONHECIDO]
-    
     def __init__(self, file_name : str):
         self._file_name: str = file_name  # Nome do arquivo contendo o documento
         self._image_file : str = None  # Nome do arquivo contendo a imagem da capa do documento
         self._image : Image = None #Imagem na memória
-        self._type : str = Document.DESCONHECIDO #Tipo do documento
+        self._type : dict = TypeDocument.DESCONHECIDO #Tipo do documento
         self._summary : str = ""  # Resumo do documento
         self._num_pages : int = 0  # Número de páginas
         self._date : datetime = None #Data de emissão do documento
         
     def to_string(self) -> str:
         str_doc = "Documento: " + self._file_name +"\n"
-        str_doc += "Tipo: " + self._type + "\n"
+        str_doc += "Tipo: " + self._type['label'] + "\n"
         str_doc += "Descrição: " + self._summary + "\n"
         str_doc += "N. páginas: " + str(self._num_pages)
         return str_doc
@@ -94,11 +88,11 @@ class Document:
         self._num_pages = value
         
     @property
-    def type(self) -> str:
+    def type(self) -> dict:
         return self._type
 
     @type.setter
-    def type(self, value : str):
+    def type(self, value : dict):
         self._type = value
         
     @property
@@ -116,3 +110,34 @@ class Document:
     @date.setter
     def date(self, value : datetime):
         self._date = value
+
+
+class TypeDocument:
+    '''Tipos de documentos periciais'''
+    DESCONHECIDO = {
+        'label' : 'desconhecido',
+        'plural' : 'desconhecidos',
+        'id' : 0
+    }
+    EDITAL = {
+        'label' : 'edital',
+        'plural' : 'editais',
+        'id' : 1
+    }
+    CONTRATO  = {
+        'label' : 'contrato',
+        'plural' : 'contratos',
+        'id' : 2
+    }
+    ADITIVO  = {
+        'label' : 'aditivo',
+        'plural' : 'aditivos',
+        'id' : 3
+    }
+    PROCURACAO  = {
+        'label' : 'procuração',
+        'plural' : 'procurações',
+        'id' : 4
+    }
+    list = [EDITAL, CONTRATO, ADITIVO, PROCURACAO, DESCONHECIDO]
+    map = {f'{_type["label"]}' : _type for _type in list}

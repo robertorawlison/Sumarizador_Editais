@@ -3,7 +3,7 @@ import tkinter as tk
 from tkinter import ttk
 
 from .classifier_document_frame import ClassifierDocumentFrame, ClassifierHeaderFrame
-from entity import Document
+from entity import Document, TypeDocument
 
 class ClassifierFrame(tk.Frame):
     '''Widget personalizado para a interface de classificação de documentos periciais na interface gráfica
@@ -67,7 +67,8 @@ class ClassifierFrame(tk.Frame):
         documents = []
         for cdf in self.class_doc_frames:
             if cdf.is_checked():
-                cdf.document.type = cdf.combo.get()
+                label = cdf.combo.get()
+                cdf.document.type = TypeDocument.map[label]
                 documents.append(cdf.document)
             
         return documents
