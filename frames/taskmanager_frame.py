@@ -2,6 +2,7 @@
 
 import tkinter as tk
 from tkinter import filedialog
+import tkinter.font as tkFont
 import threading
 from tools import print_word, fill_summary_numpages_from_pdf
 
@@ -11,7 +12,7 @@ from .catalog_frame import CatalogFrame
 from .classifier_frame import ClassifierFrame
 from .pf_frame import PFFrame
 from .forensic_frame import ForensicFrame
-from .button import CreateButton, AddButton, CatalogButton, ReportButton 
+from .button import CreateButton, OpenButton, AddButton, CatalogButton, ReportButton 
 
 class TaskManagerFrame(tk.Frame):
     '''Widget personalizado para representar a interface de gerenciamento das tarefas do sistema.
@@ -27,37 +28,103 @@ class TaskManagerFrame(tk.Frame):
         barra_horizontal.pack(fill="x")
         
         #Cria o frame para adicionar os DocumentFrames
-        super().__init__(self.master_frame, bg="royal blue") 
-        super().pack(side="top", fill="x")
+        super().__init__(self.master_frame, height=100, bg="royal blue") 
+        self.pack_propagate(False)
+        super().pack(fill="x")
         
         barra_horizontal = tk.Frame(self.master_frame, height=5, bg="#0000FF")
         barra_horizontal.pack(fill="x")
         
+        #Frames com os botões de ação
+        self.current_task_frame = None
+        self.buttons_frame = None 
+        
         
     def pack(self):
-        botoes_frame = tk.Frame(self, bg="royal blue")
-        botoes_frame.pack(anchor="center")
+        self.update_idletasks()
+        open_frame = tk.Frame(self, bg="royal blue")
+        open_frame.pack(side='left')
         
         
-        self.add_button = CreateButton(botoes_frame, self.click_create)
-        self.add_button.pack()
+        create_button = CreateButton(open_frame, 0, self.click_create)
+        create_button.pack()
         
-        self.add_button = AddButton(botoes_frame, self.click_add)
-        self.add_button.pack()
-        
-        self.catalog_button = CatalogButton(botoes_frame, self.click_catalog)
-        self.catalog_button.pack()
-        self.catalog_button.disactive()
-        
-        self.report_button = ReportButton(botoes_frame, self.click_report)
-        self.report_button.pack()
-        self.report_button.disactive()
+        open_button = OpenButton(open_frame, 1, None)
+        open_button.pack()
+        open_button.disactive()
         
         self.update_idletasks()
         
         shift_y = self.winfo_reqheight()
         self.pff = PFFrame(self.master_frame, shift_y)
         self.pff.pack()
+        
+        
+    def _create_buttons_frame(self):
+        self.current_task_frame = tk.Frame(self, height=80, width=(self.winfo_screenwidth()*0.56), bg="grey70") 
+        self.current_task_frame.pack_propagate(False)
+        self.current_task_frame.place(relx=0.5, rely=0.5, anchor="center")
+        self.current_task_frame.configure(borderwidth=2, relief="solid")
+    
+        buttons_frame = tk.Frame(self.current_task_frame,  bg="grey70")
+        buttons_frame.pack()
+        
+        
+        self.num_label = tk.Label(buttons_frame, bg="grey70")
+        self.num_label.grid(row=0, column=0)
+        
+        self.pipeline_label = tk.Label(buttons_frame, text="", bg="grey70", font=tkFont.Font(family="Arial", size=18))
+        self.pipeline_label.grid(row=0, column=1)
+        
+        self.add_button = AddButton(buttons_frame, 2, self.click_add)
+        self.add_button.pack()
+        self.add_button.disactive()
+        
+        next_image = tk.PhotoImage(file="imagens/next.png")
+        label_image = tk.Label(buttons_frame, image=next_image, bg="grey70")
+        label_image.imagem = next_image
+        label_image.grid(row=0, column=3)#, pady=10, padx=10)
+        
+        self.catalog_button = CatalogButton(buttons_frame, 4, self.click_catalog)
+        self.catalog_button.pack()
+        self.catalog_button.disactive()
+        
+        label_image = tk.Label(buttons_frame, image=next_image, bg="grey70")
+        label_image.imagem = next_image
+        label_image.grid(row=0, column=5)#, pady=10, padx=10)
+        
+        
+        self.report_button = ReportButton(buttons_frame, 6, self.click_report)
+        self.report_button.pack()
+        self.report_button.disactive()
+    
+        
+    def _forensic_buttons(self):
+        num_image = tk.PhotoImage(file="imagens/um.png")
+        self.num_label.configure(image = num_image)
+        self.num_label.imagem = num_image
+        
+        self.pipeline_label.config(text="Cadastrando a perícia")
+        self.add_button.active()
+    
+    def _classifier_buttons(self):
+        num_image = tk.PhotoImage(file="imagens/dois.png")
+        self.num_label.configure(image = num_image)
+        self.num_label.imagem = num_image
+        
+        self.pipeline_label.config(text="Classificando documentos")
+        self.add_button.disactive()
+        self.catalog_button.active()
+    
+    def _catalog_buttons(self):
+        num_image = tk.PhotoImage(file="imagens/tres.png")
+        self.num_label.configure(image = num_image)
+        self.num_label.imagem = num_image
+        
+        self.pipeline_label.config(text="Sumarizando documentos")
+        self.catalog_button.disactive()
+        self.report_button.active()
+        
         
     def _clear_frames(self):
         if self.pff != None:
@@ -82,9 +149,12 @@ class TaskManagerFrame(tk.Frame):
                    
     def click_create(self):
         self._clear_frames()
+        self._create_buttons_frame()
+        self._forensic_buttons()
         
-        self.ff = ForensicFrame(self.master_frame)
+        self.ff = ForensicFrame(self.master_frame, width=self.current_task_frame.winfo_reqwidth())
         self.ff.pack()
+        
         
                 
     def click_add(self):
@@ -96,16 +166,14 @@ class TaskManagerFrame(tk.Frame):
         )
         if file_names:
             self._clear_frames()
+            self._classifier_buttons()
             
-            self.class_f = ClassifierFrame(self.master_frame, width=700)
+            self.class_f = ClassifierFrame(self.master_frame,  width=self.current_task_frame.winfo_reqwidth())
             self.class_f.pack()
             
             self.class_f.create_documents(file_names)
             self.class_f.draw()
             
-            self.catalog_button.active()
-            self.add_button.disactive()
-            self.report_button.disactive()
             
 
     def minha_thread(self, documents : list):
@@ -120,8 +188,8 @@ class TaskManagerFrame(tk.Frame):
             fw.update_count_docs()
         
         fw.destroy()
-        self.report_button.active()
-        self.add_button.active()
+        #self.report_button.active()
+        #self.add_button.active()
         
 
     def click_catalog(self):
@@ -130,6 +198,7 @@ class TaskManagerFrame(tk.Frame):
         docs = self.class_f.checked_documents()
         
         self._clear_frames()
+        self._catalog_buttons()
         
         largura_tela = self.master_frame.winfo_screenwidth()
         self.cf = CatalogFrame(self.master_frame, width=largura_tela)
@@ -138,4 +207,5 @@ class TaskManagerFrame(tk.Frame):
         th = threading.Thread(target=self.minha_thread, args=(docs,))
         th.start()
 
-        self.catalog_button.disactive() 
+        
+        #self.catalog_button.disactive() 

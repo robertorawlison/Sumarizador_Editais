@@ -2,13 +2,13 @@
 import tkinter as tk
 import tkinter.font as tkFont
 
-from entity import Forensic, Document, TypeDocument, Appendix
+from entity import Forensic, TypeDocument, Appendix
 
 class ForensicFrame(tk.Frame):
     '''Widget personalizado para criar ou editar uma perícia na interface gráfica
     '''    
-    def __init__(self, root : tk.Frame):
-        super().__init__(root, width=(root.winfo_screenwidth()*0.4), bg="white", highlightbackground="black", highlightthickness=1)  
+    def __init__(self, root : tk.Frame, width : int):
+        super().__init__(root, width=width, bg="white", highlightbackground="black", highlightthickness=1)  
         self.forensic = Forensic()
         self.forensic.description = "Perícia policial"
         self.forensic.author = "nome do perito"
@@ -17,32 +17,6 @@ class ForensicFrame(tk.Frame):
         
         self.font = tkFont.Font(family="Arial", size=20)
         
-    def create_fake_forensic(self):
-        self.forensic.appendices.append(Appendix())
-        
-        for _ in range(11):
-            doc = Document("doc1.txt")
-            doc.type = TypeDocument.EDITAL
-            self.forensic.appendices[0].documents.append(doc)
-        
-        for _ in range(3):
-            doc = Document("doc2.txt")
-            doc.type = TypeDocument.CONTRATO
-            self.forensic.appendices[0].documents.append(doc)
-        
-        for _ in range(4):
-            doc = Document("doc3.txt")
-            doc.type = TypeDocument.ADITIVO
-            self.forensic.appendices[0].documents.append(doc)
-        
-        for _ in range(2):
-            doc = Document("doc3.txt")
-            doc.type = TypeDocument.PROCURACAO
-            self.forensic.appendices[0].documents.append(doc)
-        
-        doc = Document("doc4.txt")
-        doc.type = TypeDocument.DESCONHECIDO
-        self.forensic.appendices[0].documents.append(doc)
         
     def pack(self):
         super().pack(side="top")
@@ -55,6 +29,7 @@ class ForensicFrame(tk.Frame):
         self.label_forensic.pack(side="left")
         
         self.create_description()
+        self.create_taskbar()
         self.create_docs_counter()
         
     def create_description(self):    
@@ -109,7 +84,13 @@ class ForensicFrame(tk.Frame):
                          justify="left", font=self.font, bg="white")
         label.grid(row=3, column=1, padx=5, pady=5, sticky="w")
         
-        
+    
+    def create_taskbar(self):
+        #Cria o frame do taskbar
+        taskbar_frame = tk.Frame(self, bg="grey70", highlightbackground="black", highlightthickness=1) 
+        taskbar_frame.pack(side="top", fill="x", pady=10)
+        label = tk.Label(taskbar_frame, text="Documentos classificados", font=self.font, bg="grey70")
+        label.pack()
         
     def create_docs_counter(self):
         #Contando quantos documentos de cada tipo
@@ -118,7 +99,7 @@ class ForensicFrame(tk.Frame):
             for doc in appendix.documents:
                 counter[doc.type['id']] += 1
                 
-        self.counter_frame = tk.Frame(self, width=self.winfo_reqwidth(), bg="white", highlightbackground="black", highlightthickness=1)
+        self.counter_frame = tk.Frame(self, width=self.winfo_reqwidth(), bg="white")
         self.counter_frame.pack(side="bottom")
         
         self.update_idletasks()
@@ -145,10 +126,40 @@ class ForensicFrame(tk.Frame):
                 else:
                     type_text = TypeDocument.list[type_id]['plural']
                 label = tk.Label(self.counter_doc_frame, text=type_text, font=type_font, bg="white")
-                label.pack(anchor="center", pady=5)
+                label.pack(anchor="center")
                 
                 
                 #Cada linha possui apenas 4 colunas
                 c = (c + 1) % 4 
                 if(c == 0):
                     r += 1
+                    
+                    
+                    
+    def create_fake_forensic(self):
+        self.forensic.appendices.append(Appendix())
+        
+        # for _ in range(11):
+        #     doc = Document("doc1.txt")
+        #     doc.type = TypeDocument.EDITAL
+        #     self.forensic.appendices[0].documents.append(doc)
+        
+        # for _ in range(3):
+        #     doc = Document("doc2.txt")
+        #     doc.type = TypeDocument.CONTRATO
+        #     self.forensic.appendices[0].documents.append(doc)
+        
+        # for _ in range(4):
+        #     doc = Document("doc3.txt")
+        #     doc.type = TypeDocument.ADITIVO
+        #     self.forensic.appendices[0].documents.append(doc)
+        
+        # for _ in range(2):
+        #     doc = Document("doc3.txt")
+        #     doc.type = TypeDocument.PROCURACAO
+        #     self.forensic.appendices[0].documents.append(doc)
+        
+        # doc = Document("doc4.txt")
+        # doc.type = TypeDocument.DESCONHECIDO
+        # self.forensic.appendices[0].documents.append(doc)
+    
