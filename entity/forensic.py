@@ -3,7 +3,6 @@
 Class que representa uma perícia documental realizada por um perito
 """
 from datetime import datetime
-from .appendix import Appendix
 
 class Forensic:
     def __init__(self):

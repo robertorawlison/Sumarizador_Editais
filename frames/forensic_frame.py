@@ -82,10 +82,11 @@ class ForensicFrame(tk.Frame):
         
     def create_docs_counter(self):
         #Contando quantos documentos de cada tipo
-        counter = [0] * len(TypeDocument.list)
+        counter = [0 for _ in range(len(TypeDocument.list))]
         for appendix in self.forensic.appendices:
             for doc in appendix.documents:
                 counter[doc.type['id']] += 1
+        print(counter)
         
         if(sum(counter) == 0):
             return
@@ -105,6 +106,8 @@ class ForensicFrame(tk.Frame):
         r = c = 0 #Variável de controle do posicionamento dos frame de contagem no grid 
         for type_id in range(len(TypeDocument.list)):
             if counter[type_id] > 0:
+                print(type_id)
+                print(TypeDocument.list[type_id])
                 self.counter_doc_frame = tk.Frame(self.counter_frame, width=width, height=width/2, bg="white")
                 self.counter_doc_frame.pack_propagate(False)
                 self.counter_doc_frame.grid(row=r, column=c)

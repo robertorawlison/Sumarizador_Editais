@@ -188,5 +188,5 @@ class TypeDocument:
         'plural' : 'procurações',
         'id' : 4
     }
-    list = [EDITAL, CONTRATO, ADITIVO, PROCURACAO, DESCONHECIDO]
+    list = [DESCONHECIDO, EDITAL, CONTRATO, ADITIVO, PROCURACAO]
     map = {f'{_type["label"]}' : _type for _type in list}

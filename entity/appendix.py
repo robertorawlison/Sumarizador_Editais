@@ -21,8 +21,6 @@ class Appendix:
 
     def add(self, doc : Document):
         self._documents.append(doc)
-        if self.db_instance.documents == None:
-            print("documents")
         self.db_instance.documents.add([doc.db_instance])
         self.db_instance.save()
 
