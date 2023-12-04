@@ -7,3 +7,5 @@ parsers/__pycache__/
 tools/__pycache__/
 relatorio_documentos.docx
 temp.docx
+database.db
+temp/*

@@ -94,7 +94,7 @@ def print_word(documents : list) -> None:
         
         
     # Salvando o arquivo temporário no formato do Word
-    docx_document.save("temp.docx")
+    docx_document.save("temp/temp.docx")
 
     # Abrindo o arquivo gerado
-    subprocess.Popen(['start', "temp.docx"], shell=True)
+    subprocess.Popen(['start', "temp/temp.docx"], shell=True)

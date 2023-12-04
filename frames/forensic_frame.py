@@ -29,7 +29,6 @@ class ForensicFrame(tk.Frame):
         self.label_forensic.pack(side="left")
         
         self.create_description()
-        self.create_taskbar()
         self.create_docs_counter()
         
     def create_description(self):    
@@ -84,13 +83,6 @@ class ForensicFrame(tk.Frame):
                          justify="left", font=self.font, bg="white")
         label.grid(row=3, column=1, padx=5, pady=5, sticky="w")
         
-    
-    def create_taskbar(self):
-        #Cria o frame do taskbar
-        taskbar_frame = tk.Frame(self, bg="grey70", highlightbackground="black", highlightthickness=1) 
-        taskbar_frame.pack(side="top", fill="x", pady=10)
-        label = tk.Label(taskbar_frame, text="Documentos classificados", font=self.font, bg="grey70")
-        label.pack()
         
     def create_docs_counter(self):
         #Contando quantos documentos de cada tipo
@@ -98,7 +90,16 @@ class ForensicFrame(tk.Frame):
         for appendix in self.forensic.appendices:
             for doc in appendix.documents:
                 counter[doc.type['id']] += 1
-                
+        
+        if(sum(counter) == 0):
+            return
+        
+        #Cria o frame do taskbar
+        header_frame = tk.Frame(self, bg="grey70", highlightbackground="black", highlightthickness=1) 
+        header_frame.pack(side="top", fill="x", pady=10)
+        label = tk.Label(header_frame, text="Documentos classificados", font=self.font, bg="grey70")
+        label.pack()
+        
         self.counter_frame = tk.Frame(self, width=self.winfo_reqwidth(), bg="white")
         self.counter_frame.pack(side="bottom")
         

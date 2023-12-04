@@ -3,7 +3,6 @@
 import tkinter as tk
 from tkinter import ttk
 import tkinter.font as tkFont
-import subprocess
 from PIL import ImageTk
 
 from entity import Document, TypeDocument
@@ -44,8 +43,7 @@ class ClassifierDocumentFrame(ClassifierLineFrame):
             return False
         
     def _open_file(self):
-        print("Open: " + str(self.document.file_name))
-        subprocess.Popen(['start', "", self.document.file_name], shell=True)
+        self.document.open_file()
         
     def _show_text_doc(self, event):
         # Função para exibir a janela com texto
@@ -85,8 +83,15 @@ class ClassifierDocumentFrame(ClassifierLineFrame):
         
         type_labels = [_type['label'] for _type in TypeDocument.list]
         self.combo = ttk.Combobox(self.cell_frames[CLASS_COL], values=type_labels, font=self.font, state="readonly")
-        self.combo.set(TypeDocument.DESCONHECIDO['label'])
+        self.combo.set(self.document.type['label'])
         self.combo.pack(pady=75)
+        self.combo.bind("<<ComboboxSelected>>", self.on_change)        
+
+    def on_change(self, event):
+        label = self.combo.get()
+        self.document.type = TypeDocument.map[label]
+        self.document.update_db_type()
+        
         
         
 

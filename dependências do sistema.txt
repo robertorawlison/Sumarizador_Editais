@@ -17,7 +17,7 @@ os.environ['TESSDATA_PREFIX'] = r'C:\Arquivos de Programas\Tesseract-OCR\tessdat
 
 2. Instalar pacotes no Anacaonda Prompt:
 
-pip install re, frontend, tools, pytesseract, sumy
+pip install re, frontend, tools, pytesseract, sumy, peewee
 
 pip install --upgrade --force-reinstall pymupdf
 

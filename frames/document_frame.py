@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import tkinter as tk
 import tkinter.font as tkFont
-import subprocess
 import math
 from PIL import ImageTk 
 
@@ -47,8 +46,7 @@ class DocumentFrame(CatalogLineFrame):
             return False
         
     def _open_file(self):
-        print("Open: " + str(self.document.file_name))
-        subprocess.Popen(['start', "", self.document.file_name], shell=True)
+        self.document.open_file()
         
     def _show_text_doc(self, event):
         # Função para exibir a janela com texto

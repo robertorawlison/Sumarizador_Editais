@@ -3,7 +3,7 @@ import tkinter as tk
 from tkinter import ttk
 
 from .classifier_document_frame import ClassifierDocumentFrame, ClassifierHeaderFrame
-from entity import Document, TypeDocument
+from entity import Document, TypeDocument, Persistence
 
 class ClassifierFrame(tk.Frame):
     '''Widget personalizado para a interface de classificação de documentos periciais na interface gráfica
@@ -41,11 +41,11 @@ class ClassifierFrame(tk.Frame):
         self.canvas.configure(scrollregion=self.canvas.bbox("all"))
         
     def create_documents(self, file_names : list) -> None:
-        self.documents = []
+        self.documents = Persistence.load_documents()
         
-        for file in file_names:
-            doc = Document(file)
-            doc.create_image()
+        for file_name in file_names:
+            doc = Document(file_name = file_name)
+            doc.create_db_instance()
             self.documents.append(doc)
         
         
@@ -67,8 +67,8 @@ class ClassifierFrame(tk.Frame):
         documents = []
         for cdf in self.class_doc_frames:
             if cdf.is_checked():
-                label = cdf.combo.get()
-                cdf.document.type = TypeDocument.map[label]
+                #label = cdf.combo.get()
+                #cdf.document.type = TypeDocument.map[label]
                 documents.append(cdf.document)
             
         return documents

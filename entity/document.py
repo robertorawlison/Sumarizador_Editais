@@ -1,22 +1,57 @@
 # -*- coding: utf-8 -*-
 from PIL import Image
-import os
+import io, subprocess, os
 import fitz
 from datetime import datetime
 
+from .document_model import DocumentModel
 
 class Document:
     '''Representa os dados dos documentos periciais avaliados
     '''
-    def __init__(self, file_name : str):
-        self._file_name: str = file_name  # Nome do arquivo contendo o documento
-        self._image_file : str = None  # Nome do arquivo contendo a imagem da capa do documento
-        self._image : Image = None #Imagem na memória
-        self._type : dict = TypeDocument.DESCONHECIDO #Tipo do documento
-        self._summary : str = ""  # Resumo do documento
-        self._num_pages : int = 0  # Número de páginas
-        self._date : datetime = None #Data de emissão do documento
+    def __init__(self, file_name:str = None, file_bytes:bytes = None, image:Image = None, num_pages:int = None, doc_db:DocumentModel = None):
+        if(doc_db == None):
+            self._file_name: str = file_name  # Nome do arquivo contendo o documento
+            #self._image_file : str = None  # Nome do arquivo contendo a imagem da capa do documento
+            self._image : Image = image #Imagem na memória
+            self._num_pages : int = 0  # Número de páginas
+            self._file_bytes : bytes = file_bytes #Conteúdo em bytes do documento
+            self._type : dict = TypeDocument.DESCONHECIDO #Tipo do documento
+            self._summary : str = ""  # Resumo do documento
+            self._date : datetime = None #Data de emissão do documento
+            self.db_instance : DocumentModel = None #Instância no database
+            
+            self._extract_file_metadata()
+            
+        else:
+            self._file_name = doc_db.file_name  
+            #self._image_file : str = None  
+            self._image = Image.open(io.BytesIO(doc_db.image)) 
+            self._type = TypeDocument().map[doc_db.type] 
+            self._summary = doc_db.summary
+            self._num_pages = doc_db.num_pages 
+            self._date : datetime = doc_db.date
+            self._file_bytes = doc_db.file_bytes 
+            self.db_instance = doc_db   
+    
+    def create_db_instance(self):
+        # Criando instância da classe DocumentModel e inserindo no banco de dados
+        self.db_instance = DocumentModel.create_db_instance(self)
         
+    def update_db_type(self):
+        DocumentModel.update_type(self)
+    
+    def update_db_summary(self):
+        DocumentModel.update_summary(self)
+    
+    def open_file(self):
+        #print("Open: " + str(self.file_name))
+        with open('temp/temp.pdf', 'wb') as pdf_file:
+            pdf_file.write(self.file_bytes)
+        
+        subprocess.Popen(['start', "", 'temp/temp.pdf'], shell=True)
+    
+    
     def to_string(self) -> str:
         str_doc = "Documento: " + self._file_name +"\n"
         str_doc += "Tipo: " + self._type['label'] + "\n"
@@ -24,13 +59,17 @@ class Document:
         str_doc += "N. páginas: " + str(self._num_pages)
         return str_doc
 
-    def create_image(self) -> None:
+    def _extract_file_metadata(self) -> None:
+        # Lê o conteúdo do arquivo como bytes
+        with open(self._file_name, "rb") as file:
+           self._file_bytes = file.read()
+        
         #Captura a imagem da primeira página do pdf
         pdf_file = fitz.open(self._file_name)
-        #M = fitz.Matrix(90, 130)
-        capa = pdf_file[0]
+        self.num_pages = pdf_file.page_count
         
         # Configurar a escala para 90x130 pixels
+        capa = pdf_file[0]
         escala_x = 90 / capa.rect.width
         escala_y = 130 / capa.rect.height
 
@@ -38,7 +77,6 @@ class Document:
         M = fitz.Matrix(escala_x, escala_y)
         pixmap = capa.get_pixmap(matrix=M)
         self.image = Image.frombytes("RGB", [pixmap.width, pixmap.height], pixmap.samples)
-        
     
     def get_str_num_pages(self) -> str:
         #Texto do número de folhas
@@ -110,6 +148,14 @@ class Document:
     @date.setter
     def date(self, value : datetime):
         self._date = value
+        
+    @property
+    def file_bytes(self) -> bytes:
+        return self._file_bytes
+
+    @file_bytes.setter
+    def file_bytes(self, value : bytes):
+        self._file_byes = value
 
 
 class TypeDocument:

@@ -9,7 +9,7 @@ import os
 from entity import Document
 from parsers import Parser
 from frames import FeedbackWindow
-
+import tempfile
 
 #from transformers import pipeline,  DistilBertTokenizer, DistilBertForQuestionAnswering
 
@@ -27,13 +27,17 @@ custom_config = r'--oem 3 --psm 6 -l por'
 # Função para extrair texto de uma página PDF usando pytesseract
 def fill_summary_numpages_from_pdf(doc : Document, fd : FeedbackWindow) -> (str, int):
     #qa_pipeline = pipeline('question-answering', model='neuralmind/bert-base-portuguese-cased', tokenizer='neuralmind/bert-base-portuguese-cased')
-    
-    
     text = ""
-    pdf_document = fitz.open(doc.file_name)
-    #Captura o número de páginas
-    doc.num_pages = pdf_document.page_count
+    # Criar um arquivo temporário para armazenar os bytes do PDF
+    temp_pdf = tempfile.NamedTemporaryFile(delete=False, mode="w+b", suffix=".pdf")
+    # Escrever os bytes do PDF no arquivo temporário
+    temp_pdf.write(doc.file_bytes)
+    temp_pdf.close()
+        
+    # Abrir o PDF usando fitz
+    pdf_document = fitz.open(temp_pdf.name)
     
+    #Captura o número de páginas
     fd.reset_count_pages(pdf_document.page_count)
 
     for page_num in range(pdf_document.page_count):
@@ -52,6 +56,9 @@ def fill_summary_numpages_from_pdf(doc : Document, fd : FeedbackWindow) -> (str,
         image = image.filter(ImageFilter.SHARPEN)  # Aplicar nitidez
         text += pytesseract.image_to_string(image, config=custom_config)
         
+    #Remove documento temporário
+    pdf_document.close()
+    os.remove(temp_pdf.name)
     #Resumindo o texto lido do pdf
     fd.in_summary()
     

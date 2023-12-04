@@ -12,7 +12,8 @@ from .catalog_frame import CatalogFrame
 from .classifier_frame import ClassifierFrame
 from .pf_frame import PFFrame
 from .forensic_frame import ForensicFrame
-from .button import CreateButton, OpenButton, AddButton, CatalogButton, ReportButton 
+from .button import CreateButton, OpenButton, AddButton, CatalogButton, ReportButton
+from entity import Persistence
 
 class TaskManagerFrame(tk.Frame):
     '''Widget personalizado para representar a interface de gerenciamento das tarefas do sistema.
@@ -37,7 +38,9 @@ class TaskManagerFrame(tk.Frame):
         
         #Frames com os botões de ação
         self.current_task_frame = None
-        self.buttons_frame = None 
+        self.buttons_frame = None
+        
+        Persistence.init()
         
         
     def pack(self):
@@ -182,7 +185,9 @@ class TaskManagerFrame(tk.Frame):
         
         #Pegando o sumário e o número de folhas de cada documento
         for doc in documents:
-            fill_summary_numpages_from_pdf(doc, fw)
+            if(doc.summary == ""): #Não sumarizou seu conteúdo
+                fill_summary_numpages_from_pdf(doc, fw)
+                doc.update_db_summary()
         
             self.cf.add(doc)
             fw.update_count_docs()
