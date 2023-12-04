@@ -45,11 +45,17 @@ class Document:
         DocumentModel.update_summary(self)
     
     def open_file(self):
-        #print("Open: " + str(self.file_name))
-        with open('temp/temp.pdf', 'wb') as pdf_file:
+        diretorio = os.path.dirname("temp/")
+
+        # Verificar se o diretório existe, e criá-lo se não existir
+        if not os.path.exists(diretorio):
+            os.makedirs(diretorio)
+        
+        file_name = os.path.basename(diretorio)+'/temp.pdf' 
+        with open(file_name, 'wb') as pdf_file:
             pdf_file.write(self.file_bytes)
         
-        subprocess.Popen(['start', "", 'temp/temp.pdf'], shell=True)
+        subprocess.Popen(['start', "", file_name], shell=True)
     
     
     def to_string(self) -> str:

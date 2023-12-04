@@ -5,7 +5,7 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.table import WD_ALIGN_VERTICAL
 from docx.shared import Inches, Pt
 from io import BytesIO
-import subprocess, ctypes
+import subprocess, ctypes, os
 
 def get_ppi_windows():
     hdc = ctypes.windll.user32.GetDC(0)
@@ -91,10 +91,16 @@ def print_word(documents : list) -> None:
         
         num_lin += 1
         
-        
+    
+    diretorio = os.path.dirname("temp/")
+
+    # Verificar se o diretório existe, e criá-lo se não existir
+    if not os.path.exists(diretorio):
+        os.makedirs(diretorio)
         
     # Salvando o arquivo temporário no formato do Word
-    docx_document.save("temp/temp.docx")
+    file_name = os.path.basename(diretorio)+'/temp.docx'
+    docx_document.save(file_name)
 
     # Abrindo o arquivo gerado
-    subprocess.Popen(['start', "temp/temp.docx"], shell=True)
+    subprocess.Popen(['start', file_name], shell=True)
