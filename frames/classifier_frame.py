@@ -3,12 +3,12 @@ import tkinter as tk
 from tkinter import ttk
 
 from .classifier_document_frame import ClassifierDocumentFrame, ClassifierHeaderFrame
-from entity import Document, TypeDocument, Persistence
+from entity import Forensic, Document
 
 class ClassifierFrame(tk.Frame):
     '''Widget personalizado para a interface de classificação de documentos periciais na interface gráfica
     '''    
-    def __init__(self, root : tk.Frame, width : int):
+    def __init__(self, root : tk.Frame, width : int, forensic: Forensic):
         # Frame com barra de rolagem      
         self.frame_master = tk.Frame(root, height=650, width=width)
         self.scrollbar = ttk.Scrollbar(self.frame_master, orient="vertical")
@@ -25,6 +25,7 @@ class ClassifierFrame(tk.Frame):
         super().__init__(self.canvas, height=self.frame_master.winfo_reqheight(), width=diff, bg="white", highlightthickness=1, highlightbackground="black")  
   
         self.class_doc_frames = [] #Frames dos documentos periciais
+        self.forensic = forensic
       
         
     def pack(self) -> None:
@@ -41,13 +42,11 @@ class ClassifierFrame(tk.Frame):
         self.canvas.configure(scrollregion=self.canvas.bbox("all"))
         
     def create_documents(self, file_names : list) -> None:
-        self.documents = Persistence.load_documents()
-        self.documents.sort(key=lambda doc: doc.date)
+        self.forensic.appendices[0].documents.sort(key=lambda doc: doc.date) #Ordenar os documentos por data
         
         for file_name in file_names:
             doc = Document(file_name = file_name)
-            doc.create_db_instance()
-            self.documents.append(doc)
+            self.forensic.appendices[0].add(doc)
         
         
     def draw(self) -> None:
@@ -57,7 +56,7 @@ class ClassifierFrame(tk.Frame):
         chf = ClassifierHeaderFrame(self)
         chf.draw()
         
-        for doc in self.documents:
+        for doc in self.forensic.appendices[0].documents:
             cdf = ClassifierDocumentFrame(self, doc)
             cdf.draw()
             self.class_doc_frames.append(cdf)

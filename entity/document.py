@@ -12,31 +12,28 @@ class Document:
     def __init__(self, file_name:str = None, file_bytes:bytes = None, image:Image = None, num_pages:int = None, doc_db:DocumentModel = None):
         if(doc_db == None):
             self._file_name: str = file_name  # Nome do arquivo contendo o documento
-            #self._image_file : str = None  # Nome do arquivo contendo a imagem da capa do documento
             self._image : Image = image #Imagem na memória
             self._num_pages : int = 0  # Número de páginas
             self._file_bytes : bytes = file_bytes #Conteúdo em bytes do documento
             self._type : dict = TypeDocument.DESCONHECIDO #Tipo do documento
             self._summary : str = ""  # Resumo do documento
             self._date : datetime = None #Data de emissão do documento
-            self.db_instance : DocumentModel = None #Instância no database
             
             self._extract_file_metadata()
+            # Criando instância da classe DocumentModel e inserindo no banco de dados
+            self.db_instance = DocumentModel.create_db_instance(self) #Instância no database
+            
             
         else:
             self._file_name = doc_db.file_name  
-            #self._image_file : str = None  
             self._image = Image.open(io.BytesIO(doc_db.image)) 
             self._type = TypeDocument().map[doc_db.type] 
             self._summary = doc_db.summary
             self._num_pages = doc_db.num_pages 
             self._date : datetime = doc_db.date
             self._file_bytes = doc_db.file_bytes 
-            self.db_instance = doc_db   
-    
-    def create_db_instance(self):
-        # Criando instância da classe DocumentModel e inserindo no banco de dados
-        self.db_instance = DocumentModel.create_db_instance(self)
+            self.db_instance = doc_db
+            
         
     def update_db_type(self):
         DocumentModel.update_type(self)

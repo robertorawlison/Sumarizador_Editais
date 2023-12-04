@@ -2,18 +2,14 @@
 import tkinter as tk
 import tkinter.font as tkFont
 
-from entity import Forensic, TypeDocument, Appendix
+from entity import Forensic, TypeDocument
 
 class ForensicFrame(tk.Frame):
     '''Widget personalizado para criar ou editar uma perícia na interface gráfica
     '''    
-    def __init__(self, root : tk.Frame, width : int):
+    def __init__(self, root : tk.Frame, width : int, forensic : Forensic):
         super().__init__(root, width=width, bg="white", highlightbackground="black", highlightthickness=1)  
-        self.forensic = Forensic()
-        self.forensic.description = "Perícia policial"
-        self.forensic.author = "nome do perito"
-        
-        self.create_fake_forensic()
+        self.forensic = forensic
         
         self.font = tkFont.Font(family="Arial", size=20)
         
@@ -134,33 +130,3 @@ class ForensicFrame(tk.Frame):
                 c = (c + 1) % 4 
                 if(c == 0):
                     r += 1
-                    
-                    
-                    
-    def create_fake_forensic(self):
-        self.forensic.appendices.append(Appendix())
-        
-        # for _ in range(11):
-        #     doc = Document("doc1.txt")
-        #     doc.type = TypeDocument.EDITAL
-        #     self.forensic.appendices[0].documents.append(doc)
-        
-        # for _ in range(3):
-        #     doc = Document("doc2.txt")
-        #     doc.type = TypeDocument.CONTRATO
-        #     self.forensic.appendices[0].documents.append(doc)
-        
-        # for _ in range(4):
-        #     doc = Document("doc3.txt")
-        #     doc.type = TypeDocument.ADITIVO
-        #     self.forensic.appendices[0].documents.append(doc)
-        
-        # for _ in range(2):
-        #     doc = Document("doc3.txt")
-        #     doc.type = TypeDocument.PROCURACAO
-        #     self.forensic.appendices[0].documents.append(doc)
-        
-        # doc = Document("doc4.txt")
-        # doc.type = TypeDocument.DESCONHECIDO
-        # self.forensic.appendices[0].documents.append(doc)
-    

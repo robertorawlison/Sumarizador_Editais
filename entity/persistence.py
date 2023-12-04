@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
+from peewee import DoesNotExist
+
 from .base_model import db
+from .appendix_model import AppendixModel
 from .document_model import DocumentModel
-from .document import Document
+from .appendix import Appendix
 
 class Persistence:
     """
@@ -10,21 +13,19 @@ class Persistence:
     @classmethod
     def init(cls):
         db.connect()
-        db.create_tables([DocumentModel])
+        db.create_tables([DocumentModel, AppendixModel, AppendixModel.documents.get_through_model()])
 
 
     @classmethod
-    def load_documents(cls):
-        # Consultando e exibindo os registros na tabela
-        docs_model = DocumentModel.select()
-        if docs_model:
-            documents = []
-            for doc_model in docs_model:
-                documents.append(Document(doc_db = doc_model))
-            return documents
-        else:
-            return []
-    
+    def load_appendix(cls):
+        append_name = "apenso 1"
+        try:
+            appendix_db = AppendixModel.select().where(AppendixModel.name == append_name).get()
+            return Appendix(append_db = appendix_db)
+        except DoesNotExist:
+            return Appendix(name = append_name)
+
+        
     @classmethod
     def finish(cls):
         db.close()
