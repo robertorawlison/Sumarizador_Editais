@@ -42,6 +42,7 @@ class ClassifierFrame(tk.Frame):
         
     def create_documents(self, file_names : list) -> None:
         self.documents = Persistence.load_documents()
+        self.documents.sort(key=lambda doc: doc.date)
         
         for file_name in file_names:
             doc = Document(file_name = file_name)

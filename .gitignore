@@ -5,6 +5,8 @@ frames/__pycache__/*
 entity/__pycache__/*
 parsers/__pycache__/*
 tools/__pycache__/*
+classifier/dataset/cover/*
+classifier/dataset/non-cover/*
 temp/*
 relatorio_documentos.docx
 temp.docx

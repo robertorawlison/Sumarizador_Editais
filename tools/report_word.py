@@ -70,7 +70,7 @@ def print_word(documents : list) -> None:
 
         row_cells[0].add_paragraph(current_doc.get_basename()).alignment = WD_ALIGN_VERTICAL.CENTER
         
-        row_cells[1].text = current_doc.type
+        row_cells[1].text = current_doc.type['label']
         row_cells[2].text = current_doc.summary
         row_cells[3].text = current_doc.get_str_date()
         row_cells[4].text = current_doc.get_str_num_pages()
