@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-from peewee import Model, CharField, IntegerField, DateTimeField, BlobField
+from peewee import CharField, IntegerField, DateTimeField, BlobField
 import io
-from .database import Database
+from .base_model import BaseModel
 
 # Modelo para a tabela Document
-class DocumentModel(Model):
+class DocumentModel(BaseModel):
     """
     Modelo que repreenta a entidade Document no database
     """
@@ -48,8 +48,3 @@ class DocumentModel(Model):
         # Atualizando campo summary, date
         update = DocumentModel.update(summary=doc.summary, date=doc.date)
         update.where(DocumentModel.id == doc.db_instance.id).execute()
-
-        
-    class Meta:
-        database = Database.db
-

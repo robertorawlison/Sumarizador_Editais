@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from .database import Database
+from .base_model import db
 from .document_model import DocumentModel
 from .document import Document
 
@@ -9,8 +9,8 @@ class Persistence:
     """
     @classmethod
     def init(cls):
-        Database.connect()
-        Database.db.create_tables([DocumentModel])
+        db.connect()
+        db.create_tables([DocumentModel])
 
 
     @classmethod
@@ -27,6 +27,6 @@ class Persistence:
     
     @classmethod
     def finish(cls):
-        Database.close()
+        db.close()
         
 
