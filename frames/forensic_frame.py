@@ -39,6 +39,8 @@ class ForensicFrame(tk.Frame):
         self.description_entry.insert(0, self.forensic.description)
         self.description_entry.grid(row=0, column=1, padx=5, pady=5)
         
+        self.description_entry.bind("<FocusOut>", self.on_description_entry_change)
+        
         #Campo author
         label = tk.Label(self.description_frame, text="Perito:", font=self.font, bg="white")
         label.grid(row=1, column=0, padx=5, pady=5, sticky="e")
@@ -46,6 +48,8 @@ class ForensicFrame(tk.Frame):
         self.author_entry = tk.Entry(self.description_frame, font=self.font, highlightbackground="black", highlightthickness=1)
         self.author_entry.insert(0, self.forensic.author)
         self.author_entry.grid(row=1, column=1, padx=5, pady=5)
+        
+        self.author_entry.bind("<FocusOut>", self.on_author_entry_change)
         
         #Campo date
         label = tk.Label(self.description_frame, text="Data-hora:", font=self.font, bg="white")
@@ -65,12 +69,12 @@ class ForensicFrame(tk.Frame):
         label = tk.Label(self.description_frame, text="#Arquivos:", font=self.font, bg="white")
         label.grid(row=3, column=0, padx=5, pady=5, sticky="e")
         
-        if(num_docs == 1):
+        if(num_docs <= 1):
             text_appendices = f'{num_docs} documento'
         else:
             text_appendices = f'{num_docs} documentos'
         
-        if(len(self.forensic.appendices) == 1): 
+        if(len(self.forensic.appendices) <= 1): 
             text_appendices += f' em {len(self.forensic.appendices)} apenso'
         else:
             text_appendices = f' em {len(self.forensic.appendices)} apensos'
@@ -78,6 +82,19 @@ class ForensicFrame(tk.Frame):
                          text=text_appendices, 
                          justify="left", font=self.font, bg="white")
         label.grid(row=3, column=1, padx=5, pady=5, sticky="w")
+        
+    
+    def on_description_entry_change(self, event):
+        new_value = self.description_entry.get()
+        if(self.forensic.description != new_value):
+            self.forensic.description = new_value
+            self.forensic.update_db_description()
+            
+    def on_author_entry_change(self, event):
+        new_value = self.author_entry.get()
+        if(self.forensic.author != new_value):
+            self.forensic.author = new_value
+            self.forensic.update_db_author()
         
         
     def create_docs_counter(self):

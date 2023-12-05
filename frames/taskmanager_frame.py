@@ -12,8 +12,9 @@ from .catalog_frame import CatalogFrame
 from .classifier_frame import ClassifierFrame
 from .pf_frame import PFFrame
 from .forensic_frame import ForensicFrame
+from .list_forensic_frame import ListForensicFrame
 from .button import CreateButton, OpenButton, AddButton, CatalogButton, ReportButton
-from entity import Persistence, Forensic
+from entity import Persistence
 
 class TaskManagerFrame(tk.Frame):
     '''Widget personalizado para representar a interface de gerenciamento das tarefas do sistema.
@@ -24,6 +25,7 @@ class TaskManagerFrame(tk.Frame):
         self.class_f : ClassifierFrame = None 
         self.pff : PFFrame = None 
         self.ff : ForensicFrame = None
+        self.lff : ListForensicFrame = None
         
         barra_horizontal = tk.Frame(self.master_frame, height=5, bg="#0000FF")
         barra_horizontal.pack(fill="x")
@@ -54,9 +56,8 @@ class TaskManagerFrame(tk.Frame):
         create_button = CreateButton(open_frame, 0, self.click_create)
         create_button.pack()
         
-        open_button = OpenButton(open_frame, 1, None)
+        open_button = OpenButton(open_frame, 1, self.click_open)
         open_button.pack()
-        open_button.disactive()
         
         self.update_idletasks()
         
@@ -144,7 +145,17 @@ class TaskManagerFrame(tk.Frame):
         if(self.ff != None):
             self.ff.destroy()
             self.ff = None
+        if(self.lff != None):
+            self.lff.destroy()
+            self.lff = None
         
+    
+    def click_open(self):
+        self._clear_frames()
+        self.lff = ListForensicFrame(self.master_frame, width = self.winfo_screenwidth()*0.56)
+        self.lff.pack()
+        
+    
     def click_report(self):
         if(self.cf != None):
             documents = self.cf.checked_documents()
@@ -158,12 +169,7 @@ class TaskManagerFrame(tk.Frame):
         self._forensic_buttons()
         
         if(self.forensic == None):
-            self.forensic = Forensic()
-            self.forensic.description = "Perícia policial"
-            self.forensic.author = "nome do perito"
-            appendix = Persistence.load_appendix()
-            self.forensic.appendices.append(appendix)
-        
+            self.forensic = Persistence.load_forensic()
         self.ff = ForensicFrame(self.master_frame, width=self.current_task_frame.winfo_reqwidth(), forensic = self.forensic)
         self.ff.pack()
         
@@ -202,8 +208,6 @@ class TaskManagerFrame(tk.Frame):
             fw.update_count_docs()
         
         fw.destroy()
-        #self.report_button.active()
-        #self.add_button.active()
         
 
     def click_catalog(self):
@@ -220,6 +224,3 @@ class TaskManagerFrame(tk.Frame):
         
         th = threading.Thread(target=self.minha_thread, args=(docs,))
         th.start()
-
-        
-        #self.catalog_button.disactive() 
