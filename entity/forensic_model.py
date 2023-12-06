@@ -29,6 +29,7 @@ class ForensicModel(BaseModel):
     @classmethod
     def update_description(cls, forensic):
         # Atualizando campo description
+        print("Update")
         update = ForensicModel.update(description=forensic.description)
         update.where(ForensicModel.id == forensic.db_instance.id).execute()
         

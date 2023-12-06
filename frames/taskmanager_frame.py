@@ -14,7 +14,7 @@ from .pf_frame import PFFrame
 from .forensic_frame import ForensicFrame
 from .list_forensic_frame import ListForensicFrame
 from .button import CreateButton, OpenButton, AddButton, CatalogButton, ReportButton
-from entity import Persistence
+from entity import Forensic, Appendix, Persistence
 
 class TaskManagerFrame(tk.Frame):
     '''Widget personalizado para representar a interface de gerenciamento das tarefas do sistema.
@@ -56,7 +56,7 @@ class TaskManagerFrame(tk.Frame):
         create_button = CreateButton(open_frame, 0, self.click_create)
         create_button.pack()
         
-        open_button = OpenButton(open_frame, 1, self.click_open)
+        open_button = OpenButton(open_frame, 1, self.click_list)
         open_button.pack()
         
         self.update_idletasks()
@@ -150,9 +150,12 @@ class TaskManagerFrame(tk.Frame):
             self.lff = None
         
     
-    def click_open(self):
+    def click_list(self):
         self._clear_frames()
-        self.lff = ListForensicFrame(self.master_frame, width = self.winfo_screenwidth()*0.56)
+        self.lff = ListForensicFrame(self.master_frame, 
+                                     width = self.winfo_screenwidth()*0.46,
+                                     command_open = self.open_forensic,
+                                     command_del = self.click_list)
         self.lff.pack()
         
     
@@ -164,13 +167,20 @@ class TaskManagerFrame(tk.Frame):
                 
                    
     def click_create(self):
+        if(self.forensic == None):
+            self.forensic = Forensic()
+            append = Appendix(name="apenso 1")
+            self.forensic.add(append)
+            
+        self.open_forensic(self.forensic)
+    
+    
+    def open_forensic(self, forensic : Forensic):
         self._clear_frames()
         self._create_buttons_frame()
         self._forensic_buttons()
         
-        if(self.forensic == None):
-            self.forensic = Persistence.load_forensic()
-        self.ff = ForensicFrame(self.master_frame, width=self.current_task_frame.winfo_reqwidth(), forensic = self.forensic)
+        self.ff = ForensicFrame(self.master_frame, width=self.current_task_frame.winfo_reqwidth(), forensic = forensic)
         self.ff.pack()
         
         

@@ -11,7 +11,7 @@ class LineFrame(tk.Frame):
         self.pack()
         
         self.cell_frames = [None] * num_col
-        self.col_widths = col_widths
+        self.col_widths = [col_widths]
         
         #Fonte dos textos contidos na linha
         self.font = tkFont.Font(family="Arial", size=14)

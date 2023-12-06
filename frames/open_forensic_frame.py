@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 import tkinter as tk
-from tkinter import ttk
 import tkinter.font as tkFont
-from PIL import ImageTk
 
-from entity import Forensic
+from entity import Forensic, Persistence
 from .line_frame import LineFrame
         
 
@@ -26,10 +24,12 @@ class ForensicLineFrame(LineFrame):
 class OpenForensicFrame(ForensicLineFrame):
     '''Widget personalizado para classificar o documento pericial na interface gráfica
     '''
-    def __init__(self, frame_master : tk.Frame, forensic : Forensic):
-        super().__init__(frame_master, height=200, bg = "white")  #Cor do fundo da linha do OpenForensicFrame
+    def __init__(self, frame_master : tk.Frame, forensic : Forensic, command_open, command_del):
+        super().__init__(frame_master, height=90, bg = "white")  #Cor do fundo da linha do OpenForensicFrame
 
         self.forensic = forensic
+        self.command_open = command_open
+        self.command_del = command_del
         
     def _show_text_doc(self, event):
         # Função para exibir a janela com texto
@@ -47,17 +47,25 @@ class OpenForensicFrame(ForensicLineFrame):
     def draw(self) -> None:
         super().draw()
         
-        frame_forensic = tk.Frame(self.cell_frames[0], height=self.cell_frames[0].winfo_reqheight(), bg = "white")
-        frame_forensic.pack(pady=10, padx=10)
+        frame_forensic = tk.Frame(self.cell_frames[0],  height=self.cell_frames[0].winfo_reqheight(), bg = "white")
+        frame_forensic.pack(side='left')
+        
+        frame_button = tk.Frame(frame_forensic, bg = "white")
+        frame_button.pack(side="left", padx=20)
         
         #Image
-        photo = tk.PhotoImage(file="imagens/forensic.png")
-        botao_img = tk.Button(frame_forensic, image=photo,  bg=self.bg, justify="center", command = self._on_click)
-        botao_img.photo = photo
-        botao_img.pack(side="left", pady=5)
+        photo = tk.PhotoImage(file="imagens/open_forensic.png")
+        button_open = tk.Button(frame_button, image=photo,  bg=self.bg, justify="left", command = self._on_click_open)
+        button_open.photo = photo
+        button_open.pack(padx=10,pady=5)
+        
+        photo = tk.PhotoImage(file="imagens/delete.png")
+        button_del = tk.Button(frame_button, image=photo,  bg=self.bg, justify="left", command = self._on_click_delete)
+        button_del.photo = photo
+        button_del.pack(padx=10,pady=5)
         
         #Texto do tipo do documento
-        l_type = tk.Label(frame_forensic, text=self.forensic.to_string(), justify="center",  
+        l_type = tk.Label(frame_forensic, text=self.forensic.to_string(), justify="left",  
                           wraplength=self.cell_frames[0].winfo_reqwidth(), bg = "white", 
                           font = tkFont.Font(family="Arial", size=18)
                           )
@@ -65,5 +73,10 @@ class OpenForensicFrame(ForensicLineFrame):
         
             
 
-    def on_click(self, event):
+    def _on_click_open(self):
         self.forensic.load_appendices()
+        self.command(self.forensic)
+        
+    def _on_click_delete(self):
+        Persistence.delete(self.forensic)
+        self.command_del()

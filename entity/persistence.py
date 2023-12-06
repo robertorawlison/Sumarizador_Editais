@@ -6,7 +6,6 @@ from .appendix_model import AppendixModel
 from .document_model import DocumentModel
 from .forensic_model import ForensicModel
 from .forensic import Forensic
-from .appendix import Appendix
 
 class Persistence:
     """
@@ -21,8 +20,6 @@ class Persistence:
                           ForensicModel,
                           ForensicModel.appendices.get_through_model()])
 
-
-
     @classmethod
     def listForensics(cls):
         forensics = []
@@ -31,18 +28,9 @@ class Persistence:
         return forensics
     
     @classmethod
-    def load_forensic(cls):
-         forensic_description = "Perícia policial"
-         try:
-             forensic_db = ForensicModel.select().where(ForensicModel.description == forensic_description).get()
-             return Forensic(forensic_db = forensic_db)
-         except DoesNotExist:
-             forensic = Forensic()
-             
-             append = Appendix(name="apenso 1")
-             forensic.add(append)
-             
-             return forensic
+    def delete(cls, forensic : Forensic):
+        ''''Remove o objeto Forensic do BD e seus objetos associados nas outras tabelas'''
+        forensic.db_instance.delete_instance(recursive=True)
 
         
     @classmethod
