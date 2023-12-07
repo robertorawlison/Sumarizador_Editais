@@ -2,6 +2,7 @@
 
 from .document import Document
 from .appendix_model import AppendixModel
+from .document_model import DocumentModel
 
 class Appendix:
     """
@@ -16,7 +17,7 @@ class Appendix:
             self._name = append_db.name
             self.db_instance = append_db
             self._documents = []
-            for doc_db in self.db_instance.documents:
+            for doc_db in self.db_instance.documents.order_by(DocumentModel.date):
                 self._documents.append(Document(doc_db = doc_db))
 
     def add(self, doc : Document):

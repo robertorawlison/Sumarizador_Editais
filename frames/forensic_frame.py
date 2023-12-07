@@ -100,7 +100,9 @@ class ForensicFrame(tk.Frame):
     def create_docs_counter(self):
         #Contando quantos documentos de cada tipo
         counter = [0 for _ in range(len(TypeDocument.list))]
+        print("Counter: " + str(len(self.forensic.appendices)))
         for appendix in self.forensic.appendices:
+            print("Docs: " + str(len(appendix.documents)))
             for doc in appendix.documents:
                 counter[doc.type['id']] += 1
         

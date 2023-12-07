@@ -46,7 +46,7 @@ class ClassifierFrame(tk.Frame):
         print(self.forensic.appendices[0])
         print(self.forensic.appendices[0].documents)
         
-        self.forensic.appendices[0].documents.sort(key=lambda doc: doc.date) #Ordenar os documentos por data
+        #self.forensic.appendices[0].documents.sort(key=lambda doc: doc.date) #Ordenar os documentos por data
         
         for file_name in file_names:
             doc = Document(file_name = file_name)
