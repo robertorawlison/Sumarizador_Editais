@@ -20,7 +20,6 @@ class Forensic:
             self._author = forensic_db.author
             self._date = forensic_db.date
             self.db_instance = forensic_db
-            
             self._appendices = []
     
     def to_string(self) -> str:
@@ -38,7 +37,11 @@ class Forensic:
         self._appendices.append(append)
         self.db_instance.appendices.add([append.db_instance])
         self.db_instance.save()
-        
+    
+    def delete_db_instance(self):
+        for append in self.appendices:
+            append.delete_db_instance()
+        ForensicModel.delete_db_instance(self)
         
     def update_db_description(self):
         ForensicModel.update_description(self)

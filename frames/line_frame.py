@@ -11,7 +11,7 @@ class LineFrame(tk.Frame):
         self.pack()
         
         self.cell_frames = [None] * num_col
-        self.col_widths = [col_widths]
+        self.col_widths = col_widths
         
         #Fonte dos textos contidos na linha
         self.font = tkFont.Font(family="Arial", size=14)
@@ -19,7 +19,9 @@ class LineFrame(tk.Frame):
         
     def draw(self) -> None:
         for i in range(len(self.cell_frames)):
-            self.cell_frames[i] = tk.Frame(self, height=self.height, width=self.col_widths[i], bg=self.bg)
+            self.cell_frames[i] = tk.Frame(self, height=self.height, 
+                                           width=self.col_widths[i], 
+                                           bg=self.bg)
             self.cell_frames[i].pack_propagate(False)
             self.cell_frames[i].grid(row=0, column=i)
             self.cell_frames[i].configure(borderwidth=1, relief="solid")

@@ -42,6 +42,10 @@ class ClassifierFrame(tk.Frame):
         self.canvas.configure(scrollregion=self.canvas.bbox("all"))
         
     def create_documents(self, file_names : list) -> None:
+        print(self.forensic)
+        print(self.forensic.appendices[0])
+        print(self.forensic.appendices[0].documents)
+        
         self.forensic.appendices[0].documents.sort(key=lambda doc: doc.date) #Ordenar os documentos por data
         
         for file_name in file_names:

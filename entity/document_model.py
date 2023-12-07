@@ -37,6 +37,10 @@ class DocumentModel(BaseModel):
         return db_instance
     
     @classmethod
+    def delete_db_instance(cls, doc):
+        doc.db_instance.delete_instance()
+    
+    @classmethod
     def update_type(cls, doc):
         # Atualizando campo type
         update = DocumentModel.update(type=doc.type['label'])

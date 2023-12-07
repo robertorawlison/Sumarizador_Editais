@@ -34,7 +34,9 @@ class Document:
             self._file_bytes = doc_db.file_bytes 
             self.db_instance = doc_db
             
-        
+    def delete_db_instance(self):
+        DocumentModel.delete_db_instance(self)
+    
     def update_db_type(self):
         DocumentModel.update_type(self)
     

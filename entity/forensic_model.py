@@ -27,6 +27,10 @@ class ForensicModel(BaseModel):
         return db_instance
     
     @classmethod
+    def delete_db_instance(cls, forensic):
+        forensic.db_instance.delete_instance()
+    
+    @classmethod
     def update_description(cls, forensic):
         # Atualizando campo description
         print("Update")

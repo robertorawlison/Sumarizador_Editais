@@ -167,20 +167,24 @@ class TaskManagerFrame(tk.Frame):
                 
                    
     def click_create(self):
-        if(self.forensic == None):
-            self.forensic = Forensic()
-            append = Appendix(name="apenso 1")
-            self.forensic.add(append)
+        self.forensic = None
+        foren = Forensic()
+        append = Appendix(name="apenso 1")
+        foren.add(append)
+        
             
-        self.open_forensic(self.forensic)
+        self.open_forensic(foren)
     
     
-    def open_forensic(self, forensic : Forensic):
+    def open_forensic(self, foren : Forensic):
+        '''Tela de exibição dos dados de um Forensic. Esta função é chamada para abrir 
+        uma nova perícia ou para abrir na tela de listagem das perícias do BD.'''
+        self.forensic = foren
         self._clear_frames()
         self._create_buttons_frame()
         self._forensic_buttons()
         
-        self.ff = ForensicFrame(self.master_frame, width=self.current_task_frame.winfo_reqwidth(), forensic = forensic)
+        self.ff = ForensicFrame(self.master_frame, width=self.current_task_frame.winfo_reqwidth(), forensic = self.forensic)
         self.ff.pack()
         
         

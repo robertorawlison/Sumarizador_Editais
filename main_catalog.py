@@ -11,4 +11,4 @@ if __name__ == "__main__":
     taskbar = TaskManagerFrame(root)
     taskbar.pack()
 
-    root.mainloop()
+    root.mainloop() 

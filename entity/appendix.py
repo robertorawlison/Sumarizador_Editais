@@ -23,6 +23,11 @@ class Appendix:
         self._documents.append(doc)
         self.db_instance.documents.add([doc.db_instance])
         self.db_instance.save()
+        
+    def delete_db_instance(self):
+        for doc in self.documents:
+            doc.delete_db_instance()
+        AppendixModel.delete_db_instance(self)
 
 
     # Métodos get e set para os campos da classe

@@ -20,3 +20,7 @@ class AppendixModel(BaseModel):
             name = append.name
         )
         return db_instance
+    
+    @classmethod
+    def delete_db_instance(cls, append):
+        append.db_instance.delete_instance()

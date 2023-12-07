@@ -16,7 +16,7 @@ class ForensicLineFrame(LineFrame):
         self.height = height
         self.bg = bg
         num_cols = 1
-        col_widths = frame_master.winfo_reqwidth()
+        col_widths = [frame_master.winfo_reqwidth()]
         
         super().__init__(frame_master, self.height, self.bg, num_cols, col_widths)
         
@@ -75,8 +75,8 @@ class OpenForensicFrame(ForensicLineFrame):
 
     def _on_click_open(self):
         self.forensic.load_appendices()
-        self.command(self.forensic)
+        self.command_open(self.forensic)
         
     def _on_click_delete(self):
-        Persistence.delete(self.forensic)
+        self.forensic.delete_db_instance()
         self.command_del()

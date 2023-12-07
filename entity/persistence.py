@@ -27,11 +27,6 @@ class Persistence:
             forensics.append(Forensic(forensic_db))
         return forensics
     
-    @classmethod
-    def delete(cls, forensic : Forensic):
-        ''''Remove o objeto Forensic do BD e seus objetos associados nas outras tabelas'''
-        forensic.db_instance.delete_instance(recursive=True)
-
         
     @classmethod
     def finish(cls):
