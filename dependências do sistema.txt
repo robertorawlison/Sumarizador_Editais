@@ -15,7 +15,11 @@ Adicionar o arquivo por.traineddata mp diretório .\Tesseract-OCR\tessdata
 Configurar a variável de ambiente no arquivo ocr_summary_pdf.py
 os.environ['TESSDATA_PREFIX'] = r'C:\Arquivos de Programas\Tesseract-OCR\tessdata'
 
-2. Instalar pacotes no Anacaonda Prompt:
+2. Instalar o ambiente de compilação do C++ (necessário para instalação de alguns pacotes do python)
+
+https://visualstudio.microsoft.com/pt-br/visual-cpp-build-tools/
+
+3. Instalar pacotes no Anacaonda Prompt:
 
 pip install re, frontend, tools, pytesseract, sumy, peewee
 

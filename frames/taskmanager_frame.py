@@ -167,11 +167,11 @@ class TaskManagerFrame(tk.Frame):
                 
                    
     def click_create(self):
-        self.forensic = None
         foren = Forensic()
         append = Appendix(name="apenso 1")
         foren.add(append)
         
+        print("Click create: " + str(len(foren.appendices[0].documents)))
             
         self.open_forensic(foren)
     
@@ -179,6 +179,7 @@ class TaskManagerFrame(tk.Frame):
     def open_forensic(self, foren : Forensic):
         '''Tela de exibição dos dados de um Forensic. Esta função é chamada para abrir 
         uma nova perícia ou para abrir na tela de listagem das perícias do BD.'''
+        self.forensic = None
         self.forensic = foren
         self._clear_frames()
         self._create_buttons_frame()

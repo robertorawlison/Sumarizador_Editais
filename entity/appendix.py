@@ -8,15 +8,15 @@ class Appendix:
     """
     Classe apenso, para representar um conjunto de documentos periciais
     """
-    def __init__(self, name:str = None, documents:list = [], append_db:AppendixModel = None):
+    def __init__(self, name:str = None, append_db:AppendixModel = None):
+        self._documents = [] #Lista de documentos periciais
+        
         if(append_db == None):
-            self._name = name #Nome identificador do apenso
-            self._documents = documents #Lista de documentos periciais
+            self._name = name #Nome identificador do apenso    
             self.db_instance = AppendixModel.create_db_instance(self) #Instância no database
         else:
             self._name = append_db.name
             self.db_instance = append_db
-            self._documents = []
             for doc_db in self.db_instance.documents.order_by(DocumentModel.date):
                 self._documents.append(Document(doc_db = doc_db))
 
