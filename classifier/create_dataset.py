@@ -41,6 +41,7 @@ def create_text_dataset(file_name : str) -> str:
 def page_to_string_image(page) -> (str, Image):
     pix = page.get_pixmap()
     img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
+    img.show()
     
     largura, altura = img.size
     new_width = largura * 2  # Ajuste conforme necessário
@@ -57,9 +58,7 @@ def page_to_string_image(page) -> (str, Image):
 
 
 if __name__ == "__main__":
-    if(len(sys.argv) >= 2):
-        for i in range(1, len(sys.argv)):
-            file_name = sys.argv[i]
-            print(f"Tratando arquivo: {file_name}")
-            create_text_dataset(file_name)
+    file_name = "../docs/contrato_1.pdf"
+    print(f"Tratando arquivo: {file_name}")
+    create_text_dataset(file_name)
     
