@@ -53,11 +53,11 @@ class TaskManagerFrame(tk.Frame):
         open_frame.pack(side='left')
         
         
-        create_button = CreateButton(open_frame, 0, self.click_create)
-        create_button.pack()
+        create_button = CreateButton(open_frame, self.click_create)
+        create_button.grid(row=0, column=0, pady=10, padx=10)
         
-        open_button = OpenButton(open_frame, 1, self.click_list)
-        open_button.pack()
+        open_button = OpenButton(open_frame, self.click_list)
+        open_button.grid(row=0, column=1, pady=10, padx=10)
         
         self.update_idletasks()
         
@@ -82,8 +82,8 @@ class TaskManagerFrame(tk.Frame):
         self.pipeline_label = tk.Label(buttons_frame, text="", bg="grey70", font=tkFont.Font(family="Arial", size=18))
         self.pipeline_label.grid(row=0, column=1)
         
-        self.add_button = AddButton(buttons_frame, 2, self.click_add)
-        self.add_button.pack()
+        self.add_button = AddButton(buttons_frame, self.click_add)
+        self.add_button.grid(row=0, column=2, pady=10, padx=10)
         self.add_button.disactive()
         
         next_image = tk.PhotoImage(file="imagens/next.png")
@@ -91,8 +91,8 @@ class TaskManagerFrame(tk.Frame):
         label_image.imagem = next_image
         label_image.grid(row=0, column=3)#, pady=10, padx=10)
         
-        self.catalog_button = CatalogButton(buttons_frame, 4, self.click_catalog)
-        self.catalog_button.pack()
+        self.catalog_button = CatalogButton(buttons_frame, self.click_catalog)
+        self.catalog_button.grid(row=0, column=4, pady=10, padx=10)
         self.catalog_button.disactive()
         
         label_image = tk.Label(buttons_frame, image=next_image, bg="grey70")
@@ -100,8 +100,8 @@ class TaskManagerFrame(tk.Frame):
         label_image.grid(row=0, column=5)#, pady=10, padx=10)
         
         
-        self.report_button = ReportButton(buttons_frame, 6, self.click_report)
-        self.report_button.pack()
+        self.report_button = ReportButton(buttons_frame, self.click_report)
+        self.report_button.grid(row=0, column=6, pady=10, padx=10)
         self.report_button.disactive()
     
         
@@ -110,7 +110,7 @@ class TaskManagerFrame(tk.Frame):
         self.num_label.configure(image = num_image)
         self.num_label.imagem = num_image
         
-        self.pipeline_label.config(text="Cadastrando a perícia")
+        self.pipeline_label.config(text="Editando a perícia")
         self.add_button.active()
     
     def _classifier_buttons(self):
@@ -160,19 +160,16 @@ class TaskManagerFrame(tk.Frame):
         
     
     def click_report(self):
-        if(self.cf != None):
-            documents = self.cf.checked_documents()
-            #Gerando a versão word do catálogo de documentos periciais
-            print_word(documents)
-                
+        documents = self.forensic.appendices[0].documents
+        #Gerando a versão word do catálogo de documentos periciais
+        print_word(documents)
+            
                    
     def click_create(self):
         foren = Forensic()
         append = Appendix(name="apenso 1")
         foren.add(append)
         
-        print("Click create: " + str(len(foren.appendices[0].documents)))
-            
         self.open_forensic(foren)
     
     
@@ -185,7 +182,10 @@ class TaskManagerFrame(tk.Frame):
         self._create_buttons_frame()
         self._forensic_buttons()
         
-        self.ff = ForensicFrame(self.master_frame, width=self.current_task_frame.winfo_reqwidth(), forensic = self.forensic)
+        self.ff = ForensicFrame(self.master_frame, 
+                                width=self.current_task_frame.winfo_reqwidth(), 
+                                forensic = self.forensic,
+                                task_manager = self)
         self.ff.pack()
         
         
@@ -198,12 +198,17 @@ class TaskManagerFrame(tk.Frame):
             filetypes=(("Arquivos PDF", "*.pdf"),)
         )
         if file_names:
+            self.click_classifier(file_names)
+            
+            
+    def click_classifier(self, file_names = []):
             self._clear_frames()
             self._classifier_buttons()
             
-            self.class_f = ClassifierFrame(self.master_frame,  width=self.current_task_frame.winfo_reqwidth(), forensic=self.forensic)
+            self.class_f = ClassifierFrame(self.master_frame,  
+                                           width = self.current_task_frame.winfo_reqwidth(), 
+                                           forensic = self.forensic)
             self.class_f.pack()
-            
             self.class_f.create_documents(file_names)
             self.class_f.draw()
             
@@ -228,7 +233,8 @@ class TaskManagerFrame(tk.Frame):
     def click_catalog(self):
         if self.class_f == None:
             return
-        docs = self.class_f.checked_documents()
+        
+        docs = self.forensic.appendices[0].documents
         
         self._clear_frames()
         self._catalog_buttons()

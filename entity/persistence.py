@@ -27,6 +27,16 @@ class Persistence:
             forensics.append(Forensic(forensic_db))
         return forensics
     
+    @classmethod
+    def delete(cls, forensic : Forensic):
+        for append_db in forensic.db_instance.appendices:
+            for doc_db in append_db.documents:
+                append_db.documents.remove(doc_db)
+            forensic.db_instance.appendices.remove(append_db)
+        forensic.db_instance.delete_instance()
+ 
+        
+    
         
     @classmethod
     def finish(cls):

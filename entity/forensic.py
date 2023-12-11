@@ -23,9 +23,17 @@ class Forensic:
             self._appendices = []
     
     def to_string(self) -> str:
+        num_appendices = len(self.db_instance.appendices)
+        num_docs = 0
+        for append_db in self.db_instance.appendices:
+            num_docs += len(append_db.documents)
+        
+        
         str_forensic = "Descrição: " + self._description + "\n"
         str_forensic += "Autor: " + self._author + "\n"
-        str_forensic += "Data de criação: " + self._date.strftime("%d/%m/%Y")
+        str_forensic += "Data de criação: " + self._date.strftime("%d/%m/%Y") + "\n"
+        str_forensic += "Número de apensos: " + str(num_appendices) + "\n"
+        str_forensic += "Número de documentos: " + str(num_docs)
         return str_forensic
     
                 
@@ -38,10 +46,21 @@ class Forensic:
         self.db_instance.appendices.add([append.db_instance])
         self.db_instance.save()
     
-    def delete_db_instance(self):
-        for append in self.appendices:
-            append.delete_db_instance()
-        ForensicModel.delete_db_instance(self)
+    # def delete_db_instance(self):
+    #     print("Entrou del")
+    #     for append_db in self.db_instance.appendices:
+    #         for doc_db in append_db.documents:
+    #             append_db.documents.remove(doc_db)
+    #             print("del doc")
+    #         self.db_instance.appendices.remove(append_db)
+    #         print("del append")
+    #     self.db_instance.delete_instance()
+    #     print("saiu del")
+        
+        #for append in self.appendices:
+        #    print("del append")
+        #    append.delete_db_instance()
+        #ForensicModel.delete_db_instance(self)
         
     def update_db_description(self):
         ForensicModel.update_description(self)

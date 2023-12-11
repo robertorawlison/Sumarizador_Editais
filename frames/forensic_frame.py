@@ -3,13 +3,17 @@ import tkinter as tk
 import tkinter.font as tkFont
 
 from entity import Forensic, TypeDocument
+from .board_number import BoardNumber
+from .button import ClassifieButton, ReportButton
 
 class ForensicFrame(tk.Frame):
     '''Widget personalizado para criar ou editar uma perícia na interface gráfica
     '''    
-    def __init__(self, root : tk.Frame, width : int, forensic : Forensic):
-        super().__init__(root, width=width, bg="white", highlightbackground="black", highlightthickness=1)  
+    def __init__(self, root : tk.Frame, width : int, forensic : Forensic, task_manager):
+        super().__init__(root, width=width, bg="white", 
+                         highlightbackground="black", highlightthickness=1)  
         self.forensic = forensic
+        self.task_manager = task_manager
         
         self.font = tkFont.Font(family="Arial", size=20)
         
@@ -24,10 +28,14 @@ class ForensicFrame(tk.Frame):
         self.label_forensic.image = image_forensic 
         self.label_forensic.pack(side="left")
         
-        self.create_description()
-        self.create_docs_counter()
+        self._count_documents()
+        self._create_description()
         
-    def create_description(self):    
+        
+        if(sum(self.counter) > 0):
+            self._create_docs_report()
+        
+    def _create_description(self):    
         description_frame = tk.Frame(self.top_frame, bg="white")
         description_frame.pack(side="right")
         
@@ -61,27 +69,47 @@ class ForensicFrame(tk.Frame):
                          font=self.font, bg="white")
         label.grid(row=2, column=1, padx=5, pady=5, sticky="w")
         
-        #Número de apensos
-        num_docs = 0
-        for a in self.forensic.appendices:
-            num_docs += len(a.documents)
-            
-        label = tk.Label(description_frame, text="#Arquivos:", font=self.font, bg="white")
+        self._docs_classification(description_frame)
+        
+        
+    def _docs_classification(self, description_frame):
+        ''' Indica a quantidade de documentos ainda não classificados.
+            Se todos os documentos foram classificados então libera a geração de relatórios
+            Se algum documento não estiver classificado libera a classificação de documentos'''
+        label = tk.Label(description_frame, text="Status:", font=self.font, bg="white")
         label.grid(row=3, column=0, padx=5, pady=5, sticky="e")
         
-        if(num_docs <= 1):
-            text_appendices = f'{num_docs} documento'
-        else:
-            text_appendices = f'{num_docs} documentos'
+        frame = tk.Frame(description_frame, bg="white")
+        frame.grid(row=3, column=1, sticky="w")
         
-        if(len(self.forensic.appendices) <= 1): 
-            text_appendices += f' em {len(self.forensic.appendices)} apenso'
+        type_id = 0 # Id do contador de documentos não classificados
+        counter_doc_frame = tk.Frame(frame, bg="white")
+        counter_doc_frame.pack(side='left', padx=10)
+        
+        if(self.counter[type_id] > 0):
+            color="red"
         else:
-            text_appendices = f' em {len(self.forensic.appendices)} apensos'
-        label = tk.Label(description_frame, 
-                         text=text_appendices, 
-                         justify="left", font=self.font, bg="white")
-        label.grid(row=3, column=1, padx=5, pady=5, sticky="w")
+            color="blue"
+        
+        BoardNumber(frame = counter_doc_frame, 
+                    number = self.counter[type_id],
+                    total_number = sum(self.counter),
+                    type_doc_id = type_id,
+                    color = color)
+        
+        if (self.counter[type_id] > 0) :
+            class_button = ClassifieButton(frame, 
+                                           on_click = self.task_manager.click_classifier)
+            class_button.pack(side='right', padx=10)
+        else:
+            report_button = ReportButton(frame, 
+                                         on_click = self.task_manager.click_report)
+            report_button.pack(side='right', padx=12, pady=5)
+            
+         
+        #catalog_button = CatalogButton(buttons_frame, self.task_manager.click_catalog)
+        #catalog_button.grid(row=0, column=4, pady=10, padx=10)
+        
         
     
     def on_description_entry_change(self, event):
@@ -96,54 +124,39 @@ class ForensicFrame(tk.Frame):
             self.forensic.author = new_value
             self.forensic.update_db_author()
         
-        
-    def create_docs_counter(self):
+    def _count_documents(self):
         #Contando quantos documentos de cada tipo
-        counter = [0 for _ in range(len(TypeDocument.list))]
-        print("Counter: " + str(len(self.forensic.appendices)))
+        self.counter = [0 for _ in range(len(TypeDocument.list))]
         for appendix in self.forensic.appendices:
-            print("Docs: " + str(len(appendix.documents)))
             for doc in appendix.documents:
-                counter[doc.type['id']] += 1
+                self.counter[doc.type['id']] += 1
+    
+    
+    def _create_docs_report(self):
+        #Cria o frame do taskbar
+        header_frame = tk.Frame(self, bg="grey70", highlightbackground="black", highlightthickness=1) 
+        header_frame.pack(side="top", fill="x", pady=10)
+        label = tk.Label(header_frame, text="Documentos classificados", font=self.font, bg="grey70")
+        label.pack()
         
-        if(sum(counter) > 0):
-            #Cria o frame do taskbar
-            header_frame = tk.Frame(self, bg="grey70", highlightbackground="black", highlightthickness=1) 
-            header_frame.pack(side="top", fill="x", pady=10)
-            label = tk.Label(header_frame, text="Documentos classificados", font=self.font, bg="grey70")
-            label.pack()
-            
-            counter_frame = tk.Frame(self, width=self.winfo_reqwidth(), bg="white")
-            counter_frame.pack(side="bottom")
-            
-            self.update_idletasks()
-            
-            width = self.winfo_reqwidth() * 0.25
-            r = c = 0 #Variável de controle do posicionamento dos frame de contagem no grid 
-            for type_id in range(len(TypeDocument.list)):
-                if counter[type_id] > 0:
-                    counter_doc_frame = tk.Frame(counter_frame, width=width, height=width/2, bg="white")
-                    counter_doc_frame.pack_propagate(False)
-                    counter_doc_frame.grid(row=r, column=c)
-                    
-                    num_font = tkFont.Font(family="Arial", size=24)
-                    if counter[type_id] < 10:
-                        num_text = f'0{counter[type_id]}'
-                    else:
-                        num_text = f'{counter[type_id]}'
-                    label = tk.Label(counter_doc_frame, text=num_text, font=num_font, bg="white")
-                    label.pack(anchor="center")
-                    
-                    type_font = tkFont.Font(family="Arial", size=18)
-                    if counter[type_id] == 1:
-                        type_text = TypeDocument.list[type_id]['label']
-                    else:
-                        type_text = TypeDocument.list[type_id]['plural']
-                    label = tk.Label(counter_doc_frame, text=type_text, font=type_font, bg="white")
-                    label.pack(anchor="center")
-                    
-                    
-                    #Cada linha possui apenas 4 colunas
-                    c = (c + 1) % 4 
-                    if(c == 0):
-                        r += 1
+        counter_frame = tk.Frame(self, width=self.winfo_reqwidth(), bg="white")
+        counter_frame.pack(side="bottom")
+        
+        self.update_idletasks()
+        
+        width = self.winfo_reqwidth() * 0.25
+        r = c = 0 #Variável de controle do posicionamento dos frame de contagem no grid 
+        for type_id in range(1, len(TypeDocument.list)): #Igonora o primeiro que indica quem não foi classificado ainda
+            if self.counter[type_id] > 0:
+                counter_doc_frame = tk.Frame(counter_frame, width=width, height=width/2, bg="white")
+                counter_doc_frame.pack_propagate(False)
+                counter_doc_frame.grid(row=r, column=c)
+                
+                BoardNumber(frame = counter_doc_frame, 
+                            number = self.counter[type_id], 
+                            type_doc_id = type_id)
+                
+                #Cada linha possui apenas 4 colunas
+                c = (c + 1) % 4 
+                if(c == 0):
+                    r += 1

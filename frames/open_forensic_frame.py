@@ -5,7 +5,6 @@ import tkinter.font as tkFont
 from entity import Forensic, Persistence
 from .line_frame import LineFrame
         
-
 DOC_COL = 0
 CLASS_COL = 1
 
@@ -25,24 +24,12 @@ class OpenForensicFrame(ForensicLineFrame):
     '''Widget personalizado para classificar o documento pericial na interface gráfica
     '''
     def __init__(self, frame_master : tk.Frame, forensic : Forensic, command_open, command_del):
-        super().__init__(frame_master, height=90, bg = "white")  #Cor do fundo da linha do OpenForensicFrame
+        super().__init__(frame_master, height=120, bg = "white")  #Cor do fundo da linha do OpenForensicFrame
 
         self.forensic = forensic
         self.command_open = command_open
         self.command_del = command_del
         
-    def _show_text_doc(self, event):
-        # Função para exibir a janela com texto
-        janela = tk.Toplevel(self.frame_summ)  # Cria uma nova janela
-        janela.title("Informações do documento")  # Define o título da nova janela
-    
-        # Cria um widget de texto
-        texto = tk.Text(janela, wrap=tk.WORD, font=tkFont.Font(family="Arial", size=18))
-        texto.pack()
-    
-        # Adicione o texto que você deseja exibir
-        texto.insert(tk.END, self.document.to_string())
-
        
     def draw(self) -> None:
         super().draw()
@@ -64,19 +51,18 @@ class OpenForensicFrame(ForensicLineFrame):
         button_del.photo = photo
         button_del.pack(padx=10,pady=5)
         
-        #Texto do tipo do documento
+        #Texto sobre a perícia
         l_type = tk.Label(frame_forensic, text=self.forensic.to_string(), justify="left",  
                           wraplength=self.cell_frames[0].winfo_reqwidth(), bg = "white", 
-                          font = tkFont.Font(family="Arial", size=18)
+                          font = tkFont.Font(family="Arial", size=16)
                           )
         l_type.pack(side="right")
         
             
-
     def _on_click_open(self):
         self.forensic.load_appendices()
         self.command_open(self.forensic)
         
     def _on_click_delete(self):
-        self.forensic.delete_db_instance()
+        Persistence.delete(self.forensic)
         self.command_del()

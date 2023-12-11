@@ -76,7 +76,7 @@ class DocumentFrame(CatalogLineFrame):
         #Texto do tipo do documento
         l_type = tk.Label(self.cell_frames[TYPE_COL], text=self.document.type['label'], font=self.font, justify="center",  
                           wraplength=self.cell_frames[TYPE_COL].winfo_reqwidth(), bg=self.bg)
-        l_type.pack(pady=60)
+        l_type.pack(pady=50)
         
         #Texto da descrição do documento
         text_label = tk.Label(self.cell_frames[SUMM_COL], text=self.document.summary, font=self.font, justify="left", 

@@ -15,7 +15,7 @@ class Document:
             self._image : Image = image #Imagem na memória
             self._num_pages : int = 0  # Número de páginas
             self._file_bytes : bytes = file_bytes #Conteúdo em bytes do documento
-            self._type : dict = TypeDocument.DESCONHECIDO #Tipo do documento
+            self._type : dict = TypeDocument.NON_CLASS #Tipo do documento
             self._summary : str = ""  # Resumo do documento
             self._date : datetime = None #Data de emissão do documento
             
@@ -165,30 +165,35 @@ class Document:
 
 class TypeDocument:
     '''Tipos de documentos periciais'''
+    NON_CLASS = {
+        'label' : 'sem classificação',
+        'plural' : 'sem classificação',
+        'id' : 0
+    }
     DESCONHECIDO = {
         'label' : 'desconhecido',
         'plural' : 'desconhecidos',
-        'id' : 0
+        'id' : 1
     }
     EDITAL = {
         'label' : 'edital',
         'plural' : 'editais',
-        'id' : 1
+        'id' : 2
     }
     CONTRATO  = {
         'label' : 'contrato',
         'plural' : 'contratos',
-        'id' : 2
+        'id' : 3
     }
     ADITIVO  = {
         'label' : 'aditivo',
         'plural' : 'aditivos',
-        'id' : 3
+        'id' : 4
     }
     PROCURACAO  = {
         'label' : 'procuração',
         'plural' : 'procurações',
-        'id' : 4
+        'id' : 5
     }
-    list = [DESCONHECIDO, EDITAL, CONTRATO, ADITIVO, PROCURACAO]
+    list = [NON_CLASS, DESCONHECIDO, EDITAL, CONTRATO, ADITIVO, PROCURACAO]
     map = {f'{_type["label"]}' : _type for _type in list}
