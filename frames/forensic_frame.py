@@ -82,20 +82,20 @@ class ForensicFrame(tk.Frame):
         frame = tk.Frame(description_frame, bg="white")
         frame.grid(row=3, column=1, sticky="w")
         
-        type_id = 0 # Id do contador de documentos não classificados
-        counter_doc_frame = tk.Frame(frame, bg="white")
-        counter_doc_frame.pack(side='left', padx=10)
+        type_id = 0 # Id = 0 possui o contador de documentos não classificados
         
         if(self.counter[type_id] > 0):
             color="red"
         else:
             color="blue"
         
-        BoardNumber(frame = counter_doc_frame, 
+        bn = BoardNumber(frame = frame, 
                     number = self.counter[type_id],
                     total_number = sum(self.counter),
                     type_doc_id = type_id,
-                    color = color)
+                    font_color = color)
+        
+        bn.pack(side='left', padx=10)
         
         if (self.counter[type_id] > 0) :
             class_button = ClassifieButton(frame, 
@@ -125,13 +125,18 @@ class ForensicFrame(tk.Frame):
             self.forensic.update_db_author()
         
     def _count_documents(self):
-        #Contando quantos documentos de cada tipo
+        #Contando quantos documentos classificados de cada tipo
         self.counter = [0 for _ in range(len(TypeDocument.list))]
+        #Contando o número de documentos não sumarizados
+        self.count_non_summary = 0;
+        
         for appendix in self.forensic.appendices:
             for doc in appendix.documents:
                 self.counter[doc.type['id']] += 1
-    
-    
+                if doc.summary == "" :
+                    self.count_non_summary += 1
+        
+        
     def _create_docs_report(self):
         #Cria o frame do taskbar
         header_frame = tk.Frame(self, bg="grey70", highlightbackground="black", highlightthickness=1) 
@@ -148,13 +153,13 @@ class ForensicFrame(tk.Frame):
         r = c = 0 #Variável de controle do posicionamento dos frame de contagem no grid 
         for type_id in range(1, len(TypeDocument.list)): #Igonora o primeiro que indica quem não foi classificado ainda
             if self.counter[type_id] > 0:
-                counter_doc_frame = tk.Frame(counter_frame, width=width, height=width/2, bg="white")
-                counter_doc_frame.pack_propagate(False)
-                counter_doc_frame.grid(row=r, column=c)
-                
-                BoardNumber(frame = counter_doc_frame, 
+                bn = BoardNumber(frame = counter_frame,
+                            width=width, 
+                            height=width/2,
                             number = self.counter[type_id], 
                             type_doc_id = type_id)
+                bn.pack_propagate(False)
+                bn.grid(row=r, column=c)
                 
                 #Cada linha possui apenas 4 colunas
                 c = (c + 1) % 4 
