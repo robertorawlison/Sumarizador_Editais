@@ -4,7 +4,7 @@ import tkinter.font as tkFont
 
 from entity import Forensic, TypeDocument
 from .board_number import BoardNumber
-from .button import ClassifieButton, ReportButton
+from .button import ClassifieButton, ReportButton, CatalogButton
 
 class ForensicFrame(tk.Frame):
     '''Widget personalizado para criar ou editar uma perícia na interface gráfica
@@ -83,29 +83,41 @@ class ForensicFrame(tk.Frame):
         frame.grid(row=3, column=1, sticky="w")
         
         type_id = 0 # Id = 0 possui o contador de documentos não classificados
-        
+        total_docs = sum(self.counter)
         if(self.counter[type_id] > 0):
-            color="red"
+            bn = BoardNumber(frame = frame, 
+                        number = self.counter[type_id],
+                        total_number = total_docs,
+                        type_doc_id = type_id,
+                        font_color = "red")
+                
+        elif self.count_non_summary > 0 :
+            bn = BoardNumber(frame = frame, 
+                        number = self.count_non_summary,
+                        total_number = total_docs,
+                        type_doc_id = -1,
+                        font_color = "red")
         else:
-            color="blue"
-        
-        bn = BoardNumber(frame = frame, 
-                    number = self.counter[type_id],
-                    total_number = sum(self.counter),
-                    type_doc_id = type_id,
-                    font_color = color)
+            bn = BoardNumber(frame = frame, 
+                        number = total_docs,
+                        total_number = total_docs,
+                        type_doc_id = -1,
+                        font_color = "blue")
         
         bn.pack(side='left', padx=10)
         
+        
         if (self.counter[type_id] > 0) :
-            class_button = ClassifieButton(frame, 
-                                           on_click = self.task_manager.click_classifier)
-            class_button.pack(side='right', padx=10)
+            button = ClassifieButton(frame, 
+                                     on_click = self.task_manager.click_classifier)
+        elif self.count_non_summary > 0 :
+            button = CatalogButton(frame, 
+                                   on_click = self.task_manager.click_catalog)    
         else:
-            report_button = ReportButton(frame, 
-                                         on_click = self.task_manager.click_report)
-            report_button.pack(side='right', padx=12, pady=5)
-            
+            button = ReportButton(frame, 
+                                  on_click = self.task_manager.click_report)
+        
+        button.pack(side='right', padx=12, pady=5)
          
         #catalog_button = CatalogButton(buttons_frame, self.task_manager.click_catalog)
         #catalog_button.grid(row=0, column=4, pady=10, padx=10)

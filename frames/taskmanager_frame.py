@@ -231,9 +231,6 @@ class TaskManagerFrame(tk.Frame):
         
 
     def click_catalog(self):
-        if self.class_f == None:
-            return
-        
         docs = self.forensic.appendices[0].documents
         
         self._clear_frames()

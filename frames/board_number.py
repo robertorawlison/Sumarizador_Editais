@@ -23,7 +23,9 @@ class BoardNumber(tk.Frame):
         num_text = f'0{number}' if number < 10 else f'{number}'
         total_num_text = f'0{total_number}' if total_number < 10 else f'{total_number}'
         
-        if(number == 0):
+        #Se type_doc_id == 1 então todos os documentos foram classificados
+        
+        if(number == total_number):
             num_text = total_num_text
         elif total_number > 0:
             num_text += f'/{total_num_text}'
@@ -32,11 +34,17 @@ class BoardNumber(tk.Frame):
         label.pack(anchor="center")
         
         type_font = tkFont.Font(family="Arial", size=18)
-        if(number == 0):
-            type_text = "classificados"
+        if(number == total_number):
+            type_text = "sumarizados"
         elif number == 1:
-            type_text = TypeDocument.list[type_doc_id]['label']
+            if type_doc_id > 0 : #id válido
+                type_text = TypeDocument.list[type_doc_id]['label']
+            else:
+                type_text = "não sumarizado"
         else:
-            type_text = TypeDocument.list[type_doc_id]['plural']
+            if type_doc_id > 0 : #id válido
+                type_text = TypeDocument.list[type_doc_id]['plural']
+            else:
+                type_text = "não sumarizados"
         label = tk.Label(self, text=type_text, font=type_font, bg="white", fg=font_color)
         label.pack(anchor="center")
