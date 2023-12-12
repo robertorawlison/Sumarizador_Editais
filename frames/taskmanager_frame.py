@@ -38,9 +38,12 @@ class TaskManagerFrame(tk.Frame):
         barra_horizontal = tk.Frame(self.master_frame, height=5, bg="#0000FF")
         barra_horizontal.pack(fill="x")
         
-        #Frames com os botões de ação
+        #Frames a serem colocados na pipeline de edição de perícias
         self.current_task_frame = None
+        self.logo_image = None
         self.buttons_frame = None
+        
+        self._create_logo_frame()
         
         #Persistência da perícia
         self.forensic = None
@@ -65,46 +68,69 @@ class TaskManagerFrame(tk.Frame):
         self.pff = PFFrame(self.master_frame, shift_y)
         self.pff.pack()
         
-        
-    def _create_buttons_frame(self):
+    
+    def _create_pipeline_frame(self):
+        #Barra que contém a pipeline de edição de uma perícia
         self.current_task_frame = tk.Frame(self, height=80, width=(self.winfo_screenwidth()*0.56), bg="grey70") 
         self.current_task_frame.pack_propagate(False)
         self.current_task_frame.place(relx=0.5, rely=0.5, anchor="center")
         self.current_task_frame.configure(borderwidth=2, relief="solid")
+        
     
-        buttons_frame = tk.Frame(self.current_task_frame,  bg="grey70")
-        buttons_frame.pack()
-        
-        
-        self.num_label = tk.Label(buttons_frame, bg="grey70")
-        self.num_label.grid(row=0, column=0)
-        
-        self.pipeline_label = tk.Label(buttons_frame, text="", bg="grey70", font=tkFont.Font(family="Arial", size=18))
-        self.pipeline_label.grid(row=0, column=1)
-        
-        self.add_button = AddButton(buttons_frame, self.click_add)
-        self.add_button.grid(row=0, column=2, pady=10, padx=10)
-        self.add_button.disactive()
-        
-        next_image = tk.PhotoImage(file="imagens/next.png")
-        label_image = tk.Label(buttons_frame, image=next_image, bg="grey70")
-        label_image.imagem = next_image
-        label_image.grid(row=0, column=3)#, pady=10, padx=10)
-        
-        self.catalog_button = CatalogButton(buttons_frame, self.click_catalog)
-        self.catalog_button.grid(row=0, column=4, pady=10, padx=10)
-        self.catalog_button.disactive()
-        
-        label_image = tk.Label(buttons_frame, image=next_image, bg="grey70")
-        label_image.imagem = next_image
-        label_image.grid(row=0, column=5)#, pady=10, padx=10)
-        
-        
-        self.report_button = ReportButton(buttons_frame, self.click_report)
-        self.report_button.grid(row=0, column=6, pady=10, padx=10)
-        self.report_button.disactive()
+    def _create_logo_frame(self):
+        if self.logo_image == None :
+            self._create_pipeline_frame()
+            
+            image = tk.PhotoImage(file="imagens/logo.png")
+            self.logo_image = tk.Label(self.current_task_frame, image=image, bg="grey70")
+            
+            self.logo_image.image = image #Guarda a referência pra manter a imagem na memória
+            
+            self.logo_image.place(relx=0.5, rely=0.5, anchor="center")
+            
+    def _create_buttons_frame(self):
+        if(self.buttons_frame == None):
+            self._create_pipeline_frame()
+            
+            self.buttons_frame = tk.Frame(self.current_task_frame,  bg="grey70")
+            self.buttons_frame.pack()
+            
+            self.num_label = tk.Label(self.buttons_frame, bg="grey70")
+            self.num_label.grid(row=0, column=0)
+            
+            self.pipeline_label = tk.Label(self.buttons_frame, text="", bg="grey70", font=tkFont.Font(family="Arial", size=18))
+            self.pipeline_label.grid(row=0, column=1)
+            
+            self.add_button = AddButton(self.buttons_frame, self.click_add)
+            self.add_button.grid(row=0, column=2, pady=10, padx=10)
+            self.add_button.disactive()
+            
+            next_image = tk.PhotoImage(file="imagens/next.png")
+            label_image = tk.Label(self.buttons_frame, image=next_image, bg="grey70")
+            label_image.imagem = next_image
+            label_image.grid(row=0, column=3)#, pady=10, padx=10)
+            
+            self.catalog_button = CatalogButton(self.buttons_frame, self.click_catalog)
+            self.catalog_button.grid(row=0, column=4, pady=10, padx=10)
+            self.catalog_button.disactive()
+            
+            label_image = tk.Label(self.buttons_frame, image=next_image, bg="grey70")
+            label_image.imagem = next_image
+            label_image.grid(row=0, column=5)#, pady=10, padx=10)
+            
+            
+            self.report_button = ReportButton(self.buttons_frame, self.click_report)
+            self.report_button.grid(row=0, column=6, pady=10, padx=10)
+            self.report_button.disactive()
     
+    def _clear_taskmanager_frame(self):
+        if(self.current_task_frame != None):
+            self.current_task_frame.destroy()
+            self.current_task_frame = None
+            self.logo_image = None
+            self.buttons_frame = None
         
+            
     def _forensic_buttons(self):
         num_image = tk.PhotoImage(file="imagens/um.png")
         self.num_label.configure(image = num_image)
@@ -152,6 +178,8 @@ class TaskManagerFrame(tk.Frame):
     
     def click_list(self):
         self._clear_frames()
+        self._clear_taskmanager_frame()
+        self._create_logo_frame()
         self.lff = ListForensicFrame(self.master_frame, 
                                      width = self.winfo_screenwidth()*0.46,
                                      command_open = self.open_forensic,
@@ -179,6 +207,7 @@ class TaskManagerFrame(tk.Frame):
         self.forensic = None
         self.forensic = foren
         self._clear_frames()
+        self._clear_taskmanager_frame
         self._create_buttons_frame()
         self._forensic_buttons()
         

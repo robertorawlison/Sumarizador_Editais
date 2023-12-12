@@ -22,18 +22,10 @@ class Forensic:
             self.db_instance = forensic_db
             self._appendices = []
     
-    def to_string(self) -> str:
-        num_appendices = len(self.db_instance.appendices)
-        num_docs = 0
-        for append_db in self.db_instance.appendices:
-            num_docs += len(append_db.documents)
-        
-        
+    def to_string(self) -> str:       
         str_forensic = "Descrição: " + self._description + "\n"
         str_forensic += "Autor: " + self._author + "\n"
         str_forensic += "Data de criação: " + self._date.strftime("%d/%m/%Y") + "\n"
-        str_forensic += "Número de apensos: " + str(num_appendices) + "\n"
-        str_forensic += "Número de documentos: " + str(num_docs)
         return str_forensic
     
                 

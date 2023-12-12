@@ -89,8 +89,10 @@ class ClassifierDocumentFrame(ClassifierLineFrame):
 
     def on_change(self, event):
         label = self.combo.get()
-        self.document.type = TypeDocument.map[label]
-        self.document.update_db_type()
+        if self.document.type.label != label :
+            self.document.type = TypeDocument.map[label]
+            self.summary = ""
+            self.document.update_db_type()
         
         
         

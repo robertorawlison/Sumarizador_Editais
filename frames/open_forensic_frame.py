@@ -4,6 +4,7 @@ import tkinter.font as tkFont
 
 from entity import Forensic, Persistence
 from .line_frame import LineFrame
+from.board_number import BoardNumber
         
 DOC_COL = 0
 CLASS_COL = 1
@@ -38,7 +39,7 @@ class OpenForensicFrame(ForensicLineFrame):
         frame_forensic.pack(side='left')
         
         frame_button = tk.Frame(frame_forensic, bg = "white")
-        frame_button.pack(side="left", padx=20)
+        frame_button.grid(row=0, column=0, padx=20)
         
         #Image
         photo = tk.PhotoImage(file="imagens/open_forensic.png")
@@ -54,9 +55,30 @@ class OpenForensicFrame(ForensicLineFrame):
         #Texto sobre a perícia
         l_type = tk.Label(frame_forensic, text=self.forensic.to_string(), justify="left",  
                           wraplength=self.cell_frames[0].winfo_reqwidth(), bg = "white", 
-                          font = tkFont.Font(family="Arial", size=16)
+                          font = tkFont.Font(family="Arial", size=20)
                           )
-        l_type.pack(side="right")
+        l_type.grid(row=0, column=1)
+
+        
+        #Contabilizando o número de apensos e documentos no BD associados a esta perícia
+        num_appendices = len(self.forensic.db_instance.appendices)
+        num_docs = 0
+        for append_db in self.forensic.db_instance.appendices:
+            num_docs += len(append_db.documents)
+
+        frame = tk.Frame(frame_forensic, bg = "white", highlightbackground="grey80", highlightthickness=1)
+        frame.grid(row=0, column=2)
+
+        bn = BoardNumber(frame = frame, 
+                     number = num_appendices,
+                     type_board = BoardNumber.APPENDIX)
+        bn.pack(side='left', padx=5, pady=5)
+        
+        
+        bn = BoardNumber(frame = frame, 
+                     number = num_docs,
+                     type_board = BoardNumber.DOCUMENT)
+        bn.pack(side='right', padx=5, pady=5)
         
             
     def _on_click_open(self):

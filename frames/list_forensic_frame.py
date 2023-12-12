@@ -34,6 +34,7 @@ class ListForensicFrame(tk.Frame):
         self.canvas.pack(side="left", fill="y", expand=True)
         self.canvas.create_window((0, 0), window=self, anchor="nw")
         
+        #super().pack(side='top')
         self.draw()
         
        

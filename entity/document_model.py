@@ -42,8 +42,8 @@ class DocumentModel(BaseModel):
     
     @classmethod
     def update_type(cls, doc):
-        # Atualizando campo type
-        update = DocumentModel.update(type=doc.type['label'])
+        # Atualizando campo type. Sempre que o tipo do documento mudar seu sumário deve ser apagado.
+        update = DocumentModel.update(type=doc.type['label'], summary = "")
         update.where(DocumentModel.id == doc.db_instance.id).execute()
 
 

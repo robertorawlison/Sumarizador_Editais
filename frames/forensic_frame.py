@@ -69,7 +69,8 @@ class ForensicFrame(tk.Frame):
                          font=self.font, bg="white")
         label.grid(row=2, column=1, padx=5, pady=5, sticky="w")
         
-        self._docs_classification(description_frame)
+        if(sum(self.counter) > 0):
+            self._docs_classification(description_frame)
         
         
     def _docs_classification(self, description_frame):
@@ -79,7 +80,7 @@ class ForensicFrame(tk.Frame):
         label = tk.Label(description_frame, text="Status:", font=self.font, bg="white")
         label.grid(row=3, column=0, padx=5, pady=5, sticky="e")
         
-        frame = tk.Frame(description_frame, bg="white")
+        frame = tk.Frame(description_frame, bg="white", highlightbackground="grey80", highlightthickness=1)
         frame.grid(row=3, column=1, sticky="w")
         
         type_id = 0 # Id = 0 possui o contador de documentos não classificados
@@ -88,20 +89,20 @@ class ForensicFrame(tk.Frame):
             bn = BoardNumber(frame = frame, 
                         number = self.counter[type_id],
                         total_number = total_docs,
-                        type_doc_id = type_id,
+                        type_board = BoardNumber.NON_CLASSIFIE,
                         font_color = "red")
                 
         elif self.count_non_summary > 0 :
             bn = BoardNumber(frame = frame, 
                         number = self.count_non_summary,
                         total_number = total_docs,
-                        type_doc_id = -1,
+                        type_board = BoardNumber.SUMMARY,
                         font_color = "red")
         else:
             bn = BoardNumber(frame = frame, 
-                        number = total_docs,
+                        number = 0,
                         total_number = total_docs,
-                        type_doc_id = -1,
+                        type_board = BoardNumber.SUMMARY,
                         font_color = "blue")
         
         bn.pack(side='left', padx=10)
@@ -169,7 +170,8 @@ class ForensicFrame(tk.Frame):
                             width=width, 
                             height=width/2,
                             number = self.counter[type_id], 
-                            type_doc_id = type_id)
+                            type_doc_id = type_id,
+                            type_board = BoardNumber.TYPE_DOC)
                 bn.pack_propagate(False)
                 bn.grid(row=r, column=c)
                 
