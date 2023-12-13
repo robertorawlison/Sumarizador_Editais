@@ -35,26 +35,30 @@ class OpenForensicFrame(ForensicLineFrame):
     def draw(self) -> None:
         super().draw()
         
-        frame_forensic = tk.Frame(self.cell_frames[0],  height=self.cell_frames[0].winfo_reqheight(), bg = "white")
+        frame_forensic = tk.Frame(self.cell_frames[0],  
+                                  height=self.cell_frames[0].winfo_reqheight(), bg = "white")
         frame_forensic.pack(side='left')
         
         frame_button = tk.Frame(frame_forensic, bg = "white")
-        frame_button.grid(row=0, column=0, padx=20)
+        frame_button.grid(row=0, column=0, padx=20, sticky="w")
         
         #Image
         photo = tk.PhotoImage(file="imagens/open_forensic.png")
-        button_open = tk.Button(frame_button, image=photo,  bg=self.bg, justify="left", command = self._on_click_open)
+        button_open = tk.Button(frame_button, image=photo,  bg=self.bg, justify="left", 
+                                command = self._on_click_open)
         button_open.photo = photo
-        button_open.pack(padx=10,pady=5)
+        button_open.pack(padx=10, pady=5)
         
         photo = tk.PhotoImage(file="imagens/delete.png")
-        button_del = tk.Button(frame_button, image=photo,  bg=self.bg, justify="left", command = self._on_click_delete)
+        button_del = tk.Button(frame_button, image=photo,  bg=self.bg, justify="left", 
+                               command = self._on_click_delete)
         button_del.photo = photo
-        button_del.pack(padx=10,pady=5)
+        button_del.pack(padx=10, pady=5)
         
         #Texto sobre a perícia
         l_type = tk.Label(frame_forensic, text=self.forensic.to_string(), justify="left",  
-                          wraplength=self.cell_frames[0].winfo_reqwidth(), bg = "white", 
+                          #wraplength=self.cell_frames[0].winfo_reqwidth(),
+                          bg = "white", 
                           font = tkFont.Font(family="Arial", size=20)
                           )
         l_type.grid(row=0, column=1)
@@ -67,18 +71,18 @@ class OpenForensicFrame(ForensicLineFrame):
             num_docs += len(append_db.documents)
 
         frame = tk.Frame(frame_forensic, bg = "white", highlightbackground="grey80", highlightthickness=1)
-        frame.grid(row=0, column=2)
+        frame.grid(row=0, column=2, padx=30)
 
         bn = BoardNumber(frame = frame, 
                      number = num_appendices,
                      type_board = BoardNumber.APPENDIX)
-        bn.pack(side='left', padx=5, pady=5)
+        bn.pack(side='left', padx=5)
         
         
         bn = BoardNumber(frame = frame, 
                      number = num_docs,
                      type_board = BoardNumber.DOCUMENT)
-        bn.pack(side='right', padx=5, pady=5)
+        bn.pack(side='right', padx=5)
         
             
     def _on_click_open(self):

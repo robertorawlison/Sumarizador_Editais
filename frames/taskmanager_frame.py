@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import tkinter as tk
-from tkinter import filedialog
+from tkinter import filedialog, messagebox
 import tkinter.font as tkFont
 import threading
 from tools import print_word, fill_summary_numpages_from_pdf
-
 
 from .feedback_window import FeedbackWindow 
 from .catalog_frame import CatalogFrame 
@@ -14,7 +13,7 @@ from .pf_frame import PFFrame
 from .forensic_frame import ForensicFrame
 from .list_forensic_frame import ListForensicFrame
 from .button import CreateButton, OpenButton, AddButton, CatalogButton, ReportButton
-from entity import Forensic, Appendix, Persistence
+from entity import Forensic, Appendix, Persistence, TypeDocument
 
 class TaskManagerFrame(tk.Frame):
     '''Widget personalizado para representar a interface de gerenciamento das tarefas do sistema.
@@ -52,15 +51,16 @@ class TaskManagerFrame(tk.Frame):
         
     def pack(self):
         self.update_idletasks()
-        open_frame = tk.Frame(self, bg="royal blue")
-        open_frame.pack(side='left')
+        open_frame = tk.Frame(self, bg="grey70",
+                              highlightbackground="black", highlightthickness=1)
+        open_frame.pack(side='left', padx=25)
         
         
         create_button = CreateButton(open_frame, self.click_create)
-        create_button.grid(row=0, column=0, pady=10, padx=10)
+        create_button.grid(row=0, column=0, pady=10, padx=15, sticky="nsew")
         
         open_button = OpenButton(open_frame, self.click_list)
-        open_button.grid(row=0, column=1, pady=10, padx=10)
+        open_button.grid(row=0, column=1, pady=10, padx=15, sticky="nsew")
         
         self.update_idletasks()
         
@@ -181,7 +181,7 @@ class TaskManagerFrame(tk.Frame):
         self._clear_taskmanager_frame()
         self._create_logo_frame()
         self.lff = ListForensicFrame(self.master_frame, 
-                                     width = self.winfo_screenwidth()*0.46,
+                                     width = self.winfo_screenwidth()*0.56,
                                      command_open = self.open_forensic,
                                      command_del = self.click_list)
         self.lff.pack()
@@ -261,13 +261,20 @@ class TaskManagerFrame(tk.Frame):
 
     def click_catalog(self):
         docs = self.forensic.appendices[0].documents
-        
-        self._clear_frames()
-        self._catalog_buttons()
-        
-        largura_tela = self.master_frame.winfo_screenwidth()
-        self.cf = CatalogFrame(self.master_frame, width=largura_tela)
-        self.cf.pack()
-        
-        th = threading.Thread(target=self.minha_thread, args=(docs,))
-        th.start()
+        num_non_class = 0
+        for doc in docs:
+            if doc.type == TypeDocument.NON_CLASS :
+                num_non_class += 1
+        if(num_non_class == 0):
+            self._clear_frames()
+            self._catalog_buttons()
+            
+            largura_tela = self.master_frame.winfo_screenwidth()
+            self.cf = CatalogFrame(self.master_frame, width=largura_tela)
+            self.cf.pack()
+            
+            th = threading.Thread(target=self.minha_thread, args=(docs,))
+            th.start()
+        else:
+            msg_erro = f'Existe 1 documento não classificado!' if num_non_class == 1 else f'Existem {num_non_class} documentos não classificados!'
+            messagebox.showerror("Documentos não podem ser sumarizados", msg_erro)

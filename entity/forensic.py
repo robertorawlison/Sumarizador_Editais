@@ -25,7 +25,7 @@ class Forensic:
     def to_string(self) -> str:       
         str_forensic = "Descrição: " + self._description + "\n"
         str_forensic += "Autor: " + self._author + "\n"
-        str_forensic += "Data de criação: " + self._date.strftime("%d/%m/%Y") + "\n"
+        str_forensic += "Data de criação: " + self._date.strftime("%d/%m/%Y")
         return str_forensic
     
                 

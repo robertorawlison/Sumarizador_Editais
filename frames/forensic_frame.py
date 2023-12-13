@@ -119,10 +119,7 @@ class ForensicFrame(tk.Frame):
                                   on_click = self.task_manager.click_report)
         
         button.pack(side='right', padx=12, pady=5)
-         
-        #catalog_button = CatalogButton(buttons_frame, self.task_manager.click_catalog)
-        #catalog_button.grid(row=0, column=4, pady=10, padx=10)
-        
+              
         
     
     def on_description_entry_change(self, event):

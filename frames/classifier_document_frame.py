@@ -35,6 +35,10 @@ class ClassifierDocumentFrame(ClassifierLineFrame):
         self.document = doc
         self.var_checkbox = tk.IntVar(value=1) #Variável de controle para saber se o checkbox está selecionado. Valor 1 indica que o mesmo começa marcado
         
+        #Se o documento estiver sem classificação a borda do frame deve ficar vermelha
+        if self.document.type == TypeDocument.NON_CLASS:
+            self.configure(highlightbackground="red", highlightthickness=1)
+        
     def is_checked(self) -> bool:
         #Retorna True indicando que o documento está marcado no checkbox
         if self.var_checkbox.get():
@@ -62,15 +66,19 @@ class ClassifierDocumentFrame(ClassifierLineFrame):
         super().draw()
         
         #Checkbox
-        checkbox = tk.Checkbutton(self.cell_frames[DOC_COL], bg=self.bg, var = self.var_checkbox)
+        checkbox = tk.Checkbutton(self.cell_frames[DOC_COL], bg=self.bg, 
+                                  var = self.var_checkbox)
         checkbox.pack(side="left", padx=60)
         
-        frame_img = tk.Frame(self.cell_frames[DOC_COL], height=self.cell_frames[DOC_COL].winfo_reqheight(), bg = "white")
+        frame_img = tk.Frame(self.cell_frames[DOC_COL], 
+                             height=self.cell_frames[DOC_COL].winfo_reqheight(), 
+                             bg = "white")
         frame_img.pack(pady=10, padx=10)
         
         #Image
         photo = ImageTk.PhotoImage(self.document.image)
-        botao_img = tk.Button(frame_img, image=photo,  bg=self.bg, justify="center", command = self._open_file)
+        botao_img = tk.Button(frame_img, image=photo,  bg=self.bg, justify="center", 
+                              command = self._open_file)
         botao_img.photo = photo
         botao_img.pack(side="top", pady=5)
         
@@ -82,20 +90,24 @@ class ClassifierDocumentFrame(ClassifierLineFrame):
         l_type.pack(side="bottom")
         
         type_labels = [_type['label'] for _type in TypeDocument.list]
-        self.combo = ttk.Combobox(self.cell_frames[CLASS_COL], values=type_labels, font=self.font, state="readonly")
+        self.combo = ttk.Combobox(self.cell_frames[CLASS_COL], values=type_labels,
+                                  font=self.font, state="readonly")
         self.combo.set(self.document.type['label'])
         self.combo.pack(pady=75)
         self.combo.bind("<<ComboboxSelected>>", self.on_change)        
 
     def on_change(self, event):
         label = self.combo.get()
-        if self.document.type.label != label :
+        if self.document.type['label'] != label :
             self.document.type = TypeDocument.map[label]
             self.summary = ""
             self.document.update_db_type()
-        
-        
-        
+            if self.document.type == TypeDocument.NON_CLASS:
+                print("red")
+                self.configure(highlightbackground="red", highlightthickness=1)
+            else:
+                self.configure(highlightbackground="black", highlightthickness=0)
+            
 
 class ClassifierHeaderFrame(ClassifierLineFrame):
     '''Widget personalizado para representar o cabeçalho do classificdor de documentos periciais na interface gráfica
@@ -104,7 +116,8 @@ class ClassifierHeaderFrame(ClassifierLineFrame):
         super().__init__(frame_master, height = 40, bg = "gray90")
         
     def _draw_cell(self, id_cell : int, text : str):
-        label = tk.Label(self.cell_frames[id_cell], text=text, font=self.font, justify="center",  bg=self.bg)
+        label = tk.Label(self.cell_frames[id_cell], text=text, font=self.font, 
+                         justify="center",  bg=self.bg)
         label.pack()
        
     def draw(self) -> None:
