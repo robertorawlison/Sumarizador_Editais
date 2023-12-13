@@ -8,7 +8,7 @@ from entity import Forensic, Document
 class ClassifierFrame(tk.Frame):
     '''Widget personalizado para a interface de classificação de documentos periciais na interface gráfica
     '''    
-    def __init__(self, root : tk.Frame, width : int, forensic: Forensic):
+    def __init__(self, root : tk.Frame, width : int, forensic: Forensic, command_del):
         # Frame com barra de rolagem      
         self.frame_master = tk.Frame(root, height=650, width=width)
         self.scrollbar = ttk.Scrollbar(self.frame_master, orient="vertical")
@@ -26,6 +26,7 @@ class ClassifierFrame(tk.Frame):
   
         self.class_doc_frames = [] #Frames dos documentos periciais
         self.forensic = forensic
+        self.command_del = command_del
       
         
     def pack(self) -> None:
@@ -55,7 +56,7 @@ class ClassifierFrame(tk.Frame):
         chf.draw()
         
         for doc in self.forensic.appendices[0].documents:
-            cdf = ClassifierDocumentFrame(self, doc)
+            cdf = ClassifierDocumentFrame(self, doc, self.command_del)
             cdf.draw()
             self.class_doc_frames.append(cdf)
             

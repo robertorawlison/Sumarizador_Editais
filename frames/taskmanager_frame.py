@@ -13,7 +13,7 @@ from .pf_frame import PFFrame
 from .forensic_frame import ForensicFrame
 from .list_forensic_frame import ListForensicFrame
 from .button import CreateButton, OpenButton, AddButton, CatalogButton, ReportButton
-from entity import Forensic, Appendix, Persistence, TypeDocument
+from entity import Forensic, Appendix, Persistence, TypeDocument, Document
 
 class TaskManagerFrame(tk.Frame):
     '''Widget personalizado para representar a interface de gerenciamento das tarefas do sistema.
@@ -196,7 +196,10 @@ class TaskManagerFrame(tk.Frame):
         
     
     def click_report(self):
-        documents = self.forensic.appendices[0].documents
+        if self.cf == None :
+            documents = self.forensic.appendices[0].documents
+        else:
+            documents = self.cf.checked_documents()
         #Gerando a versão word do catálogo de documentos periciais
         print_word(documents)
             
@@ -237,14 +240,28 @@ class TaskManagerFrame(tk.Frame):
         if file_names:
             self.click_classifier(file_names)
             
-            
+    def _delete_classifier_doc(self, doc : Document):
+        self.forensic.appendices[0].documents.remove(doc)
+        
+        self._clear_frames()
+        self._classifier_buttons()
+        
+        self.class_f = ClassifierFrame(self.master_frame,  
+                                       width = self.current_task_frame.winfo_reqwidth(), 
+                                       forensic = self.forensic,
+                                       command_del = self._delete_classifier_doc)
+        self.class_f.pack()
+        self.class_f.draw()        
+    
+    
     def click_classifier(self, file_names = []):
             self._clear_frames()
             self._classifier_buttons()
             
             self.class_f = ClassifierFrame(self.master_frame,  
                                            width = self.current_task_frame.winfo_reqwidth(), 
-                                           forensic = self.forensic)
+                                           forensic = self.forensic,
+                                           command_del = self._delete_classifier_doc)
             self.class_f.pack()
             self.class_f.create_documents(file_names)
             self.class_f.draw()
@@ -266,6 +283,21 @@ class TaskManagerFrame(tk.Frame):
         
         fw.destroy()
         
+    def _delete_catalog_doc(self, doc : Document):
+        self.forensic.appendices[0].documents.remove(doc)
+        
+        self._clear_frames()
+        self._catalog_buttons()
+        
+        largura_tela = self.master_frame.winfo_screenwidth()
+        self.cf = CatalogFrame(self.master_frame, 
+                               width=largura_tela,
+                               command_del = self._delete_catalog_doc)
+        self.cf.pack()
+        
+        for _doc in self.forensic.appendices[0].documents :
+            self.cf.add(_doc)
+        
 
     def click_catalog(self):
         docs = self.forensic.appendices[0].documents
@@ -278,7 +310,9 @@ class TaskManagerFrame(tk.Frame):
             self._catalog_buttons()
             
             largura_tela = self.master_frame.winfo_screenwidth()
-            self.cf = CatalogFrame(self.master_frame, width=largura_tela)
+            self.cf = CatalogFrame(self.master_frame, 
+                                   width=largura_tela,
+                                   command_del = self._delete_catalog_doc)
             self.cf.pack()
             
             th = threading.Thread(target=self.minha_thread, args=(docs,))

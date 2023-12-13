@@ -5,7 +5,7 @@ from tkinter import ttk
 import tkinter.font as tkFont
 from PIL import ImageTk
 
-from entity import Document, TypeDocument
+from entity import Document, TypeDocument, Persistence
 from .line_frame import LineFrame
         
 
@@ -29,46 +29,34 @@ class ClassifierLineFrame(LineFrame):
 class ClassifierDocumentFrame(ClassifierLineFrame):
     '''Widget personalizado para classificar o documento pericial na interface gráfica
     '''
-    def __init__(self, frame_master : tk.Frame, doc : Document):
+    def __init__(self, frame_master : tk.Frame, doc : Document, command_del):
         super().__init__(frame_master, height=200, bg = "white")  #Cor do fundo da linha do DocumentFrame
 
         self.document = doc
-        self.var_checkbox = tk.IntVar(value=1) #Variável de controle para saber se o checkbox está selecionado. Valor 1 indica que o mesmo começa marcado
         
         #Se o documento estiver sem classificação a borda do frame deve ficar vermelha
         if self.document.type == TypeDocument.NON_CLASS:
             self.configure(highlightbackground="red", highlightthickness=1)
-        
-    def is_checked(self) -> bool:
-        #Retorna True indicando que o documento está marcado no checkbox
-        if self.var_checkbox.get():
-            return True
-        else:
-            return False
-        
+            
+        self.command_del = command_del
+            
     def _open_file(self):
         self.document.open_file()
         
-    def _show_text_doc(self, event):
-        # Função para exibir a janela com texto
-        janela = tk.Toplevel(self.frame_summ)  # Cria uma nova janela
-        janela.title("Informações do documento")  # Define o título da nova janela
-    
-        # Cria um widget de texto
-        texto = tk.Text(janela, wrap=tk.WORD, font=tkFont.Font(family="Arial", size=18))
-        texto.pack()
-    
-        # Adicione o texto que você deseja exibir
-        texto.insert(tk.END, self.document.to_string())
-
+    def _on_click_delete(self):
+        Persistence.delete_doc(self.document)
+        self.command_del(self.document)
+        
        
     def draw(self) -> None:
         super().draw()
         
-        #Checkbox
-        checkbox = tk.Checkbutton(self.cell_frames[DOC_COL], bg=self.bg, 
-                                  var = self.var_checkbox)
-        checkbox.pack(side="left", padx=60)
+        #Delete doc
+        photo = tk.PhotoImage(file="imagens/delete2.png")
+        button_del = tk.Button(self.cell_frames[DOC_COL], image=photo,  bg=self.bg, 
+                               command = self._on_click_delete)
+        button_del.photo = photo
+        button_del.pack(side="left", padx=60)
         
         frame_img = tk.Frame(self.cell_frames[DOC_COL], 
                              height=self.cell_frames[DOC_COL].winfo_reqheight(), 

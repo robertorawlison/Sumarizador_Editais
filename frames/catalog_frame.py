@@ -9,10 +9,11 @@ from entity import Document
 class CatalogFrame(tk.Frame):
     '''Widget personalizado para um catálogo de documentos periciais na interface gráfica
     '''    
-    def __init__(self, root : tk.Frame, width : int):
+    def __init__(self, root : tk.Frame, width : int, command_del):
         # Frame com barra de rolagem      
         self.frame_master = tk.Frame(root, width=width)
         self.scrollbar = ttk.Scrollbar(self.frame_master, orient="vertical")
+        self.command_del = command_del
         
         diff = self.frame_master.winfo_reqwidth()-self.scrollbar.winfo_reqwidth()
         self.canvas = tk.Canvas(self.frame_master, width=diff)
@@ -35,8 +36,6 @@ class CatalogFrame(tk.Frame):
         self.scrollbar.pack(side="right", fill="y")
         self.canvas.pack(side="left", fill="y", expand=True)
         self.canvas.create_window((0, 0), window=self, anchor="nw")
-        
-        
         
         #desenhando o cabeçalho
         hf = HeaderFrame(self)
@@ -71,7 +70,7 @@ class CatalogFrame(tk.Frame):
         self.documents.add(document)
             
         for doc in self.documents:
-            df = DocumentFrame(self, doc)
+            df = DocumentFrame(self, doc, self.command_del)
             df.draw()
             self.doc_frames.append(df)
             

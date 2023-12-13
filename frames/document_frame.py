@@ -4,7 +4,7 @@ import tkinter.font as tkFont
 import math
 from PIL import ImageTk 
 
-from entity import Document
+from entity import Document, Persistence
 from .line_frame import LineFrame       
 
 IMG_COL = 0
@@ -19,6 +19,7 @@ class CatalogLineFrame(LineFrame):
     def __init__(self, frame_master : tk.Frame, height, bg : str):
         self.height = height
         self.bg = bg
+        
         L = frame_master.winfo_reqwidth()
         num_cols = 5
         col_widths = [math.floor(0.1 * L),
@@ -32,11 +33,12 @@ class CatalogLineFrame(LineFrame):
 class DocumentFrame(CatalogLineFrame):
     '''Widget personalizado para representar os dados do documento pericial na interface gráfica
     '''
-    def __init__(self, frame_master : tk.Frame, doc : Document):
+    def __init__(self, frame_master : tk.Frame, doc : Document, command_del):
         super().__init__(frame_master, height=150, bg = "white")  #Cor do fundo da linha do DocumentFrame
 
         self.document = doc
         self.var_checkbox = tk.IntVar(value=1) #Variável de controle para saber se o checkbox está selecionado. Valor 1 indica que o mesmo começa marcado
+        self.command_del = command_del
         
     def is_checked(self) -> bool:
         #Retorna True indicando que o documento está marcado no checkbox
@@ -59,13 +61,27 @@ class DocumentFrame(CatalogLineFrame):
     
         # Adicione o texto que você deseja exibir
         texto.insert(tk.END, self.document.to_string())
+        
+    def _on_click_delete(self):
+        Persistence.delete_doc(self.document)
+        self.command_del(self.document)
 
        
     def draw(self) -> None:
         super().draw()
-        #Checkbox
-        checkbox = tk.Checkbutton(self.cell_frames[IMG_COL], bg=self.bg, var = self.var_checkbox)
-        checkbox.pack(side="left")
+        #Checkbox e delete button
+        frame = tk.Frame(self.cell_frames[IMG_COL], bg=self.bg, highlightbackground="grey80", highlightthickness=1)
+        frame.pack(padx=20, side="left")
+        
+        checkbox = tk.Checkbutton(frame, bg=self.bg, var = self.var_checkbox)
+        checkbox.pack(pady=5)
+        
+        photo = tk.PhotoImage(file="imagens/delete2.png")
+        button_del = tk.Button(frame, image=photo,  bg=self.bg, 
+                               command = self._on_click_delete)
+        button_del.photo = photo
+        button_del.pack(pady=5)
+        
         
         #Image
         photo = ImageTk.PhotoImage(self.document.image)
@@ -87,11 +103,13 @@ class DocumentFrame(CatalogLineFrame):
         text_label.bind("<Button-1>", self._show_text_doc)
         
         #Texto da data do documento
-        date = tk.Label(self.cell_frames[DATE_COL], text=self.document.get_str_date(), font=self.font, justify="center",  bg=self.bg)
+        date = tk.Label(self.cell_frames[DATE_COL], text=self.document.get_str_date(), 
+                        font=self.font, justify="center",  bg=self.bg)
         date.pack(pady=60)
         
         #Texto do número de folhas
-        numero = tk.Label(self.cell_frames[NUMP_COL], text=self.document.get_str_num_pages(), font=self.font, justify="center",  bg=self.bg)
+        numero = tk.Label(self.cell_frames[NUMP_COL], text=self.document.get_str_num_pages(), 
+                          font=self.font, justify="center",  bg=self.bg)
         numero.pack(pady=60)
         
         
