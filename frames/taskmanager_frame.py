@@ -71,7 +71,9 @@ class TaskManagerFrame(tk.Frame):
     
     def _create_pipeline_frame(self):
         #Barra que contém a pipeline de edição de uma perícia
-        self.current_task_frame = tk.Frame(self, height=80, width=(self.winfo_screenwidth()*0.56), bg="grey70") 
+        self.current_task_frame = tk.Frame(self, height=80, 
+                                           width=(self.winfo_screenwidth()*0.56), 
+                                           bg="grey70") 
         self.current_task_frame.pack_propagate(False)
         self.current_task_frame.place(relx=0.5, rely=0.5, anchor="center")
         self.current_task_frame.configure(borderwidth=2, relief="solid")
@@ -98,7 +100,9 @@ class TaskManagerFrame(tk.Frame):
             self.num_label = tk.Label(self.buttons_frame, bg="grey70")
             self.num_label.grid(row=0, column=0)
             
-            self.pipeline_label = tk.Label(self.buttons_frame, text="", bg="grey70", font=tkFont.Font(family="Arial", size=18))
+            self.pipeline_label = tk.Label(self.buttons_frame, text="", 
+                                           bg="grey70", 
+                                           font=tkFont.Font(family="Arial", size=18))
             self.pipeline_label.grid(row=0, column=1)
             
             self.add_button = AddButton(self.buttons_frame, self.click_add)
@@ -138,6 +142,8 @@ class TaskManagerFrame(tk.Frame):
         
         self.pipeline_label.config(text="Editando a perícia")
         self.add_button.active()
+        self.catalog_button.disactive()
+        self.report_button.disactive()
     
     def _classifier_buttons(self):
         num_image = tk.PhotoImage(file="imagens/dois.png")
@@ -147,6 +153,7 @@ class TaskManagerFrame(tk.Frame):
         self.pipeline_label.config(text="Classificando documentos")
         self.add_button.disactive()
         self.catalog_button.active()
+        self.report_button.disactive()
     
     def _catalog_buttons(self):
         num_image = tk.PhotoImage(file="imagens/tres.png")
@@ -154,6 +161,7 @@ class TaskManagerFrame(tk.Frame):
         self.num_label.imagem = num_image
         
         self.pipeline_label.config(text="Sumarizando documentos")
+        self.add_button.disactive()
         self.catalog_button.disactive()
         self.report_button.active()
         
@@ -181,7 +189,7 @@ class TaskManagerFrame(tk.Frame):
         self._clear_taskmanager_frame()
         self._create_logo_frame()
         self.lff = ListForensicFrame(self.master_frame, 
-                                     width = self.winfo_screenwidth()*0.56,
+                                     width = self.winfo_screenwidth()*0.4,
                                      command_open = self.open_forensic,
                                      command_del = self.click_list)
         self.lff.pack()

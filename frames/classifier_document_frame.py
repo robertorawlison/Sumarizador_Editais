@@ -100,7 +100,7 @@ class ClassifierDocumentFrame(ClassifierLineFrame):
         label = self.combo.get()
         if self.document.type['label'] != label :
             self.document.type = TypeDocument.map[label]
-            self.summary = ""
+            self.document.summary = ""
             self.document.update_db_type()
             if self.document.type == TypeDocument.NON_CLASS:
                 print("red")
