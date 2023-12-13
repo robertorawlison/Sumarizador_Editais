@@ -71,7 +71,7 @@ class DocumentFrame(CatalogLineFrame):
         super().draw()
         #Checkbox e delete button
         frame = tk.Frame(self.cell_frames[IMG_COL], bg=self.bg, highlightbackground="grey80", highlightthickness=1)
-        frame.pack(padx=20, side="left")
+        frame.pack(padx=10, side="left")
         
         checkbox = tk.Checkbutton(frame, bg=self.bg, var = self.var_checkbox)
         checkbox.pack(pady=5)

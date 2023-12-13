@@ -189,7 +189,7 @@ class TaskManagerFrame(tk.Frame):
         self._clear_taskmanager_frame()
         self._create_logo_frame()
         self.lff = ListForensicFrame(self.master_frame, 
-                                     width = self.winfo_screenwidth()*0.4,
+                                     width = self.winfo_screenwidth()*0.55,
                                      command_open = self.open_forensic,
                                      command_del = self.click_list)
         self.lff.pack()

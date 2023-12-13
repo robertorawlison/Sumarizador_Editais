@@ -3,7 +3,7 @@ import tkinter as tk
 from tkinter import ttk
 
 from .open_forensic_frame import OpenForensicFrame
-from entity import Forensic, Persistence
+from entity import Persistence
 
 class ListForensicFrame(tk.Frame):
     '''Widget personalizado para a interface de listagem das perícias cadastradas.
@@ -54,5 +54,3 @@ class ListForensicFrame(tk.Frame):
             off.draw()
             self.open_forensic_frames.append(off)
             
-    
-

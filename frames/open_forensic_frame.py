@@ -18,7 +18,7 @@ class ForensicLineFrame(LineFrame):
         num_cols = 1
         col_widths = [frame_master.winfo_reqwidth()]
         
-        super().__init__(frame_master, self.height, self.bg, num_cols, col_widths)
+        super().__init__(frame_master, self.height, self.bg, num_cols, col_widths, True)
         
 
 class OpenForensicFrame(ForensicLineFrame):
