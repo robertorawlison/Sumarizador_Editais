@@ -9,7 +9,10 @@ from .document_model import DocumentModel
 class Document:
     '''Representa os dados dos documentos periciais avaliados
     '''
-    def __init__(self, file_name:str = None, file_bytes:bytes = None, image:Image = None, num_pages:int = None, doc_db:DocumentModel = None):
+    def __init__(self, file_name:str = None, 
+                 file_bytes:bytes = None, image:Image = None, 
+                 num_pages:int = None, doc_db:DocumentModel = None):
+        
         if(doc_db == None):
             self._file_name: str = file_name  # Nome do arquivo contendo o documento
             self._image : Image = image #Imagem na memória
@@ -93,7 +96,10 @@ class Document:
         return num_p_str
     
     def get_str_date(self) -> str:
-        return self._date.strftime("%d/%m/%Y")
+        if(self._date == datetime.max):
+            return "desconhecido"
+        else:
+            return self._date.strftime("%d/%m/%Y")
     
     def get_basename(self):
         return os.path.basename(self.file_name)

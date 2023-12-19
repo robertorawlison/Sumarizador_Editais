@@ -11,7 +11,7 @@ class ContratoSummarizer(Summarizer):
         data = self._encontra_data(text)
         
         summary = f"""Contrato entre {partes[0]} e {partes[1]} estabelecido em {data} no valor de {valor[:-2]} com o objetivo de {objeto}""" 
-        date = datetime(2022, 11, 21)
+        date = datetime.max
         return (summary, date)
         
 
