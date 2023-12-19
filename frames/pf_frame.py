@@ -13,6 +13,12 @@ class PFFrame(tk.Frame):
         self.label_pf.image = image_pf
         
     def pack(self):
-        super().pack()
+        h_screen = self.winfo_screenheight()
+        w_screen = self.winfo_screenwidth()
+        
+        h_photo = self.label_pf.winfo_reqheight()
+        w_photo = self.label_pf.winfo_reqwidth()
+        
+        super().place(x=(w_screen - w_photo)/2, y=(h_screen - h_photo)/2)
         self.label_pf.pack(anchor="center")
 
