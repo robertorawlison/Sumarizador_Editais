@@ -10,8 +10,14 @@ class EditalSummarizer(Summarizer):
         prazo = self._encontra_prazos(text)
         tipo = self._encontrar_tipo(text)
 
+        date = Summarizer._encontra_data(self, text)
+
+        if date == datetime.max:
+            data = "||Desconhecido||"
+        else:
+            data = date.strftime("%d/%m/%Y")
+
         summary = f"Edital de licitação na modalidade  {tipo[0]}, cujo objeto trata-se da {objetos[0]}, com valor previsto de {valor} e prazo de execução previsto de {prazo}"
-        date = datetime(2013, 10, 20)
         return (summary, date) 
 
 

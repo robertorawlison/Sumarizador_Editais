@@ -8,10 +8,15 @@ class ContratoSummarizer(Summarizer):
         partes = self._encontra_partes(text)
         objeto = self._encontra_objeto(text)
         valor = self._encontra_valor(text).split('(')[0].strip()
-        data = self._encontra_data(text)
         
+        date = Summarizer._encontra_data(self, text)
+
+        if date == datetime.max:
+            data = "||Desconhecido||"
+        else:
+            data = date.strftime("%d/%m/%Y")
+            
         summary = f"""Contrato entre {partes[0]} e {partes[1]} estabelecido em {data} no valor de {valor[:-2]} com o objetivo de {objeto}""" 
-        date = datetime.max
         return (summary, date)
         
 

@@ -4,6 +4,7 @@ from entity import Document, TypeDocument
 from .unknown import UnknownSummarizer
 from .edital import EditalSummarizer
 from .contrato import ContratoSummarizer
+from .aditivo import AditivoSummarizer
 
 
 class Parser:
@@ -16,6 +17,8 @@ class Parser:
             return EditalSummarizer()
         elif doc.type['id'] == TypeDocument.CONTRATO['id'] :
             return ContratoSummarizer()
+        elif doc.type['id'] == TypeDocument.ADITIVO['id']:
+            return AditivoSummarizer()
         else:
             return UnknownSummarizer()
         

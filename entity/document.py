@@ -5,6 +5,7 @@ import fitz
 from datetime import datetime
 
 from .document_model import DocumentModel
+from summarizer import Summarizer
 
 class Document:
     '''Representa os dados dos documentos periciais avaliados
