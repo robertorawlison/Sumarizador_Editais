@@ -5,7 +5,6 @@ import fitz
 from datetime import datetime
 
 from .document_model import DocumentModel
-from summarizer import Summarizer
 
 class Document:
     '''Representa os dados dos documentos periciais avaliados
@@ -202,5 +201,5 @@ class TypeDocument:
         'plural' : 'procurações',
         'id' : 5
     }
-    list = [NON_CLASS, DESCONHECIDO, EDITAL, CONTRATO, ADITIVO, PROCURACAO]
+    list = [NON_CLASS, DESCONHECIDO, EDITAL, CONTRATO, ADITIVO]
     map = {f'{_type["label"]}' : _type for _type in list}
