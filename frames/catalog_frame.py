@@ -58,7 +58,7 @@ class CatalogFrame(tk.Frame):
             docf.destroy()
         self.doc_frames = []
         
-    def add(self, document : Document) -> None:
+    def add(self, documents : list) -> None:
         '''Desenha uma tabela contendo o catálogo de documentos periciais analisados (CatologFrame).
         ''Para cada objeto Document cria uma linha através do DocumentFrame a ser desenhado no CatologFrame
         '''
@@ -67,7 +67,8 @@ class CatalogFrame(tk.Frame):
         #self.canvas.delete("all")
         
         #Ordena a lista de documentos pela data de emissão do documento
-        self.documents.add(document)
+        for document in documents:
+            self.documents.add(document)
             
         for doc in self.documents:
             df = DocumentFrame(self, doc, self.command_del)

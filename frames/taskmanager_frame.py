@@ -273,14 +273,20 @@ class TaskManagerFrame(tk.Frame):
         fw.center()
         
         #Pegando o sumário e o número de folhas de cada documento
+        docs = []
         for doc in documents:
+            docs.append(doc)
+            
             if(doc.summary == ""): #Não sumarizou seu conteúdo
                 fill_summary_numpages_from_pdf(doc, fw)
-                doc.update_db_summary()
-        
-            self.cf.add(doc)
+                doc.update_db_summary_date()
+                self.cf.add(docs)
+                docs = []
+                
             fw.update_count_docs()
-        
+ 
+        if(len(docs) > 0):
+            self.cf.add(docs)
         fw.destroy()
         
     def _delete_catalog_doc(self, doc : Document):
@@ -295,8 +301,7 @@ class TaskManagerFrame(tk.Frame):
                                command_del = self._delete_catalog_doc)
         self.cf.pack()
         
-        for _doc in self.forensic.appendices[0].documents :
-            self.cf.add(_doc)
+        self.cf.add(self.forensic.appendices[0].documents)
         
 
     def click_catalog(self):

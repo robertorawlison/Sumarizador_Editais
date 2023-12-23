@@ -48,7 +48,19 @@ class DocumentModel(BaseModel):
 
 
     @classmethod
-    def update_summary(cls, doc):
+    def update_summary_date(cls, doc):
         # Atualizando campo summary, date
         update = DocumentModel.update(summary=doc.summary, date=doc.date)
+        update.where(DocumentModel.id == doc.db_instance.id).execute()
+
+    @classmethod
+    def update_summary(cls, doc):
+        # Atualizando campo summary, date
+        update = DocumentModel.update(summary=doc.summary)
+        update.where(DocumentModel.id == doc.db_instance.id).execute()
+
+    @classmethod
+    def update_date(cls, doc):
+        # Atualizando campo summary, date
+        update = DocumentModel.update(date=doc.date)
         update.where(DocumentModel.id == doc.db_instance.id).execute()

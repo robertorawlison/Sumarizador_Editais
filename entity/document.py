@@ -43,8 +43,14 @@ class Document:
     def update_db_type(self):
         DocumentModel.update_type(self)
     
+    def update_db_summary_date(self):
+        DocumentModel.update_summary_date(self)
+    
     def update_db_summary(self):
         DocumentModel.update_summary(self)
+    
+    def update_db_date(self):
+        DocumentModel.update_date(self)
     
     def open_file(self):
         diretorio = os.path.dirname("temp/")
