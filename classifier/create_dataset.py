@@ -41,7 +41,7 @@ def create_text_dataset(file_name : str) -> str:
 def page_to_string_image(page) -> (str, Image):
     pix = page.get_pixmap()
     img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
-    img.show()
+    #img.show()
     
     largura, altura = img.size
     new_width = largura * 2  # Ajuste conforme necessário
