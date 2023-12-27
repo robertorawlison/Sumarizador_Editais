@@ -9,10 +9,12 @@ class GpelTextDataset:
     Classe que manipula os dados de texto do datset GPEL
     '''
     def __init__(self, size_test : float = 0.25):
-        self.X : list = None
-        self.y : list = None
+        self.X : list = []
+        self.y : list = []
+        
         self.X_train : list = None
         self.y_train : list = None
+        
         self.X_test : list = None
         self.y_test : list = None
         
@@ -34,10 +36,24 @@ class GpelTextDataset:
         '''
         pass
     
+    
+        '''
+            Para cada arquivo .txt dos diretórios dataset/cover e dataset/non-cover
+                st = todo o conteúdo de arquivo
+                self.X.append(st)
+                if arquivo estiver em cover
+                    self.y.append(+1)
+                else
+                    self.y.append(-1)
+            
+        '''
+    
+    
+    
     def _preprocessing(self) -> None:
         '''
         Tratamento de PLN sobre os textos:
-            1. Lenatização das plavras; (spacy)
+            1. Lematização das plavras; (spacy)
             2. Remoção dos acentos (minimiza erros do OCR);
             3. Remoção das stop words (lenatizadas e sem acento);
             4. Remoção das palavras frequentes no vocabulário. Para a remoção
