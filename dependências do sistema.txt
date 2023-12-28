@@ -21,7 +21,9 @@ https://visualstudio.microsoft.com/pt-br/visual-cpp-build-tools/
 
 3. Instalar pacotes no Anacaonda Prompt:
 
-pip install re, frontend, tools, pytesseract, sumy, peewee, tkcalendar
+pip install re, frontend, tools, pytesseract, sumy, peewee, tkcalendar, spacy
+
+python -m spacy download pt_core_news_sm
 
 pip install --upgrade --force-reinstall pymupdf
 
