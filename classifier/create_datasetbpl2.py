@@ -17,24 +17,30 @@ os.environ['TESSDATA_PREFIX'] = r'C:\Arquivos de Programas\Tesseract-OCR\tessdat
 # Configurações pro português
 custom_config = r'--oem 3 --psm 6 -l por'
 
+num_cover = 0
+num_non_cover = 0
 
 def processar_arquivo(file_name: str, output_directory: str) -> None:
+    global num_cover, num_non_cover
     pdf_document = fitz.open(file_name)
+    
 
     # Coloca o texto da primeira página no diretório dataset/cover
     page = pdf_document[0]
     (_str, img) = page_to_string_image(page)
     print(f'Página 1 - Número de caracteres lidos: {len(_str)}')
 
-    cover_directory = os.path.join(output_directory, 'cover')
+    cover_directory = 'dataset/cover'
     os.makedirs(cover_directory, exist_ok=True)
 
-    img.save(os.path.join(cover_directory, f'{os.path.basename(file_name).replace(".pdf", "_cover.png")}'), format='PNG')
-    with open(os.path.join(cover_directory, f'{os.path.basename(file_name).replace(".pdf", "_cover.txt")}'), 'w') as arquivo:
+    img.save(os.path.join(cover_directory, f'GPEL_{num_cover}.png'), format='PNG')
+    with open(os.path.join(cover_directory, f'GPEL_{num_cover}.txt'), 'w') as arquivo:
         arquivo.write(_str)
+    
+    num_cover = num_cover + 1
 
     # Coloca as outras páginas no diretório dataset/non-cover
-    non_cover_directory = os.path.join(output_directory, 'non-cover')
+    non_cover_directory = 'dataset/non-cover'
     os.makedirs(non_cover_directory, exist_ok=True)
 
     for page_num in range(1, pdf_document.page_count):
@@ -42,11 +48,13 @@ def processar_arquivo(file_name: str, output_directory: str) -> None:
         (_str, img) = page_to_string_image(page)
         print(f'Página {(page_num+1)} - Número de caracteres lidos: {len(_str)}')
 
-        img.save(os.path.join(non_cover_directory, f'{os.path.basename(file_name).replace(".pdf", f"_non-cover{page_num}.png")}'), format='PNG')
+        img.save(os.path.join(non_cover_directory, f'GPEL_{num_non_cover}.png'), format='PNG')
 
-        caminho_arquivo = os.path.join(non_cover_directory, f'{os.path.basename(file_name).replace(".pdf", f"_non-cover{page_num}.txt")}')
+        caminho_arquivo = os.path.join(non_cover_directory, f'GPEL_{num_non_cover}.txt')
         with open(caminho_arquivo, 'w') as arquivo:
             arquivo.write(_str)
+        
+        num_non_cover = num_non_cover + 1
 
 
 def page_to_string_image(page) -> (str, Image):
