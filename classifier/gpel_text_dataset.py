@@ -2,6 +2,7 @@
 
 import spacy
 from sklearn.feature_extraction import DictVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
 
 class GpelTextDataset:
@@ -19,9 +20,10 @@ class GpelTextDataset:
         self.y_test : list = None
         
         self._load()
+        self._split_train_test(size_test)
         self._preprocessing()
         self._vectorization()
-        self._split_train_test(size_test)
+        
     
     def _load(self) -> None:
         '''
@@ -49,20 +51,37 @@ class GpelTextDataset:
         '''
     
     
+    def _split_train_test(self, test_size : float):
+        '''
+        Quebra a instância X em X_train, usado na fase de aprendizado do dados, e em X_test
+        a ser usada na computação das métricas de classificação e comparação com outros modelos.
+
+        Parameters
+        ----------
+        test_size : float
+            Indica a proporção de dados da matriz X que irá compor a matriz X_test, 
+            sendo o resto colocado na matriz X_train.
+
+        Returns
+        -------
+        None.
+
+        '''
+        pass
+    
     
     def _preprocessing(self) -> None:
         '''
         Tratamento de PLN sobre os textos:
+            0. Tokenização do texto (separação dos espaços, remoção de acentuação 
+                                     e conversão de maiúsculas em minúsculas); (spacy)
             1. Lematização das plavras; (spacy)
             2. Remoção dos acentos (minimiza erros do OCR);
-            3. Remoção das stop words (lenatizadas e sem acento);
-            4. Remoção das palavras frequentes no vocabulário. Para a remoção
-            de termos frequentes existem duas possibilidades:
-                4.1 Experiemntal. Determinar qual limiar de frequência mínima
-                produz os melhores resultados em instâncias de teste ou validação;
-                4.2 TF-IDF (Term Frequency-Inverse Document Frequency), que 
-                levam em conta a importância relativa de uma palavra em 
-                relação ao documento e ao corpus.
+            3. Remoção das stop words (lenatizadas e sem acento).
+            
+        obs: para lidar com dados de teste, é necessário processá-los separadamente dos dados de treino
+        usando uma nova chamada do nlp (spacy). Isso garante que o modelo não tenha conhecimento 
+        prévio dos dados de teste e ajuda a simular melhor o cenário de aplicação real.
         
         A matriz X resultante é uma lista de textos tratados, onde cada 
         texto é uma lista de strings
@@ -93,6 +112,19 @@ class GpelTextDataset:
           como o TF-IDF (Term Frequency-Inverse Document Frequency) ou a representação 
           de palavras usando embeddings, como Word2Vec ou GloVe.
           
+          obs: Ao trabalhar com qualquer técnica de vetorização em aprendizado de máquina, 
+          você deve calcular os pesos usando apenas o conjunto de treinamento e, em seguida, 
+          aplicar esses pesos aos dados de teste.
+          
+          Possíveis testes para melhoria da acurácia de classificação:
+              Remoção das palavras frequentes no vocabulário. Para a remoção de termos frequentes 
+              existem duas possibilidades:
+                1. Experiemntal. Determinar qual limiar de frequência mínima
+                produz os melhores resultados em instâncias de teste ou validação;
+                2. TF-IDF (Term Frequency-Inverse Document Frequency), que 
+                levam em conta a importância relativa de uma palavra em 
+                relação ao documento e ao corpus.
+          
 
         Returns
         -------
@@ -101,21 +133,27 @@ class GpelTextDataset:
         '''
         pass
         
-    def _split_train_test(self, test_size : float):
+    
+    
+    def posprocessing(self, X : list) -> list:
         '''
-        Quebra a instância X em X_train, usado na fase de aprendizado do dados, e em X_test
-        a ser usada na computação das métricas de classificação e comparação com outros modelos.
-
+        Processa novos dados de documentos fora da base de teste a serem usadas pelo classificador.
+        Aplica as técnicas de pré-processamento e vetorização.
+        
         Parameters
         ----------
-        test_size : float
-            Indica a proporção de dados da matriz X que irá compor a matriz X_test, 
-            sendo o resto colocado na matriz X_train.
+        X : list
+            Lista de textos de documentos a serem classificados.
+            Ex: X = [
+                "Este é um texto de teste",
+                "Outro texto de teste"
+                ]
+.
 
         Returns
         -------
-        None.
+        list
+            DESCRIPTION.
 
         '''
         pass
-        
