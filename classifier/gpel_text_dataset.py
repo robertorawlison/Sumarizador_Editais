@@ -25,9 +25,9 @@ class GpelTextDataset:
         self.spell = SpellChecker(language='pt')
         
         self._load()
-        self._split_train_test(size_test)
-        self._preprocessing()
-        self._vectorization()
+        #self._split_train_test(size_test)
+        #self._preprocessing()
+        #self._vectorization()
         
     
     def _load(self) -> None:
@@ -56,16 +56,19 @@ class GpelTextDataset:
                     self.y.append(+1)
         
         # Process files in the non-cover directory
-        for filename in os.listdir(non_cover_dir):
-            if filename.endswith('.txt'):
-                file_path = os.path.join(non_cover_dir, filename)
-                #print(file_path)
-                with open(file_path, 'r', encoding="ISO-8859-1", errors="ignore") as file:
-                    st = file.read()
-                    #print(st)
-                    self.X.append(st)
-                    self.y.append(-1)
-                    
+        # for filename in os.listdir(non_cover_dir):
+        #     if filename.endswith('.txt'):
+        #         file_path = os.path.join(non_cover_dir, filename)
+        #         #print(file_path)
+        #         with open(file_path, 'r', encoding="ISO-8859-1", errors="ignore") as file:
+        #             st = file.read()
+        #             #print(st)
+        #             self.X.append(st)
+        #             self.y.append(-1)
+         
+            
+        #Testando o primeiro arquivo.
+        self.process_text(self.X[0])
     
     
     def _split_train_test(self, test_size: float):
@@ -129,22 +132,38 @@ class GpelTextDataset:
 
 
     def process_text(self, text):
+        # 0. Colocar todos os caracteres para minúsculo
+        # >>>
+        
+        print(text)
+        
         # 1. Remoção da acentuação
         text = unidecode(text)
+        print(text)
+        
 
         # 2. Tokenização do texto
-        doc = self.nlp(text)
+        # doc = self.nlp(text)
+        # print("Tokenização")
+        # for token in doc:
+        #     print(f"{token.text}: {token.lemma_}")
+        # print("\n\n")
+        
+        # # 3. Lematização das palavras, removendo pontuações.
+        # lemmatized_words = [token.lemma_ for token in doc if not token.is_punct]
 
-        # 3. Lematização das palavras
-        lemmatized_words = [token.lemma_ for token in doc]
-
-        # 4. Correção ortográfica
-        corrected_words = [self.spell.correction(word) for word in lemmatized_words]
-
+        # # 4. Correção ortográfica
+        # corrected_words = [self.spell.correction(word) for word in lemmatized_words]
+        # print("Correção")
+        # print(corrected_words)
+        # print("\n\n")
+    
         # 5. Remoção das stop words
         filtered_words = [word for word in corrected_words if word not in spacy.lang.pt.stop_words.STOP_WORDS]
+        print("Filtro")
+        print(filtered_words)
 
-        return filtered_words
+        # return filtered_words
 
         
     def _vectorization(self):
@@ -170,7 +189,7 @@ class GpelTextDataset:
           Possíveis testes para melhoria da acurácia de classificação:
               Remoção das palavras frequentes no vocabulário. Para a remoção de termos frequentes 
               existem duas possibilidades:
-                1. Experiemntal. Determinar qual limiar de frequência mínima
+                1. Experimental. Determinar qual limiar de frequência mínima
                 produz os melhores resultados em instâncias de teste ou validação;
                 2. TF-IDF (Term Frequency-Inverse Document Frequency), que 
                 levam em conta a importância relativa de uma palavra em 
