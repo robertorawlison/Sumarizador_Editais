@@ -4,6 +4,7 @@ import spacy
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
+from spellchecker import SpellChecker
 
 class GpelTextDataset:
     '''
@@ -73,11 +74,12 @@ class GpelTextDataset:
     def _preprocessing(self) -> None:
         '''
         Tratamento de PLN sobre os textos:
-            0. Tokenização do texto (separação dos espaços, remoção de acentuação 
+            0. Tokenização do texto (separação dos espaços, 
                                      e conversão de maiúsculas em minúsculas); (spacy)
             1. Lematização das plavras; (spacy)
-            2. Remoção dos acentos (minimiza erros do OCR);
-            3. Remoção das stop words (lenatizadas e sem acento).
+            2. Correção ortográfica; (pyspellchecker)
+            3. Remoção dos acentos (minimiza erros do OCR);
+            4. Remoção das stop words (lenatizadas e sem acento).
             
         obs: para lidar com dados de teste, é necessário processá-los separadamente dos dados de treino
         usando uma nova chamada do nlp (spacy). Isso garante que o modelo não tenha conhecimento 
@@ -113,8 +115,10 @@ class GpelTextDataset:
           de palavras usando embeddings, como Word2Vec ou GloVe.
           
           obs: Ao trabalhar com qualquer técnica de vetorização em aprendizado de máquina, 
-          você deve calcular os pesos usando apenas o conjunto de treinamento e, em seguida, 
-          aplicar esses pesos aos dados de teste.
+          você deve calcular os pesos usando apenas o conjunto de treinamento (TfidfVectorizer.fit(.)) e,
+          em seguida, aplicar esses pesos aos dados de teste (TfidfVectorizer.transform(.)). 
+          O objeto TfidfVectorizer deve persistir para ser usado na classificação de novos documentos 
+          fora do dataset de teste.
           
           Possíveis testes para melhoria da acurácia de classificação:
               Remoção das palavras frequentes no vocabulário. Para a remoção de termos frequentes 
@@ -138,7 +142,9 @@ class GpelTextDataset:
     def posprocessing(self, X : list) -> list:
         '''
         Processa novos dados de documentos fora da base de teste a serem usadas pelo classificador.
-        Aplica as técnicas de pré-processamento e vetorização.
+        Aplica as técnicas de pré-processamento e vetorização. 
+        Na vetorização o objeto que se ajustou ao dados de treinamento deve ser recuperado para manter 
+        a base de representação das palavras contidas nos documentos para a hipotese aprendida.
         
         Parameters
         ----------
@@ -147,13 +153,17 @@ class GpelTextDataset:
             Ex: X = [
                 "Este é um texto de teste",
                 "Outro texto de teste"
-                ]
-.
+                ].
 
         Returns
         -------
         list
-            DESCRIPTION.
-
+            Retorna uma matriz de números indicando a importância de cada palavra do vocabulario (coluna)
+            no texto de cada documento (linha).
+            Ex: X = [
+                [0.3645444  0.3645444  0.61722732 0.3645444  0. 0. 0.46941728 ]
+                [0.41285857 0.41285857 0. 0.41285857 0.69903033 0. 0. ]
+                [0.3645444  0.3645444  0. 0.3645444  0. 0.61722732 0.46941728]
+                ]
         '''
         pass
