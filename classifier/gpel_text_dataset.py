@@ -47,7 +47,7 @@ class GpelTextDataset:
                 print(file_path)
                 with open(file_path, 'r', encoding="ISO-8859-1", errors="ignore") as file:
                     st = file.read()
-                    print(st)
+                    #print(st)
                     self.X.append(st)
                     self.y.append(+1)
         
@@ -58,9 +58,13 @@ class GpelTextDataset:
                 print(file_path)
                 with open(file_path, 'r', encoding="ISO-8859-1", errors="ignore") as file:
                     st = file.read()
-                    print(st)
+                    #print(st)
                     self.X.append(st)
                     self.y.append(-1)
+                    
+        print(f"Numero de documentos {len(self.X)}")
+        print(self.X[2])
+        print(f"Rótulo: {self.y[2]}")
     
     
     def _split_train_test(self, test_size : float):
@@ -85,12 +89,12 @@ class GpelTextDataset:
     def _preprocessing(self) -> None:
         '''
         Tratamento de PLN sobre os textos:
-            0. Tokenização do texto (separação dos espaços, 
+            1. Remoção da acentuação (minimiza erros do OCR) (unicode)
+            2. Tokenização do texto (separação dos espaços, 
                                      e conversão de maiúsculas em minúsculas); (spacy)
-            1. Lematização das plavras; (spacy)
-            2. Correção ortográfica; (pyspellchecker)
-            3. Remoção dos acentos (minimiza erros do OCR);
-            4. Remoção das stop words (lenatizadas e sem acento).
+            3. Lematização das palavras; (spacy)
+            4. Correção ortográfica; (pyspellchecker);
+            5. Remoção das stop words (lenatizadas e sem acento).
             
         obs: para lidar com dados de teste, é necessário processá-los separadamente dos dados de treino
         usando uma nova chamada do nlp (spacy). Isso garante que o modelo não tenha conhecimento 
