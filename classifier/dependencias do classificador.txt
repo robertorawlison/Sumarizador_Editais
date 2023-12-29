@@ -1,2 +1,2 @@
-pip install spacy
+pip install spacy, pyspellchecker
 python -m spacy download pt_core_news_sm
