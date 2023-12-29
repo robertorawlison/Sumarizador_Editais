@@ -22,6 +22,7 @@ class GpelTextDataset:
         
         # Inicializar o modelo Spacy para o idioma Português
         self.nlp = spacy.load('pt_core_news_sm')
+        self.spell = SpellChecker(language='pt')
         
         self._load()
         self._split_train_test(size_test)
@@ -47,7 +48,7 @@ class GpelTextDataset:
         for filename in os.listdir(cover_dir):
             if filename.endswith('.txt'):
                 file_path = os.path.join(cover_dir, filename)
-                print(file_path)
+                #print(file_path)
                 with open(file_path, 'r', encoding="ISO-8859-1", errors="ignore") as file:
                     st = file.read()
                     #print(st)
@@ -58,16 +59,13 @@ class GpelTextDataset:
         for filename in os.listdir(non_cover_dir):
             if filename.endswith('.txt'):
                 file_path = os.path.join(non_cover_dir, filename)
-                print(file_path)
+                #print(file_path)
                 with open(file_path, 'r', encoding="ISO-8859-1", errors="ignore") as file:
                     st = file.read()
                     #print(st)
                     self.X.append(st)
                     self.y.append(-1)
                     
-        print(f"Numero de documentos {len(self.X)}")
-        print(self.X[2])
-        print(f"Rótulo: {self.y[2]}")
     
     
     def _split_train_test(self, test_size: float):
@@ -87,8 +85,10 @@ class GpelTextDataset:
 
         '''
         # Usar train_test_split para dividir os dados em treino e teste
-        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
-        self.X, self.y, test_size=test_size, random_state=42)
+        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(self.X, 
+                                                                                self.y, 
+                                                                                test_size=test_size, 
+                                                                                random_state=42)
 
         print(f"Tamanho de X_train: {len(self.X_train)}")
         print(f"Tamanho de X_test: {len(self.X_test)}")
@@ -121,32 +121,30 @@ class GpelTextDataset:
         None.
 
         '''
-        spell = SpellChecker()
-
-        def process_text(text, nlp):
-            # 1. Remoção da acentuação
-            text = unidecode(text)
-
-            # 2. Tokenização do texto
-            doc = nlp(text)
-
-            # 3. Lematização das palavras
-            lemmatized_words = [token.lemma_ for token in doc]
-
-            # 4. Correção ortográfica
-            corrected_words = [spell.correction(word) for word in lemmatized_words]
-
-            # 5. Remoção das stop words
-            filtered_words = [word for word in corrected_words if word not in spacy.lang.pt.stop_words.STOP_WORDS]
-
-            return filtered_words
-
         # Aplicar o processamento em cada documento em X_train
-        self.X_train = [process_text(doc, self.nlp) for doc in self.X_train]
+        self.X_train = [self.process_text(doc) for doc in self.X_train]
 
         # Aplicar o processamento em cada documento em X_test
-        self.X_test = [process_text(doc, self.nlp) for doc in self.X_test]
+        self.X_test = [self.process_text(doc) for doc in self.X_test]
 
+
+    def process_text(self, text):
+        # 1. Remoção da acentuação
+        text = unidecode(text)
+
+        # 2. Tokenização do texto
+        doc = self.nlp(text)
+
+        # 3. Lematização das palavras
+        lemmatized_words = [token.lemma_ for token in doc]
+
+        # 4. Correção ortográfica
+        corrected_words = [self.spell.correction(word) for word in lemmatized_words]
+
+        # 5. Remoção das stop words
+        filtered_words = [word for word in corrected_words if word not in spacy.lang.pt.stop_words.STOP_WORDS]
+
+        return filtered_words
 
         
     def _vectorization(self):
