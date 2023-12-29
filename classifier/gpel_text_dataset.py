@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-
-import spacy
+import spacy, os
 from sklearn.feature_extraction import DictVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
 from spellchecker import SpellChecker
+from unidecode import unidecode
 
 class GpelTextDataset:
     '''
@@ -37,19 +37,30 @@ class GpelTextDataset:
         None.
 
         '''
-        pass
-    
-    
-        '''
-            Para cada arquivo .txt dos diretórios dataset/cover e dataset/non-cover
-                st = todo o conteúdo de arquivo
-                self.X.append(st)
-                if arquivo estiver em cover
+        cover_dir = 'dataset/cover'
+        non_cover_dir = 'dataset/non-cover'
+        
+        # Process files in the cover directory
+        for filename in os.listdir(cover_dir):
+            if filename.endswith('.txt'):
+                file_path = os.path.join(cover_dir, filename)
+                print(file_path)
+                with open(file_path, 'r', encoding="ISO-8859-1", errors="ignore") as file:
+                    st = file.read()
+                    print(st)
+                    self.X.append(st)
                     self.y.append(+1)
-                else
+        
+        # Process files in the non-cover directory
+        for filename in os.listdir(non_cover_dir):
+            if filename.endswith('.txt'):
+                file_path = os.path.join(non_cover_dir, filename)
+                print(file_path)
+                with open(file_path, 'r', encoding="ISO-8859-1", errors="ignore") as file:
+                    st = file.read()
+                    print(st)
+                    self.X.append(st)
                     self.y.append(-1)
-            
-        '''
     
     
     def _split_train_test(self, test_size : float):
@@ -160,7 +171,7 @@ class GpelTextDataset:
         list
             Retorna uma matriz de números indicando a importância de cada palavra do vocabulario (coluna)
             no texto de cada documento (linha).
-            Ex: X = [
+            Ex: X_out = [
                 [0.3645444  0.3645444  0.61722732 0.3645444  0. 0. 0.46941728 ]
                 [0.41285857 0.41285857 0. 0.41285857 0.69903033 0. 0. ]
                 [0.3645444  0.3645444  0. 0.3645444  0. 0.61722732 0.46941728]
