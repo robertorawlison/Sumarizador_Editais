@@ -20,6 +20,9 @@ class GpelTextDataset:
         self.X_test : list = None
         self.y_test : list = None
         
+        # Inicializar o modelo Spacy para o idioma Português
+        self.nlp = spacy.load('pt_core_news_sm')
+        
         self._load()
         self._split_train_test(size_test)
         self._preprocessing()
@@ -67,7 +70,7 @@ class GpelTextDataset:
         print(f"Rótulo: {self.y[2]}")
     
     
-    def _split_train_test(self, test_size : float):
+    def _split_train_test(self, test_size: float):
         '''
         Quebra a instância X em X_train, usado na fase de aprendizado do dados, e em X_test
         a ser usada na computação das métricas de classificação e comparação com outros modelos.
@@ -83,7 +86,14 @@ class GpelTextDataset:
         None.
 
         '''
-        pass
+        # Usar train_test_split para dividir os dados em treino e teste
+        self.X_train, self.X_test, self.y_train, self.y_test = train_test_split(
+        self.X, self.y, test_size=test_size, random_state=42)
+
+        print(f"Tamanho de X_train: {len(self.X_train)}")
+        print(f"Tamanho de X_test: {len(self.X_test)}")
+        print(f"Tamanho de y_train: {len(self.y_train)}")
+        print(f"Tamanho de y_test: {len(self.y_test)}")
     
     
     def _preprocessing(self) -> None:
@@ -94,7 +104,7 @@ class GpelTextDataset:
                                      e conversão de maiúsculas em minúsculas); (spacy)
             3. Lematização das palavras; (spacy)
             4. Correção ortográfica; (pyspellchecker);
-            5. Remoção das stop words (lenatizadas e sem acento).
+            5. Remoção das stop words (lematizadas e sem acento).
             
         obs: para lidar com dados de teste, é necessário processá-los separadamente dos dados de treino
         usando uma nova chamada do nlp (spacy). Isso garante que o modelo não tenha conhecimento 
@@ -111,7 +121,31 @@ class GpelTextDataset:
         None.
 
         '''
-        pass
+        spell = SpellChecker()
+
+        def process_text(text, nlp):
+            # 1. Remoção da acentuação
+            text = unidecode(text)
+
+            # 2. Tokenização do texto
+            doc = nlp(text)
+
+            # 3. Lematização das palavras
+            lemmatized_words = [token.lemma_ for token in doc]
+
+            # 4. Correção ortográfica
+            corrected_words = [spell.correction(word) for word in lemmatized_words]
+
+            # 5. Remoção das stop words
+            filtered_words = [word for word in corrected_words if word not in spacy.lang.pt.stop_words.STOP_WORDS]
+
+            return filtered_words
+
+        # Aplicar o processamento em cada documento em X_train
+        self.X_train = [process_text(doc, self.nlp) for doc in self.X_train]
+
+        # Aplicar o processamento em cada documento em X_test
+        self.X_test = [process_text(doc, self.nlp) for doc in self.X_test]
 
 
         
