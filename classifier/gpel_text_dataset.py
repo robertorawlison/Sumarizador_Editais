@@ -133,37 +133,35 @@ class GpelTextDataset:
 
     def process_text(self, text):
         # 0. Colocar todos os caracteres para minúsculo
-        # >>>
+        text_lower = text.lower()
+        print(text_lower)
         
-        print(text)
+        # 1. Tokenização do texto
+        doc = self.nlp(text_lower)
+        print("Tokenização")
+        for token in doc:
+            print(f"{token.text}: {token.lemma_}")
+        print("\n\n")
         
-        # 1. Remoção da acentuação
-        text = unidecode(text)
-        print(text)
-        
+        # 2. Lematização das palavras, removendo pontuações.
+        lemmatized_words = [token.lemma_ for token in doc if not token.is_punct]
 
-        # 2. Tokenização do texto
-        # doc = self.nlp(text)
-        # print("Tokenização")
-        # for token in doc:
-        #     print(f"{token.text}: {token.lemma_}")
-        # print("\n\n")
-        
-        # # 3. Lematização das palavras, removendo pontuações.
-        # lemmatized_words = [token.lemma_ for token in doc if not token.is_punct]
+        # 3. Remoção da acentuação
+        text_no_accent = unidecode(text_lower)
+        print(text_no_accent)
 
-        # # 4. Correção ortográfica
-        # corrected_words = [self.spell.correction(word) for word in lemmatized_words]
-        # print("Correção")
-        # print(corrected_words)
-        # print("\n\n")
+        # 4. Correção ortográfica
+        corrected_words = [self.spell.correction(word) for word in lemmatized_words]
+        print("Correção")
+        print(corrected_words)
+        print("\n\n")
     
         # 5. Remoção das stop words
         filtered_words = [word for word in corrected_words if word not in spacy.lang.pt.stop_words.STOP_WORDS]
         print("Filtro")
         print(filtered_words)
 
-        # return filtered_words
+        return filtered_words
 
         
     def _vectorization(self):
