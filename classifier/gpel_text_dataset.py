@@ -146,22 +146,30 @@ class GpelTextDataset:
         # 2. Lematização das palavras, removendo pontuações.
         lemmatized_words = [token.lemma_ for token in doc if not token.is_punct]
 
-        # 3. Remoção da acentuação
-        text_no_accent = unidecode(text_lower)
-        print(text_no_accent)
-
-        # 4. Correção ortográfica
-        corrected_words = [self.spell.correction(word) for word in lemmatized_words]
+        # 3. Correção ortográfica antes da lematização
+        corrected_words = [self.spell.correction(word) if word is not None else '' for word in lemmatized_words]
         print("Correção")
         print(corrected_words)
         print("\n\n")
+
+        # 4. Remoção da acentuação após a correção ortográfica
+        corrected_words_without_none = [word for word in corrected_words if word is not None and word != '']
+        text_no_accent = unidecode(' '.join(corrected_words_without_none))
+        print("Texto sem acentuação")
+        print(text_no_accent)
     
-        # 5. Remoção das stop words
-        filtered_words = [word for word in corrected_words if word not in spacy.lang.pt.stop_words.STOP_WORDS]
+        # 5. Remoção das stop words sem acentuação
+        filtered_words = [unidecode(word) for word in corrected_words_without_none if word.lower() not in spacy.lang.pt.stop_words.STOP_WORDS]
         print("Filtro")
         print(filtered_words)
 
-        return filtered_words
+        # 6. Remoção de palavras que contêm números
+        final_result = [word for word in filtered_words if not any(char.isdigit() for char in word)]
+
+        print("Resultado final sem números")
+        print(final_result)
+
+        return final_result
 
         
     def _vectorization(self):
