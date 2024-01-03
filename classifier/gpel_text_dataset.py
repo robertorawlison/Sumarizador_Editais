@@ -146,30 +146,29 @@ class GpelTextDataset:
         # 2. Lematização das palavras, removendo pontuações.
         lemmatized_words = [token.lemma_ for token in doc if not token.is_punct]
 
-        # 3. Correção ortográfica antes da lematização
-        corrected_words = [self.spell.correction(word) if word is not None else '' for word in lemmatized_words]
-        print("Correção")
+        # 3. Correção ortográfica e remoção da acentuação
+        corrected_words = self.batch_spell_and_unidecode(lemmatized_words)
+        print("Correção e remoção da acentuação")
         print(corrected_words)
         print("\n\n")
 
-        # 4. Remoção da acentuação após a correção ortográfica
-        corrected_words_without_none = [word for word in corrected_words if word is not None and word != '']
-        text_no_accent = unidecode(' '.join(corrected_words_without_none))
-        print("Texto sem acentuação")
-        print(text_no_accent)
-    
-        # 5. Remoção das stop words sem acentuação
-        filtered_words = [unidecode(word) for word in corrected_words_without_none if word.lower() not in spacy.lang.pt.stop_words.STOP_WORDS]
+        # 4. Remoção das stop words sem acentuação
+        filtered_words = [unidecode(word) for word in corrected_words if word.lower() not in spacy.lang.pt.stop_words.STOP_WORDS]
         print("Filtro")
         print(filtered_words)
 
-        # 6. Remoção de palavras que contêm números
+        # 5. Remoção de palavras que contêm números
         final_result = [word for word in filtered_words if not any(char.isdigit() for char in word)]
 
         print("Resultado final sem números")
         print(final_result)
 
         return final_result
+
+    def batch_spell_and_unidecode(self, words):
+        # Implemente a lógica para correção ortográfica e remoção de acentuação em lote aqui
+        batch_correction = self.spell.correction(' '.join(words)).split()
+        return [unidecode(word) if word != '' else None for word in batch_correction]
 
         
     def _vectorization(self):
