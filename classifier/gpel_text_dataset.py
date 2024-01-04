@@ -138,13 +138,20 @@ class GpelTextDataset:
         
         # 1. Tokenização do texto
         doc = self.nlp(text_lower)
-        # print("Tokenização")
-        # for token in doc:
-        #     print(f"{token.text}: {token.lemma_}")
-        # print("\n\n")
+        print(len(doc))
+        print("Tokenização")
+        for token in doc:
+            print(f"{token.text}: {token.lemma_} : {token.pos_}")
+        print("\n\n")
         
         # 2. Lematização das palavras, removendo pontuações.
-        lemmatized_words = [token.lemma_ for token in doc if not token.is_punct]
+        lemmatized_words = [token.lemma_ for token in doc if not token.is_punct
+                                                            and token.pos_ != 'PROPN'
+                                                            and token.pos_ != 'NUM'
+                                                            and token.pos_ != 'SPACE'
+                                                            and token.pos_ != 'DET'
+                                                            and token.pos_ != 'ADP'
+                                                            and token.pos_ != 'CCONJ']
         #print(lemmatized_words)
 
         # 3. Correção ortográfica e remoção da acentuação
@@ -165,14 +172,15 @@ class GpelTextDataset:
             stopwords_portuguese_set.add(unidecode(token.lemma_))
         
         filtered_words = [word for word in corrected_words if word not in stopwords_portuguese_set]
-        print("Filtro")
-        print(filtered_words)
+        #print("Filtro")
+        #print(filtered_words)
 
         # 5. Remoção de palavras que contêm números
         final_result = [word for word in filtered_words if not any(char.isdigit() for char in word)]
 
         print("Resultado final sem números")
         print(final_result)
+        print(len(final_result))
 
         return final_result
 
