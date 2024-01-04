@@ -134,26 +134,37 @@ class GpelTextDataset:
     def process_text(self, text):
         # 0. Colocar todos os caracteres para minúsculo
         text_lower = text.lower()
-        print(text_lower)
+        #print(text_lower)
         
         # 1. Tokenização do texto
         doc = self.nlp(text_lower)
-        print("Tokenização")
-        for token in doc:
-            print(f"{token.text}: {token.lemma_}")
-        print("\n\n")
+        # print("Tokenização")
+        # for token in doc:
+        #     print(f"{token.text}: {token.lemma_}")
+        # print("\n\n")
         
         # 2. Lematização das palavras, removendo pontuações.
         lemmatized_words = [token.lemma_ for token in doc if not token.is_punct]
+        #print(lemmatized_words)
 
         # 3. Correção ortográfica e remoção da acentuação
-        corrected_words = self.batch_spell_and_unidecode(lemmatized_words)
-        print("Correção e remoção da acentuação")
-        print(corrected_words)
-        print("\n\n")
+        batch_correction = self.spell.correction(' '.join(lemmatized_words)).split()
+        corrected_words = [unidecode(word) for word in batch_correction if word != '']
+        #print("Correção e remoção da acentuação")
+        #print(corrected_words)
+        #print("\n\n")
 
         # 4. Remoção das stop words sem acentuação
-        filtered_words = [unidecode(word) for word in corrected_words if word.lower() not in spacy.lang.pt.stop_words.STOP_WORDS]
+        #Lemmatizando e removendo acentuação das stop-words
+        stopwords_portuguese = self.nlp.Defaults.stop_words #stop words
+        doc = self.nlp(" ".join(stopwords_portuguese)) #Lematiza as palavras
+
+        # Lematiza as stop words e remove as repetições
+        stopwords_portuguese_set = set()
+        for token in doc:
+            stopwords_portuguese_set.add(unidecode(token.lemma_))
+        
+        filtered_words = [word for word in corrected_words if word not in stopwords_portuguese_set]
         print("Filtro")
         print(filtered_words)
 
@@ -164,11 +175,6 @@ class GpelTextDataset:
         print(final_result)
 
         return final_result
-
-    def batch_spell_and_unidecode(self, words):
-        # Implemente a lógica para correção ortográfica e remoção de acentuação em lote aqui
-        batch_correction = self.spell.correction(' '.join(words)).split()
-        return [unidecode(word) if word != '' else None for word in batch_correction]
 
         
     def _vectorization(self):
