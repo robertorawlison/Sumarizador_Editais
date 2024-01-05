@@ -10,6 +10,7 @@ class GpelTextDataset:
     Classe que manipula os dados de texto do datset GPEL
     '''
     def __init__(self, ):
+        self.count = 0
         self.X : list = []
         self.y : list = []
         
@@ -164,17 +165,19 @@ class GpelTextDataset:
 
 
     def process_text(self, text):
+        print("Processando documento " + str(self.count))
+        self.count += 1
         # 0. Colocar todos os caracteres para minúsculo
         text_lower = text.lower()
         #print(text_lower)
         
         # 1. Tokenização do texto
         doc = self.nlp(text_lower)
-        print(len(doc))
-        print("Tokenização")
-        for token in doc:
-            print(f"{token.text}: {token.lemma_} : {token.pos_}")
-        print("\n\n")
+        #print(len(doc))
+        #print("Tokenização")
+        #for token in doc:
+            #print(f"{token.text}: {token.lemma_} : {token.pos_}")
+        #print("\n\n")
         
         # 2. Lematização das palavras, removendo pontuações.
         lemmatized_words = [token.lemma_ for token in doc if not token.is_punct
@@ -187,6 +190,9 @@ class GpelTextDataset:
         #print(lemmatized_words)
 
         # 3. Correção ortográfica e remoção da acentuação
+        if len(lemmatized_words) == 0 :
+            return [' ']
+        print(lemmatized_words)
         batch_correction = self.spell.correction(' '.join(lemmatized_words)).split()
         corrected_words = [unidecode(word) for word in batch_correction if word != '']
         #print("Correção e remoção da acentuação")
@@ -204,7 +210,8 @@ class GpelTextDataset:
             stopwords_portuguese_set.add(unidecode(token.lemma_))
         
         #Adição de stopwords locais
-        stopwords_portuguese_set.add(["paraiba", "pb"])
+        stopwords_portuguese_set.add("paraiba")
+        stopwords_portuguese_set.add("pb")
         
         filtered_words = [word for word in corrected_words if word not in stopwords_portuguese_set]
         #print("Filtro")
