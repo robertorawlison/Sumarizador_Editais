@@ -26,11 +26,37 @@ class GpelTextDataset:
         self._preprocessing()
         
     def save_train_test(self):
-        pass
+        with open("dataset/train.pre", 'w') as arquivo:
+            for lista, label in zip(self.X_train, self.y_train):
+                linha = label + '\t'
+                linha += '\t'.join(lista)  # Use '\t' para separar os elementos, mas você pode escolher outro caractere
+                arquivo.write(f"{linha}\n")
+        
+        with open("dataset/test.pre", 'w') as arquivo:
+            for lista, label in zip(self.X_test, self.y_test):
+                linha = label + '\t'
+                linha += '\t'.join(lista)  # Use '\t' para separar os elementos, mas você pode escolher outro caractere
+                arquivo.write(f"{linha}\n")
+        
     
     def load_train_test(self):
-        pass
-    
+        self.X_train = []
+        self.y_train = []
+        with open("dataset/train.pre", 'r', encoding='utf-8') as arquivo:
+            for linha in arquivo:
+                elementos = linha.strip().split('\t')
+                self.y_train.append(int(elementos[0]))
+                self.X_train.append(elementos[1:])
+        
+        self.X_test = []
+        self.y_test = []
+        with open("dataset/test.pre", 'r', encoding='utf-8') as arquivo:
+            for linha in arquivo:
+                elementos = linha.strip().split('\t')
+                self.y_test.append(int(elementos[0]))
+                self.X_test.append(elementos[1:])
+        
+      
     def _init_portuguese_model(self):
         # Inicializar o modelo Spacy para o idioma Português
         self.nlp = spacy.load('pt_core_news_sm')
