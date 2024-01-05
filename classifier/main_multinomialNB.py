@@ -40,7 +40,7 @@ def vectorization(dataset : GpelTextDataset):
     X_train, y_train, X_test, y_test.
 
     '''
-    pass
+    dataset.X_train
 
 
 
