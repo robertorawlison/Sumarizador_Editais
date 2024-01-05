@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import spacy, os
-from sklearn.feature_extraction import DictVectorizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
 from spellchecker import SpellChecker
@@ -10,7 +9,7 @@ class GpelTextDataset:
     '''
     Classe que manipula os dados de texto do datset GPEL
     '''
-    def __init__(self, size_test : float = 0.25):
+    def __init__(self, ):
         self.X : list = []
         self.y : list = []
         
@@ -20,16 +19,24 @@ class GpelTextDataset:
         self.X_test : list = None
         self.y_test : list = None
         
+                
+    def preprocessing(self, size_test : float = 0.25):
+        self._load()
+        self._split_train_test(size_test)
+        self._preprocessing()
+        
+    def save_train_test(self):
+        pass
+    
+    def load_train_test(self):
+        pass
+    
+    def _init_portuguese_model(self):
         # Inicializar o modelo Spacy para o idioma Português
         self.nlp = spacy.load('pt_core_news_sm')
         self.spell = SpellChecker(language='pt')
         
-        self._load()
-        #self._split_train_test(size_test)
-        #self._preprocessing()
-        #self._vectorization()
         
-    
     def _load(self) -> None:
         '''
         Carrega todos os arquivos de texto (.txt) do dataset GPEL
@@ -55,21 +62,18 @@ class GpelTextDataset:
                     self.X.append(st)
                     self.y.append(+1)
         
-        # Process files in the non-cover directory
-        # for filename in os.listdir(non_cover_dir):
-        #     if filename.endswith('.txt'):
-        #         file_path = os.path.join(non_cover_dir, filename)
-        #         #print(file_path)
-        #         with open(file_path, 'r', encoding="ISO-8859-1", errors="ignore") as file:
-        #             st = file.read()
-        #             #print(st)
-        #             self.X.append(st)
-        #             self.y.append(-1)
+        #Process files in the non-cover directory
+        for filename in os.listdir(non_cover_dir):
+            if filename.endswith('.txt'):
+                file_path = os.path.join(non_cover_dir, filename)
+                #print(file_path)
+                with open(file_path, 'r', encoding="ISO-8859-1", errors="ignore") as file:
+                    st = file.read()
+                    #print(st)
+                    self.X.append(st)
+                    self.y.append(-1)
          
             
-        #Testando o primeiro arquivo.
-        self.process_text(self.X[0])
-    
     
     def _split_train_test(self, test_size: float):
         '''
@@ -124,6 +128,8 @@ class GpelTextDataset:
         None.
 
         '''
+        self._init_portuguese_model()
+        
         # Aplicar o processamento em cada documento em X_train
         self.X_train = [self.process_text(doc) for doc in self.X_train]
 
@@ -185,35 +191,10 @@ class GpelTextDataset:
         return final_result
 
         
-    def _vectorization(self):
+    def save_vectorization(self, vect : TfidfVectorizer):
         '''
-          Converte o texto em uma representação numérica que os algoritmos de 
-          aprendizado de máquina possam entender.
-          
-          Cada texto é representado por um vetor no qual cada componente 
-          corresponde à frequência de uma palavra específica no vocabulário.
-          Esse método é conhecido como Bag of Words. E pode ser implementado 
-          com a classe DictVectorizer do pacote sklearn.feature_extraction.
-          
-          Outras técnicas de vetorização incluem o uso de esquemas mais avançados, 
-          como o TF-IDF (Term Frequency-Inverse Document Frequency) ou a representação 
-          de palavras usando embeddings, como Word2Vec ou GloVe.
-          
-          obs: Ao trabalhar com qualquer técnica de vetorização em aprendizado de máquina, 
-          você deve calcular os pesos usando apenas o conjunto de treinamento (TfidfVectorizer.fit(.)) e,
-          em seguida, aplicar esses pesos aos dados de teste (TfidfVectorizer.transform(.)). 
-          O objeto TfidfVectorizer deve persistir para ser usado na classificação de novos documentos 
-          fora do dataset de teste.
-          
-          Possíveis testes para melhoria da acurácia de classificação:
-              Remoção das palavras frequentes no vocabulário. Para a remoção de termos frequentes 
-              existem duas possibilidades:
-                1. Experimental. Determinar qual limiar de frequência mínima
-                produz os melhores resultados em instâncias de teste ou validação;
-                2. TF-IDF (Term Frequency-Inverse Document Frequency), que 
-                levam em conta a importância relativa de uma palavra em 
-                relação ao documento e ao corpus.
-          
+          Persiste em arquivo o objeto de vetorização utilizado durante a fase de trenamento.
+          Este objeto deve ser utilizado em novas instâncias fora do dataset de treino e teste.
 
         Returns
         -------
@@ -222,6 +203,17 @@ class GpelTextDataset:
         '''
         pass
         
+    def _load_vectorization(self):
+        '''
+          Carrega de arquivo o objeto de vetorização utilizado durante a fase de trenamento.
+          Este objeto deve ser utilizado em novas instâncias fora do dataset de treino e teste.
+
+        Returns
+        -------
+        None.
+
+        '''
+        self.vect = None
     
     
     def posprocessing(self, X : list) -> list:
@@ -251,4 +243,5 @@ class GpelTextDataset:
                 [0.3645444  0.3645444  0. 0.3645444  0. 0.61722732 0.46941728]
                 ]
         '''
-        pass
+        self._init_portuguese_model()
+        self._load_vectorization()
