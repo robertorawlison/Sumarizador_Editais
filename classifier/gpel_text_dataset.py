@@ -177,6 +177,9 @@ class GpelTextDataset:
         for token in doc:
             stopwords_portuguese_set.add(unidecode(token.lemma_))
         
+        #Adição de stopwords locais
+        stopwords_portuguese_set.add(["paraiba", "pb"])
+        
         filtered_words = [word for word in corrected_words if word not in stopwords_portuguese_set]
         #print("Filtro")
         #print(filtered_words)
