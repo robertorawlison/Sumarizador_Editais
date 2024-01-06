@@ -176,30 +176,38 @@ class GpelTextDataset:
         #print(len(doc))
         #print("Tokenização")
         #for token in doc:
-            #print(f"{token.text}: {token.lemma_} : {token.pos_}")
+        #    print(f"{token.text}: {token.lemma_} : {token.pos_}")
         #print("\n\n")
         
         # 2. Lematização das palavras, removendo pontuações.
-        lemmatized_words = [token.lemma_ for token in doc if not token.is_punct
-                                                            and token.pos_ != 'PROPN'
-                                                            and token.pos_ != 'NUM'
-                                                            and token.pos_ != 'SPACE'
-                                                            and token.pos_ != 'DET'
-                                                            and token.pos_ != 'ADP'
-                                                            and token.pos_ != 'CCONJ']
+        lemmatized_words = [token.lemma_ for token in doc if token.pos_ == 'ADJ' #Adjetivo
+                                                            or token.pos_ == 'ADV' #Advérbio
+                                                            or token.pos_ == 'AUX' #Verbo auxiliar
+                                                            or token.pos_ == 'NOUN' #Substantivo
+                                                            or token.pos_ == 'PRON' #Pronome
+                                                            or token.pos_ == 'VERB'] #Verbo
         #print(lemmatized_words)
 
-        # 3. Correção ortográfica e remoção da acentuação
         if len(lemmatized_words) == 0 :
-            return [' ']
-        print(lemmatized_words)
-        batch_correction = self.spell.correction(' '.join(lemmatized_words)).split()
-        corrected_words = [unidecode(word) for word in batch_correction if word != '']
+            return []
+        #print(lemmatized_words)
+        #print("\n\n\n")
+        
+        # 3. Correção ortográfica e remoção da acentuação
+        correc = self.spell.correction(' '.join(lemmatized_words))
+        if(correc == None):
+            return []
+        
+        #Remove palavras que não contenham dígitos e com apenas uma letra
+        batch_correction = [word for word in correc.split() if word.isalpha() and len(word) > 1]
+        
+        #Remove acentuação
+        corrected_words = [unidecode(word) for word in batch_correction]
         #print("Correção e remoção da acentuação")
         #print(corrected_words)
         #print("\n\n")
 
-        # 4. Remoção das stop words sem acentuação
+        # 4. Remoção das stop words lematizadas e sem acentuação
         #Lemmatizando e removendo acentuação das stop-words
         stopwords_portuguese = self.nlp.Defaults.stop_words #stop words
         doc = self.nlp(" ".join(stopwords_portuguese)) #Lematiza as palavras
@@ -213,16 +221,11 @@ class GpelTextDataset:
         stopwords_portuguese_set.add("paraiba")
         stopwords_portuguese_set.add("pb")
         
-        filtered_words = [word for word in corrected_words if word not in stopwords_portuguese_set]
-        #print("Filtro")
-        #print(filtered_words)
-
-        # 5. Remoção de palavras que contêm números
-        final_result = [word for word in filtered_words if not any(char.isdigit() for char in word)]
-
-        print("Resultado final sem números")
+        final_result = [word for word in corrected_words if word not in stopwords_portuguese_set]
+        
+        #print("Resultado final sem números")
         print(final_result)
-        print(len(final_result))
+        #print(len(final_result))
 
         return final_result
 
