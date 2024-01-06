@@ -29,13 +29,13 @@ class GpelTextDataset:
     def save_train_test(self):
         with open("dataset/train.pre", 'w') as arquivo:
             for lista, label in zip(self.X_train, self.y_train):
-                linha = label + '\t'
+                linha = str(label) + '\t'
                 linha += '\t'.join(lista)  # Use '\t' para separar os elementos, mas você pode escolher outro caractere
                 arquivo.write(f"{linha}\n")
         
         with open("dataset/test.pre", 'w') as arquivo:
             for lista, label in zip(self.X_test, self.y_test):
-                linha = label + '\t'
+                linha = str(label) + '\t'
                 linha += '\t'.join(lista)  # Use '\t' para separar os elementos, mas você pode escolher outro caractere
                 arquivo.write(f"{linha}\n")
         
