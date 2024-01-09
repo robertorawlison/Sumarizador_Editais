@@ -2,7 +2,9 @@ from spellchecker import SpellChecker
 
 spell = SpellChecker(language='pt')
 
-texto = "Este é um exemmplo de arvore algumms erros."
+texto = "eaa vmorunsa sisgee espato saa ein re aga ernsnraro"
+
+
 print(texto.split())
 palavras_erradas = spell.unknown(texto.split())
 

@@ -16,7 +16,7 @@ vectorizer = TfidfVectorizer()
 matriz_tfidf = vectorizer.fit_transform(textos_tokenizados_texto)
 
 # Obter vocabulário e matriz esparsa
-vocabulario = vectorizer.get_feature_names_out()
+vocabulario = vectorizer.get_feature_names()
 matriz_esparsa = matriz_tfidf.toarray()
 
 # Exibir resultados

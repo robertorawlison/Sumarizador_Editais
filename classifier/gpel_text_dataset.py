@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
+from typing import Iterable
 import spacy, os
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split
 from spellchecker import SpellChecker
-from unidecode import unidecode
 
 class GpelTextDataset:
     '''
@@ -23,45 +23,44 @@ class GpelTextDataset:
                 
     def preprocessing(self, size_test : float = 0.25):
         self._load()
-        self._split_train_test(size_test)
         self._preprocessing()
+        self._split_train_test(size_test)
         
-    def save_train_test(self):
-        with open("dataset/train.pre", 'w') as arquivo:
-            for lista, label in zip(self.X_train, self.y_train):
-                linha = str(label) + '\t'
-                linha += '\t'.join(lista)  # Use '\t' para separar os elementos, mas você pode escolher outro caractere
-                arquivo.write(f"{linha}\n")
-        
-        with open("dataset/test.pre", 'w') as arquivo:
-            for lista, label in zip(self.X_test, self.y_test):
-                linha = str(label) + '\t'
+    def save_preprocessing(self):
+        with open("dataset/data.pre", 'w') as arquivo:
+            for lista, label, filename in zip(self.X, self.y, self.file_names):
+                linha = filename + '\t' + str(label) + '\t'
                 linha += '\t'.join(lista)  # Use '\t' para separar os elementos, mas você pode escolher outro caractere
                 arquivo.write(f"{linha}\n")
         
     
-    def load_train_test(self):
-        self.X_train = []
-        self.y_train = []
-        with open("dataset/train.pre", 'r', encoding='utf-8') as arquivo:
+    def load_preprocessing(self, size_test : float = 0.25) -> None:
+        with open("dataset/data.pre", 'r', encoding='utf-8') as arquivo:
             for linha in arquivo:
                 elementos = linha.strip().split('\t')
-                self.y_train.append(int(elementos[0]))
-                self.X_train.append(elementos[1:])
+                self.y.append(int(elementos[1])) #Ignora o nome do arquivo original que está na primeira posição
+                self.X.append(elementos[2:])
         
-        self.X_test = []
-        self.y_test = []
-        with open("dataset/test.pre", 'r', encoding='utf-8') as arquivo:
-            for linha in arquivo:
-                elementos = linha.strip().split('\t')
-                self.y_test.append(int(elementos[0]))
-                self.X_test.append(elementos[1:])
+        self._split_train_test(size_test)
         
       
-    def _init_portuguese_model(self):
+    def _init_portuguese_model(self) -> None:
         # Inicializar o modelo Spacy para o idioma Português
         self.nlp = spacy.load('pt_core_news_sm')
         self.spell = SpellChecker(language='pt')
+        
+        #Lemmatizando as stop-words
+        stopwords_portuguese = self.nlp.Defaults.stop_words #stop words
+        doc = self.nlp(" ".join(stopwords_portuguese)) #Lematiza as palavras
+
+        # Lematiza as stop words e remove as repetições
+        self.stopwords_portuguese_set = set()
+        for token in doc:
+            self.stopwords_portuguese_set.add(token.lemma_)
+        
+        #Adição de stopwords locais
+        self.stopwords_portuguese_set.add("paraíba")
+        self.stopwords_portuguese_set.add("pb")
         
         
     def _load(self) -> None:
@@ -78,9 +77,11 @@ class GpelTextDataset:
         cover_dir = 'dataset/cover'
         non_cover_dir = 'dataset/non-cover'
         
+        self.file_names = [] #Nome do arquivo de cada instância do dataset
         # Process files in the cover directory
         for filename in os.listdir(cover_dir):
             if filename.endswith('.txt'):
+                self.file_names.append(filename)
                 file_path = os.path.join(cover_dir, filename)
                 #print(file_path)
                 with open(file_path, 'r', encoding="ISO-8859-1", errors="ignore") as file:
@@ -92,6 +93,7 @@ class GpelTextDataset:
         #Process files in the non-cover directory
         for filename in os.listdir(non_cover_dir):
             if filename.endswith('.txt'):
+                self.file_names.append(filename)
                 file_path = os.path.join(non_cover_dir, filename)
                 #print(file_path)
                 with open(file_path, 'r', encoding="ISO-8859-1", errors="ignore") as file:
@@ -157,16 +159,14 @@ class GpelTextDataset:
         '''
         self._init_portuguese_model()
         
-        # Aplicar o processamento em cada documento em X_train
-        self.X_train = [self.process_text(doc) for doc in self.X_train]
-
-        # Aplicar o processamento em cada documento em X_test
-        self.X_test = [self.process_text(doc) for doc in self.X_test]
+        # Aplicar o processamento em cada documento de X
+        self.X = [self.process_text(doc) for doc in self.X]
 
 
-    def process_text(self, text):
+    def process_text(self, text : str) -> Iterable[str]:
         print("Processando documento " + str(self.count))
         self.count += 1
+        
         # 0. Colocar todos os caracteres para minúsculo
         text_lower = text.lower()
         #print(text_lower)
@@ -187,41 +187,31 @@ class GpelTextDataset:
                                                             or token.pos_ == 'PRON' #Pronome
                                                             or token.pos_ == 'VERB'] #Verbo
         #print(lemmatized_words)
-
+        
         if len(lemmatized_words) == 0 :
             return []
         #print(lemmatized_words)
         #print("\n\n\n")
         
         # 3. Correção ortográfica e remoção da acentuação
-        correc = self.spell.correction(' '.join(lemmatized_words))
-        if(correc == None):
-            return []
+        unknown_words = self.spell.unknown(lemmatized_words)
+        corrected_words = []
+        for word in lemmatized_words:
+            if word in unknown_words: #unknown_words é um set. pesquisa eficiente
+                correc = self.spell.correction(word)
+                if(correc != None):
+                    doc = self.nlp(correc) # Obter o lemma da palavra corrigida
+                    corrected_words.append(doc[0].lemma_)
+            else:
+                corrected_words.append(word)
         
         #Remove palavras que não contenham dígitos e com apenas uma letra
-        batch_correction = [word for word in correc.split() if word.isalpha() and len(word) > 1]
+        corrected_words = [word for word in corrected_words if word.isalpha() and len(word) > 1]
         
-        #Remove acentuação
-        corrected_words = [unidecode(word) for word in batch_correction]
-        #print("Correção e remoção da acentuação")
-        #print(corrected_words)
-        #print("\n\n")
+        
 
-        # 4. Remoção das stop words lematizadas e sem acentuação
-        #Lemmatizando e removendo acentuação das stop-words
-        stopwords_portuguese = self.nlp.Defaults.stop_words #stop words
-        doc = self.nlp(" ".join(stopwords_portuguese)) #Lematiza as palavras
-
-        # Lematiza as stop words e remove as repetições
-        stopwords_portuguese_set = set()
-        for token in doc:
-            stopwords_portuguese_set.add(unidecode(token.lemma_))
-        
-        #Adição de stopwords locais
-        stopwords_portuguese_set.add("paraiba")
-        stopwords_portuguese_set.add("pb")
-        
-        final_result = [word for word in corrected_words if word not in stopwords_portuguese_set]
+        # 4. Remoção das stop words lematizadas
+        final_result = [word for word in corrected_words if word not in self.stopwords_portuguese_set]
         
         #print("Resultado final sem números")
         print(final_result)

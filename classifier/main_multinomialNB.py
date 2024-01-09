@@ -46,7 +46,7 @@ def vectorization(dataset : GpelTextDataset):
 
 if __name__ == "__main__":
     dataset = GpelTextDataset()
-    dataset.load_train_test()
+    dataset.load_preprocessing()
    
     X_train, y_train, X_test, y_test = vectorization(dataset) 
    
