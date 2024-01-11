@@ -4,6 +4,7 @@ spell = SpellChecker(language='pt')
 
 texto = "eaa vmorunsa sisgee espato saa ein re aga ernsnraro"
 
+print(spell.correction("papel"))
 
 print(texto.split())
 palavras_erradas = spell.unknown(texto.split())
