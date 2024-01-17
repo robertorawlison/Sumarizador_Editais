@@ -9,6 +9,8 @@ classifier/__pycache__/*
 classifier/dataset/cover/*
 classifier/dataset/non-cover/*
 temp/*
+data/*
 relatorio_documentos.docx
 temp.docx
+temp.pdf
 database.db
