@@ -4,10 +4,11 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.pipeline import Pipeline
-from sklearn import metrics, classification_report
+from sklearn import metrics
+from sklearn.metrics import classification_report
 
 from gpel_text_dataset import GpelTextDataset
-from gpel_text_classfier import GpelTexClassifier
+from gpel_text_classifier import GpelTexClassifier
 
 
 if __name__ == "__main__":
@@ -23,14 +24,15 @@ if __name__ == "__main__":
     
     # Definir a grade de hiperparâmetros a serem testados
     parametros_grid = {
-        'tfidf__max_features': [5000, 10000, None],
+        'tfidf__max_features': [100, 150, 250, 350, None],
         'clf__alpha': [0.1, 0.5, 1.0]
     }
     
     # Inicializar a busca em grade com validação cruzada
-    grid_search = GridSearchCV(pipeline, parametros_grid, cv=5, scoring='accuracy', n_jobs=-1)
+    grid_search = GridSearchCV(pipeline, parametros_grid, cv=5, scoring='accuracy', n_jobs=-1, verbose=2)
     
     # Executar a busca em grade no conjunto de treinamento
+    print(dataset.X_train[0])
     grid_search.fit(dataset.X_train, dataset.y_train)
     
     # Exibir os melhores hiperparâmetros encontrados

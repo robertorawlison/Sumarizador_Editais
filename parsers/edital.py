@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import re
-from datetime import datetime
 from .summarizer import Summarizer
 
 class EditalSummarizer(Summarizer):
@@ -11,11 +10,6 @@ class EditalSummarizer(Summarizer):
         tipo = self._encontrar_tipo(text)
 
         date = Summarizer._encontra_data(self, text)
-
-        if date == datetime.max:
-            data = "||Desconhecido||"
-        else:
-            data = date.strftime("%d/%m/%Y")
 
         summary = f"Edital de licitação na modalidade  {tipo[0]}, cujo objeto trata-se da {objetos[0]}, com valor previsto de {valor} e prazo de execução previsto de {prazo}"
         return (summary, date) 

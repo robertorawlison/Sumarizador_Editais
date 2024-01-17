@@ -7,7 +7,7 @@ class Summarizer:
     def summarize(self, text : str) -> str:
         return ""
 
-    def convert_to_datetime(self,date_str):
+    def convert_to_datetime(self, date_str) -> datetime:
         
         locale.setlocale(locale.LC_TIME, 'pt_BR.utf8')
         
@@ -50,4 +50,4 @@ class Summarizer:
             return self.convert_to_datetime(aparicoes_d[0])
         else:
             return datetime.max
-
+        

@@ -13,8 +13,11 @@ class DocumentModel(BaseModel):
     type = CharField()
     file_bytes = BlobField()
     num_pages = IntegerField()
+    first_page = IntegerField()
+    last_page = IntegerField()
     
     summary = CharField(null=True)
+    text = CharField(null=True)
     date = DateTimeField(null=True)
 
     @classmethod
@@ -30,7 +33,10 @@ class DocumentModel(BaseModel):
             image = image_bytes,
             type = doc.type['label'],
             summary = doc.summary,
+            text = doc.text,
             num_pages = doc.num_pages,
+            first_page = doc.first_page,
+            last_page = doc.last_page,
             date = doc.date,
             file_bytes = doc.file_bytes
         )
@@ -50,12 +56,15 @@ class DocumentModel(BaseModel):
     @classmethod
     def update_summary_date(cls, doc):
         # Atualizando campo summary, date
-        update = DocumentModel.update(summary=doc.summary, date=doc.date)
+        if(doc.db_instance.text == None):
+            update = DocumentModel.update(summary=doc.summary, date=doc.date, text=doc.text)
+        else:
+            update = DocumentModel.update(summary=doc.summary, date=doc.date)
         update.where(DocumentModel.id == doc.db_instance.id).execute()
 
     @classmethod
     def update_summary(cls, doc):
-        # Atualizando campo summary, date
+        # Atualizando campo summary
         update = DocumentModel.update(summary=doc.summary)
         update.where(DocumentModel.id == doc.db_instance.id).execute()
 

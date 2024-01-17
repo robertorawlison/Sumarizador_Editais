@@ -2,15 +2,17 @@
 """
 Class que representa uma perícia documental realizada por um perito
 """
+from typing import Iterable
 from datetime import datetime
 
 from .forensic_model import ForensicModel
 from .appendix import Appendix
+from .document import Document
 
 class Forensic:
     def __init__(self, forensic_db:ForensicModel = None):
         if(forensic_db == None):
-            self._appendices: list = []  # Lista de apensos
+            self._appendices: Iterable[Appendix] = []  # Lista de apensos
             self._description: str = "Perícia policial"  # Descrição da perícia
             self._author: str = "nome do perito"  # Identificação do perito autor da perícia
             self._date: datetime = datetime.now()  # Data e hora de criação da perícia
@@ -21,6 +23,12 @@ class Forensic:
             self._date = forensic_db.date
             self.db_instance = forensic_db
             self._appendices = []
+    
+    def getAllDocs(self) -> Iterable[Document]:
+        documents : Iterable[Document] = [] 
+        for appendix in self.appendices:
+            documents.extend(appendix.documents)
+        return documents
     
     def to_string(self) -> str:       
         str_forensic = "Descrição: " + self._description + "\n"
@@ -37,22 +45,6 @@ class Forensic:
         self._appendices.append(append)
         self.db_instance.appendices.add([append.db_instance])
         self.db_instance.save()
-    
-    # def delete_db_instance(self):
-    #     print("Entrou del")
-    #     for append_db in self.db_instance.appendices:
-    #         for doc_db in append_db.documents:
-    #             append_db.documents.remove(doc_db)
-    #             print("del doc")
-    #         self.db_instance.appendices.remove(append_db)
-    #         print("del append")
-    #     self.db_instance.delete_instance()
-    #     print("saiu del")
-        
-        #for append in self.appendices:
-        #    print("del append")
-        #    append.delete_db_instance()
-        #ForensicModel.delete_db_instance(self)
         
     def update_db_description(self):
         ForensicModel.update_description(self)
@@ -63,11 +55,11 @@ class Forensic:
 
     # Métodos get e set para os campos da classe
     @property
-    def appendices(self) -> list:
+    def appendices(self) -> Iterable[Appendix]:
         return self._appendices
 
     @appendices.setter
-    def appendices(self, value: list) -> None:
+    def appendices(self, value: Iterable[Appendix]) -> None:
         self._appendices = value
 
     @property

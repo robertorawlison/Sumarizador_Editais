@@ -9,7 +9,11 @@ from .button import ClassifieButton, ReportButton, CatalogButton
 class ForensicFrame(tk.Frame):
     '''Widget personalizado para criar ou editar uma perícia na interface gráfica
     '''    
-    def __init__(self, root : tk.Frame, width : int, forensic : Forensic, task_manager):
+    def __init__(self, 
+                 root : tk.Frame, 
+                 width : int, 
+                 forensic : Forensic, 
+                 task_manager):
         super().__init__(root, width=width, bg="white", 
                          highlightbackground="black", highlightthickness=1)  
         self.forensic = forensic
@@ -26,7 +30,7 @@ class ForensicFrame(tk.Frame):
         image_forensic = tk.PhotoImage(file="imagens/forensic2.png")
         self.label_forensic = tk.Label(self.top_frame, image=image_forensic, bg="white")
         self.label_forensic.image = image_forensic 
-        self.label_forensic.pack(side="left")
+        self.label_forensic.pack(side="left", padx=20, pady=20)
         
         self._count_documents()
         self._create_description()
@@ -43,21 +47,30 @@ class ForensicFrame(tk.Frame):
         label = tk.Label(description_frame, text="Descrição:", font=self.font, bg="white")
         label.grid(row=0, column=0, padx=5, pady=5)#, sticky="e")
         
-        self.description_entry = tk.Entry(description_frame, font=self.font, highlightbackground="black", highlightthickness=1)
+        self.description_entry = tk.Entry(description_frame, 
+                                          font=self.font, 
+                                          highlightbackground="black", highlightthickness=1)
         self.description_entry.insert(0, self.forensic.description)
         self.description_entry.grid(row=0, column=1, padx=5, pady=5)
         
+        #Eventos de perde foco, apertar enter ou tab
         self.description_entry.bind("<FocusOut>", self.on_description_entry_change)
+        self.description_entry.bind("<Enter>", self.on_description_entry_change)
+        self.description_entry.bind("<Return>", self.on_description_entry_change)
         
         #Campo author
         label = tk.Label(description_frame, text="Perito:", font=self.font, bg="white")
         label.grid(row=1, column=0, padx=5, pady=5, sticky="e")
         
-        self.author_entry = tk.Entry(description_frame, font=self.font, highlightbackground="black", highlightthickness=1)
+        self.author_entry = tk.Entry(description_frame, 
+                                     font=self.font, 
+                                     highlightbackground="black", highlightthickness=1)
         self.author_entry.insert(0, self.forensic.author)
         self.author_entry.grid(row=1, column=1, padx=5, pady=5)
         
         self.author_entry.bind("<FocusOut>", self.on_author_entry_change)
+        self.author_entry.bind("<Enter>", self.on_author_entry_change)
+        self.author_entry.bind("<Return>", self.on_author_entry_change)
         
         #Campo date
         label = tk.Label(description_frame, text="Data-hora:", font=self.font, bg="white")

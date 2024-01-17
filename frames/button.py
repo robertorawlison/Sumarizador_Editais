@@ -62,7 +62,7 @@ class AddButton(Button):
     def __init__(self, master_frame : tk.Frame, on_click):
         super().__init__(master_frame, 
                      img_file_name = "imagens/add.png",
-                     text = "Novos docs.",
+                     text = "Novo apenso",
                      on_click = on_click)
                 
 

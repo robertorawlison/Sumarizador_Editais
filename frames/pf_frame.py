@@ -5,7 +5,7 @@ class PFFrame(tk.Frame):
     '''Frame personalizado com a imagem da PF como plano de fundo
     '''
     def __init__(self, frame_master : tk.Frame, shift_y : int):
-        image_pf = tk.PhotoImage(file="imagens/pf-cinza.png")
+        image_pf = tk.PhotoImage(file="imagens/aavia.png")
         super().__init__(frame_master, width=(frame_master.winfo_reqwidth() - shift_y), 
                          height=frame_master.winfo_reqheight(), bg="white")
         

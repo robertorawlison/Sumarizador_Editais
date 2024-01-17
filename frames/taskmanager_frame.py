@@ -1,19 +1,22 @@
 # -*- coding: utf-8 -*-
-
+from typing import Iterable
 import tkinter as tk
 from tkinter import filedialog, messagebox
 import tkinter.font as tkFont
 import threading
-from tools import print_word, fill_summary_numpages_from_pdf
+from tools import print_word, PDFReader
 
-from .feedback_window import FeedbackWindow 
+from .fill_pdf_summary import fill_summary_from_pdf
+from .feedback_scan_docs import FeedbackScanDocs
+from .feedback_scan_appendix import FeedbackScanAppendix  
 from .catalog_frame import CatalogFrame 
 from .classifier_frame import ClassifierFrame
 from .pf_frame import PFFrame
 from .forensic_frame import ForensicFrame
 from .list_forensic_frame import ListForensicFrame
-from .button import CreateButton, OpenButton, AddButton, CatalogButton, ReportButton
+from .button import CreateButton, OpenButton, AddButton, CatalogButton, ReportButton, ClassifieButton
 from entity import Forensic, Appendix, Persistence, TypeDocument, Document
+from classifier import CoverClassifier 
 
 class TaskManagerFrame(tk.Frame):
     '''Widget personalizado para representar a interface de gerenciamento das tarefas do sistema.
@@ -42,7 +45,8 @@ class TaskManagerFrame(tk.Frame):
         self.logo_image = None
         self.buttons_frame = None
         
-        self._create_logo_frame()
+        #self._create_logo_frame()
+        self._create_buttons_frame()
         
         #Persistência da perícia
         self.forensic = None
@@ -105,7 +109,7 @@ class TaskManagerFrame(tk.Frame):
                                            font=tkFont.Font(family="Arial", size=18))
             self.pipeline_label.grid(row=0, column=1)
             
-            self.add_button = AddButton(self.buttons_frame, self.click_add)
+            self.add_button = AddButton(self.buttons_frame, self.click_add_appendix)
             self.add_button.grid(row=0, column=2, pady=10, padx=10)
             self.add_button.disactive()
             
@@ -114,17 +118,25 @@ class TaskManagerFrame(tk.Frame):
             label_image.imagem = next_image
             label_image.grid(row=0, column=3)#, pady=10, padx=10)
             
+            self.classfie_button = ClassifieButton(self.buttons_frame, self.click_classifier)
+            self.classfie_button.grid(row=0, column=4, pady=10, padx=10)
+            self.classfie_button.disactive()
+            
+            label_image = tk.Label(self.buttons_frame, image=next_image, bg="grey70")
+            label_image.imagem = next_image
+            label_image.grid(row=0, column=5)
+            
             self.catalog_button = CatalogButton(self.buttons_frame, self.click_catalog)
-            self.catalog_button.grid(row=0, column=4, pady=10, padx=10)
+            self.catalog_button.grid(row=0, column=6, pady=10, padx=10)
             self.catalog_button.disactive()
             
             label_image = tk.Label(self.buttons_frame, image=next_image, bg="grey70")
             label_image.imagem = next_image
-            label_image.grid(row=0, column=5)#, pady=10, padx=10)
+            label_image.grid(row=0, column=7)#, pady=10, padx=10)
             
             
             self.report_button = ReportButton(self.buttons_frame, self.click_report)
-            self.report_button.grid(row=0, column=6, pady=10, padx=10)
+            self.report_button.grid(row=0, column=8, pady=10, padx=10)
             self.report_button.disactive()
     
     def _clear_taskmanager_frame(self):
@@ -142,26 +154,40 @@ class TaskManagerFrame(tk.Frame):
         
         self.pipeline_label.config(text="Editando a perícia")
         self.add_button.active()
+        self.classfie_button.disactive()
+        self.catalog_button.disactive()
+        self.report_button.disactive()
+        
+    def _add_buttons(self):
+        num_image = tk.PhotoImage(file="imagens/dois.png")
+        self.num_label.configure(image = num_image)
+        self.num_label.imagem = num_image
+        
+        self.pipeline_label.config(text="Cortando apenso")
+        self.add_button.disactive()
+        self.classfie_button.active()
         self.catalog_button.disactive()
         self.report_button.disactive()
     
     def _classifier_buttons(self):
-        num_image = tk.PhotoImage(file="imagens/dois.png")
+        num_image = tk.PhotoImage(file="imagens/tres.png")
         self.num_label.configure(image = num_image)
         self.num_label.imagem = num_image
         
         self.pipeline_label.config(text="Classificando documentos")
         self.add_button.disactive()
+        self.classfie_button.disactive()
         self.catalog_button.active()
         self.report_button.disactive()
     
     def _catalog_buttons(self):
-        num_image = tk.PhotoImage(file="imagens/tres.png")
+        num_image = tk.PhotoImage(file="imagens/quatro.png")
         self.num_label.configure(image = num_image)
         self.num_label.imagem = num_image
         
         self.pipeline_label.config(text="Sumarizando documentos")
         self.add_button.disactive()
+        self.classfie_button.disactive()
         self.catalog_button.disactive()
         self.report_button.active()
         
@@ -195,32 +221,23 @@ class TaskManagerFrame(tk.Frame):
         self.lff.pack()
         
     
-    def click_report(self):
-        if self.cf == None :
-            documents = self.forensic.appendices[0].documents
-        else:
-            documents = self.cf.checked_documents()
-        #Gerando a versão word do catálogo de documentos periciais
-        print_word(documents)
-            
                    
     def click_create(self):
         foren = Forensic()
-        append = Appendix(name="apenso 1")
-        foren.add(append)
-        
         self.open_forensic(foren)
     
     
-    def open_forensic(self, foren : Forensic):
+    def open_forensic(self, forensic : Forensic, append_added : bool = False):
         '''Tela de exibição dos dados de um Forensic. Esta função é chamada para abrir 
         uma nova perícia ou para abrir na tela de listagem das perícias do BD.'''
-        self.forensic = None
-        self.forensic = foren
+        self.forensic = forensic
         self._clear_frames()
         self._clear_taskmanager_frame
         self._create_buttons_frame()
-        self._forensic_buttons()
+        if(append_added == True):
+            self._add_buttons()
+        else:
+            self._forensic_buttons()
         
         self.ff = ForensicFrame(self.master_frame, 
                                 width=self.current_task_frame.winfo_reqwidth(), 
@@ -229,8 +246,73 @@ class TaskManagerFrame(tk.Frame):
         self.ff.pack()
         
         
+    def click_add_appendix(self):
+        #Abre a janela de seleção de arquivos
+        file_name = filedialog.askopenfilename(
+            initialdir="./",
+            title="Selecione Arquivos",
+            filetypes=(("Arquivos PDF", "*.pdf"),)
+        )
+
+        if file_name:
+            num_append = len(self.forensic.appendices)
+            append = Appendix(name=f'apenso {num_append+1}',
+                              file_name = file_name)
+            self.forensic.add(append)
+            
+            th = threading.Thread(target=self.scan_appendix, args=(append,))
+            th.start()
+            
+    def scan_appendix(self, append : Appendix):
+        pdf_reader = PDFReader(append.file_name)
+        fb = FeedbackScanAppendix(self.master_frame, pdf_reader.getNumPages())
+        pdf_reader.setFeedBack(fb) 
+        classifier = CoverClassifier()
+        
+        doc_text = None
+        _first_page = _last_page = 0
+        for page_num in range(pdf_reader.getNumPages()):
+            fb.in_ocr()
+            _text = pdf_reader.getPageText(page_num)
+            fb.in_spellchecker()
+            if(classifier.isCover(_text)):
+                print("\nCAAPPAAAA\n")
+                _last_page = page_num #página anterior
+                if(doc_text != None):
+                    doc = Document(appendix = append,
+                                   file_name = f'doc{len(append.documents) + 1}.pdf', 
+                                   file_bytes = pdf_reader.splitFile(_first_page - 1, _last_page - 1), 
+                                   image = pdf_reader.getPageImage(_first_page - 1),
+                                   text = doc_text, 
+                                   first_page = _first_page,
+                                   last_page = _last_page)
+                    append.add(doc)
+                    fb.find_doc()
                 
-    def click_add(self):
+                doc_text = _text
+                _first_page = page_num + 1
+            else: #Texto não é uma capa
+                doc_text += _text
+        #Pega o ultimo documento do apenso.
+        _last_page = pdf_reader.getNumPages()
+        doc = Document(appendix = append,
+                       file_name = f'doc{len(append.documents) + 1}.pdf', 
+                       file_bytes = pdf_reader.splitFile(_first_page - 1, _last_page - 1), 
+                       image = pdf_reader.getPageImage(_first_page - 1),
+                       text = doc_text, 
+                       first_page = _first_page,
+                       last_page = _last_page)
+        append.add(doc)
+        fb.find_doc()
+        
+        fb.destroy()
+        pdf_reader.close()
+
+        self.open_forensic(forensic = self.forensic,
+                           append_added = True)
+            
+    
+    def click_add_docs(self):
         #Abre a janela de seleção de arquivos
         file_names = filedialog.askopenfilenames(
             initialdir="./",
@@ -241,7 +323,8 @@ class TaskManagerFrame(tk.Frame):
             self.click_classifier(file_names)
             
     def _delete_classifier_doc(self, doc : Document):
-        self.forensic.appendices[0].documents.remove(doc)
+        appendix = doc.appendix
+        appendix.documents.remove(doc)
         
         self._clear_frames()
         self._classifier_buttons()
@@ -255,57 +338,19 @@ class TaskManagerFrame(tk.Frame):
     
     
     def click_classifier(self, file_names = []):
-            self._clear_frames()
-            self._classifier_buttons()
-            
-            self.class_f = ClassifierFrame(self.master_frame,  
-                                           width = self.current_task_frame.winfo_reqwidth(), 
-                                           forensic = self.forensic,
-                                           command_del = self._delete_classifier_doc)
-            self.class_f.pack()
-            self.class_f.create_documents(file_names)
-            self.class_f.draw()
-            
-            
-
-    def minha_thread(self, documents : list):
-        fw = FeedbackWindow(self.master_frame, len( documents))
-        fw.center()
-        
-        #Pegando o sumário e o número de folhas de cada documento
-        docs = []
-        for doc in documents:
-            docs.append(doc)
-            
-            if(doc.summary == ""): #Não sumarizou seu conteúdo
-                fill_summary_numpages_from_pdf(doc, fw)
-                doc.update_db_summary_date()
-                self.cf.add(docs)
-                docs = []
-                
-            fw.update_count_docs()
- 
-        if(len(docs) > 0):
-            self.cf.add(docs)
-        fw.destroy()
-        
-    def _delete_catalog_doc(self, doc : Document):
-        self.forensic.appendices[0].documents.remove(doc)
-        
         self._clear_frames()
-        self._catalog_buttons()
+        self._classifier_buttons()
         
-        largura_tela = self.master_frame.winfo_screenwidth()
-        self.cf = CatalogFrame(self.master_frame, 
-                               width=largura_tela,
-                               command_del = self._delete_catalog_doc)
-        self.cf.pack()
-        
-        self.cf.add(self.forensic.appendices[0].documents)
-        
-
+        self.class_f = ClassifierFrame(self.master_frame,  
+                                       width = self.current_task_frame.winfo_reqwidth(), 
+                                       forensic = self.forensic,
+                                       command_del = self._delete_classifier_doc)
+        self.class_f.pack()
+        self.class_f.create_documents(file_names)
+        self.class_f.draw()
+            
     def click_catalog(self):
-        docs = self.forensic.appendices[0].documents
+        docs : Iterable[Document] = self.forensic.getAllDocs()
         num_non_class = 0
         for doc in docs:
             if doc.type == TypeDocument.NON_CLASS :
@@ -320,8 +365,55 @@ class TaskManagerFrame(tk.Frame):
                                    command_del = self._delete_catalog_doc)
             self.cf.pack()
             
-            th = threading.Thread(target=self.minha_thread, args=(docs,))
+            th = threading.Thread(target=self.thread_scan_docs, args=(docs,))
             th.start()
         else:
-            msg_erro = f'Existe 1 documento não classificado!' if num_non_class == 1 else f'Existem {num_non_class} documentos não classificados!'
+            msg_erro = 'Existe 1 documento não classificado!' if num_non_class == 1 else f'Existem {num_non_class} documentos não classificados!'
             messagebox.showerror("Documentos não podem ser sumarizados", msg_erro)
+                
+
+    
+    def thread_scan_docs(self, 
+                         documents : Iterable[Document]):
+        
+        fw = FeedbackScanDocs(self.master_frame, len( documents))
+        #Pegando o sumário e a data
+        docs : Iterable[Document] = []
+        for doc in documents:
+            docs.append(doc)
+            
+            if(doc.summary == ""): #Não sumarizou seu conteúdo
+                fill_summary_from_pdf(doc, fw)
+                doc.update_db_summary_date()
+                self.cf.add(docs)
+                docs = []
+                
+            fw.update_count_docs()
+ 
+        if(len(docs) > 0):
+            self.cf.add(docs)
+        fw.destroy()
+        
+    def _delete_catalog_doc(self, doc : Document):
+        appendix = doc.appendix
+        appendix.documents.remove(doc)
+        
+        self._clear_frames()
+        self._catalog_buttons()
+        
+        largura_tela = self.master_frame.winfo_screenwidth()
+        self.cf = CatalogFrame(self.master_frame, 
+                               width=largura_tela,
+                               command_del = self._delete_catalog_doc)
+        self.cf.pack()
+        
+        self.cf.add(self.forensic.getAllDocs())
+        
+            
+    def click_report(self):
+        if self.cf == None :
+            documents : Iterable[Document] = self.forensic.getAllDocs()
+        else:
+            documents : Iterable[Document] = self.cf.checked_documents()
+        #Gerando a versão word do catálogo de documentos periciais
+        print_word(documents)

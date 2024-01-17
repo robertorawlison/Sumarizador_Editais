@@ -1,28 +1,40 @@
 # -*- coding: utf-8 -*-
 from PIL import Image
 import io, subprocess, os
-import fitz
 from datetime import datetime
 
 from .document_model import DocumentModel
+from tools import PDFReader
 
 class Document:
     '''Representa os dados dos documentos periciais avaliados
     '''
-    def __init__(self, file_name:str = None, 
-                 file_bytes:bytes = None, image:Image = None, 
-                 num_pages:int = None, doc_db:DocumentModel = None):
+    def __init__(self,
+                 appendix,
+                 file_name:str = None, 
+                 file_bytes:bytes = None, 
+                 image:Image = None,
+                 text:str = None, 
+                 first_page:int = None,
+                 last_page:int = None,
+                 doc_db:DocumentModel = None):
+    
+        self.appendix = appendix #Objeto apenso original do documento
         
         if(doc_db == None):
             self._file_name: str = file_name  # Nome do arquivo contendo o documento
             self._image : Image = image #Imagem na memória
-            self._num_pages : int = 0  # Número de páginas
+            self._num_pages : int = last_page - first_page + 1  # Número de páginas
             self._file_bytes : bytes = file_bytes #Conteúdo em bytes do documento
             self._type : dict = TypeDocument.NON_CLASS #Tipo do documento
             self._summary : str = ""  # Resumo do documento
             self._date : datetime = None #Data de emissão do documento
+            self._text : str = text #Texto original do documento
+            self._first_page : int = first_page #Número da primeira página do documento no apenso de origem
+            self._last_page : int = last_page #Número da última página do documento no apenso de origem
             
-            self._extract_file_metadata()
+            if self._image == None:
+                self._extract_file_metadata()
             # Criando instância da classe DocumentModel e inserindo no banco de dados
             self.db_instance = DocumentModel.create_db_instance(self) #Instância no database
             
@@ -35,6 +47,9 @@ class Document:
             self._num_pages = doc_db.num_pages 
             self._date : datetime = doc_db.date
             self._file_bytes = doc_db.file_bytes 
+            self._text = doc_db.text
+            self._first_page = doc_db.first_page
+            self._last_page = doc_db.last_page
             self.db_instance = doc_db
             
     def delete_db_instance(self):
@@ -78,27 +93,20 @@ class Document:
         with open(self._file_name, "rb") as file:
            self._file_bytes = file.read()
         
-        #Captura a imagem da primeira página do pdf
-        pdf_file = fitz.open(self._file_name)
-        self.num_pages = pdf_file.page_count
-        
-        # Configurar a escala para 90x130 pixels
-        capa = pdf_file[0]
-        escala_x = 90 / capa.rect.width
-        escala_y = 130 / capa.rect.height
-
-        # Configurar a matriz de transformação para ajustar a escala
-        M = fitz.Matrix(escala_x, escala_y)
-        pixmap = capa.get_pixmap(matrix=M)
-        self.image = Image.frombytes("RGB", [pixmap.width, pixmap.height], pixmap.samples)
+        #Captura a imagem da primeira página e o número de páginas do pdf
+        pdf_reader = PDFReader(self._file_name)
+        self.num_pages = pdf_reader.getNumPages()
+        self.first_page = 1
+        self.last_page = self.num_pages
+        self.image = pdf_reader.getPageImage(0) #Capa
     
     def get_str_num_pages(self) -> str:
         #Texto do número de folhas
-        num_p_str = str(self.num_pages)
+        num_p_str = "Em " + str(self.num_pages)
         if(self.num_pages > 1):
-            num_p_str += " fls."
+            num_p_str += " fls. numeradas de " + str(self.first_page) + " a " + str(self.last_page)
         else:
-            num_p_str += " fl."
+            num_p_str += " fl. na página " + str(self.first_page)
         return num_p_str
     
     def get_str_date(self) -> str:
@@ -133,6 +141,14 @@ class Document:
     @summary.setter
     def summary(self, value : str):
         self._summary = value
+    
+    @property
+    def text(self) -> str:
+        return self._text
+
+    @text.setter
+    def text(self, value : str):
+        self._text = value
 
     @property
     def num_pages(self) -> int:
@@ -141,6 +157,22 @@ class Document:
     @num_pages.setter
     def num_pages(self, value : int):
         self._num_pages = value
+        
+    @property
+    def first_page(self) -> int:
+        return self._first_page
+
+    @first_page.setter
+    def first_page(self, value : int):
+        self._first_page = value
+    
+    @property
+    def last_page(self) -> int:
+        return self._last_page
+
+    @last_page.setter
+    def last_page(self, value : int):
+        self._last_page = value
         
     @property
     def type(self) -> dict:

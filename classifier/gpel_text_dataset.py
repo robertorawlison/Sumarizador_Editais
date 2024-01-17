@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from typing import Iterable
 import os
 from sklearn.model_selection import train_test_split
 
@@ -9,14 +10,14 @@ class GpelTextDataset:
     Classe que manipula os dados de texto do datset GPEL
     '''
     def __init__(self):
-        self.X : list = []
-        self.y : list = []
+        self.X : Iterable[str] = []
+        self.y : Iterable[str] = []
         
-        self.X_train : list = None
-        self.y_train : list = None
+        self.X_train : Iterable[str] = None
+        self.y_train : Iterable[str] = None
         
-        self.X_test : list = None
-        self.y_test : list = None
+        self.X_test : Iterable[str] = None
+        self.y_test : Iterable[str] = None
         
                 
     def preprocessing(self) -> None:
@@ -32,11 +33,11 @@ class GpelTextDataset:
         
     
     def load_preprocessing(self, size_test : float = 0.25) -> None:
-        with open("dataset/data.pre", 'r', encoding='utf-8') as arquivo:
+        with open("dataset/data.pre", 'r', encoding="ISO-8859-1", errors="ignore") as arquivo:
             for linha in arquivo:
                 elementos = linha.strip().split('\t')
                 self.y.append(int(elementos[1])) #Ignora o nome do arquivo original que está na primeira posição
-                self.X.append(elementos[2:])
+                self.X.append(' '.join(elementos[2:]))
         
         self._split_train_test(size_test)
         

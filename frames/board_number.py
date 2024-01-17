@@ -15,9 +15,15 @@ class BoardNumber(tk.Frame):
     Representa o número e sua descrição associada para um relatório de composição de elementos
     """
 
-    def __init__(self, frame : tk.Frame, number : int,  type_board : int = TYPE_DOC, type_doc_id : int = -1, 
-                 total_number : int = 0, font_color : str = "black", 
-                 bg : str ="white", width : int = None, height : int = None):
+    def __init__(self, frame : tk.Frame,
+                 number : int,  
+                 type_board : int = TYPE_DOC, 
+                 type_doc_id : int = -1, 
+                 total_number : int = 0, 
+                 font_color : str = "black", 
+                 bg : str ="white", 
+                 width : int = None, 
+                 height : int = None):
         
         super().__init__(frame, bg = bg)
         self.type = type

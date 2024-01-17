@@ -13,7 +13,8 @@ IMG_COL = 0
 TYPE_COL = 1
 SUMM_COL = 2
 DATE_COL = 3
-NUMP_COL = 4
+APPEND_COL = 4
+NUMP_COL = 5
 
 class CatalogLineFrame(LineFrame):
     '''Widget personalizado para representar uma linha do catálogo de documentos periciais na interface gráfica
@@ -23,11 +24,12 @@ class CatalogLineFrame(LineFrame):
         self.bg = bg
         
         L = frame_master.winfo_reqwidth()
-        num_cols = 5
-        col_widths = [math.floor(0.1 * L),
-                      math.floor(0.1 * L),
+        num_cols = 6
+        col_widths = [math.floor(0.09 * L),
+                      math.floor(0.08 * L),
                       math.floor(0.6 * L),
-                      math.floor(0.1 * L),
+                      math.floor(0.07 * L),
+                      math.floor(0.06 * L),
                       math.floor(0.1 * L)]
         super().__init__(frame_master, self.height, self.bg, num_cols, col_widths)
 
@@ -200,8 +202,12 @@ class DocumentFrame(CatalogLineFrame):
         button_img.pack(padx=5, pady=3)
         
         #Texto do tipo do documento
-        l_type = tk.Label(self.cell_frames[TYPE_COL], text=self.document.type['label'], font=self.font, justify="center",  
-                          wraplength=self.cell_frames[TYPE_COL].winfo_reqwidth(), bg=self.bg)
+        l_type = tk.Label(self.cell_frames[TYPE_COL], 
+                          text=self.document.type['label'], 
+                          font=self.font, 
+                          justify="center",  
+                          wraplength=self.cell_frames[TYPE_COL].winfo_reqwidth(), 
+                          bg=self.bg)
         l_type.pack(pady=50)
         
         #Texto da descrição do documento
@@ -209,12 +215,18 @@ class DocumentFrame(CatalogLineFrame):
         self.cell_frames[SUMM_COL].bind("<Button-1>", self._show_text_doc)
         
         #Texto da data do documento
-        frame = tk.Frame(self.cell_frames[DATE_COL], bg=self.bg, highlightbackground="grey80", highlightthickness=1)
+        frame = tk.Frame(self.cell_frames[DATE_COL], 
+                         bg=self.bg, 
+                         highlightbackground="grey80", 
+                         highlightthickness=1)
         frame.pack(pady=40)
         
         
-        self.date_label = tk.Label(frame, text=self.document.get_str_date(), 
-                        font=self.font, justify="center",  bg=self.bg)
+        self.date_label = tk.Label(frame, 
+                                   text=self.document.get_str_date(), 
+                                   font=self.font, 
+                                   justify="center",  
+                                   bg=self.bg)
         self.date_label.pack()
         
         photo = ImageTk.PhotoImage(file="imagens/calendar.png")
@@ -223,10 +235,23 @@ class DocumentFrame(CatalogLineFrame):
         botao_cal.pack(padx=5)
         
         
+        #Texto do nome do apenso
+        apenso = tk.Label(self.cell_frames[APPEND_COL], 
+                          text=self.document.appendix.name, 
+                          wraplength=self.cell_frames[APPEND_COL].winfo_reqwidth(),
+                          font=self.font, 
+                          justify="center",  
+                          bg=self.bg)
+        apenso.pack(pady=60)
+        
         #Texto do número de folhas
-        numero = tk.Label(self.cell_frames[NUMP_COL], text=self.document.get_str_num_pages(), 
-                          font=self.font, justify="center",  bg=self.bg)
-        numero.pack(pady=60)
+        numero = tk.Label(self.cell_frames[NUMP_COL], 
+                          text=self.document.get_str_num_pages(), 
+                          wraplength=self.cell_frames[NUMP_COL].winfo_reqwidth(),
+                          font=self.font, 
+                          justify="center",  
+                          bg=self.bg)
+        numero.pack(pady=40)
         
         
 
@@ -245,7 +270,7 @@ class HeaderFrame(CatalogLineFrame):
         super().draw()
         
         #Rótulos do cabeçalho
-        texts = ["Doc.", "Tipo", "Descrição", "Data", "# folhas"]
+        texts = ["Doc.", "Tipo", "Descrição", "Data", "Arquivo", "# folhas"]
         
         for _id, text in zip(range(len(texts)), texts):
             self._draw_cell(_id, text)

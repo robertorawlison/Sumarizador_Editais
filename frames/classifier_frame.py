@@ -3,7 +3,7 @@ import tkinter as tk
 from tkinter import ttk
 
 from .classifier_document_frame import ClassifierDocumentFrame, ClassifierHeaderFrame
-from entity import Forensic, Document
+from entity import Forensic, Document, Appendix
 
 class ClassifierFrame(tk.Frame):
     '''Widget personalizado para a interface de classificação de documentos periciais na interface gráfica
@@ -43,9 +43,17 @@ class ClassifierFrame(tk.Frame):
         self.canvas.configure(scrollregion=self.canvas.bbox("all"))
         
     def create_documents(self, file_names : list) -> None:
-        for file_name in file_names:
-            doc = Document(file_name = file_name)
-            self.forensic.appendices[0].add(doc)
+        if(file_names != None) and len(file_names) > 0:
+            num_append = len(self.forensic.appendices)
+            appendix = Appendix(name=f'apenso {num_append+1} avulso',
+                              file_name = None)
+            self.forensic.append(appendix)
+            
+            for file_name in file_names:
+                doc = Document(appendix = appendix, 
+                               file_name = file_name)
+                appendix.add(doc)
+            
         
         
     def draw(self) -> None:
@@ -55,7 +63,7 @@ class ClassifierFrame(tk.Frame):
         chf = ClassifierHeaderFrame(self)
         chf.draw()
         
-        for doc in self.forensic.appendices[0].documents:
+        for doc in self.forensic.getAllDocs():
             cdf = ClassifierDocumentFrame(self, doc, self.command_del)
             cdf.draw()
             self.class_doc_frames.append(cdf)

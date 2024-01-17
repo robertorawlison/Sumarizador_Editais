@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+from typing import Iterable
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.table import WD_ALIGN_VERTICAL
@@ -20,21 +20,21 @@ def pixels_to_inches(pixels):
     return inches
 
 
-def print_word(documents : list) -> None:
+def print_word(documents : Iterable[Document]) -> None:
     
     # Criando um documento do Word
     docx_document = Document()
 
     # Adicionando uma tabela ao documento
-    table = docx_document.add_table(rows = len(documents) + 1, cols=5)
+    table = docx_document.add_table(rows = len(documents) + 1, cols=6)
     table.style = 'TableGrid'
 
     header_row = table.rows[0]
       
     # Adicionando cabeçalho à tabela
     # Ajustando a largura das colunas
-    text_header = ['Doc.', 'Tipo', 'Descrição', 'Data', '#Folhas']
-    inche_cells = [Inches(0.25), Inches(1), Inches(4.25), Inches(0.25), Inches(0.25)]
+    text_header = ['Doc.', 'Tipo', 'Descrição', 'Data', 'Arquivo', '#Folhas']
+    inche_cells = [Inches(0.25), Inches(0.6), Inches(5.4), Inches(0.13), Inches(0.18), Inches(0.25)]
     for cell, text, inche in zip(header_row.cells, text_header, inche_cells):
         cell.width = inche
         cell.text = text
@@ -73,7 +73,8 @@ def print_word(documents : list) -> None:
         row_cells[1].text = current_doc.type['label']
         row_cells[2].text = current_doc.summary
         row_cells[3].text = current_doc.get_str_date()
-        row_cells[4].text = current_doc.get_str_num_pages()
+        row_cells[4].text = current_doc.appendix.name
+        row_cells[5].text = current_doc.get_str_num_pages()
         
         for cell, inche in zip(row_cells, inche_cells):
             cell.width = inche
