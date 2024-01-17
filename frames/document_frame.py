@@ -27,10 +27,10 @@ class CatalogLineFrame(LineFrame):
         num_cols = 6
         col_widths = [math.floor(0.09 * L),
                       math.floor(0.08 * L),
-                      math.floor(0.6 * L),
+                      math.floor(0.58 * L),
+                      math.floor(0.1 * L),
                       math.floor(0.07 * L),
-                      math.floor(0.06 * L),
-                      math.floor(0.1 * L)]
+                      math.floor(0.08 * L)]
         super().__init__(frame_master, self.height, self.bg, num_cols, col_widths)
 
 class DocumentFrame(CatalogLineFrame):
