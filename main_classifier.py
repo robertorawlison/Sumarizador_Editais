@@ -3,12 +3,12 @@
 from sklearn.model_selection import GridSearchCV
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
+from sklearn.svm import SVC
 from sklearn.pipeline import Pipeline
 from sklearn import metrics
 from sklearn.metrics import classification_report
 
-from gpel_text_dataset import GpelTextDataset
-from gpel_text_classifier import GpelTexClassifier
+from classifier import GpelTextDataset,  GpelTextClassifier
 
 
 if __name__ == "__main__":
@@ -19,13 +19,16 @@ if __name__ == "__main__":
     # Criar um pipeline com TfidfVectorizer e MultinomialNB
     pipeline = Pipeline([
         ('tfidf', TfidfVectorizer()),
-        ('clf', MultinomialNB())
+        #('clf', MultinomialNB())#,
+        ('svm', SVC(kernel='rbf'))
     ])
     
     # Definir a grade de hiperparâmetros a serem testados
     parametros_grid = {
         'tfidf__max_features': [100, 150, 250, 350, None],
-        'clf__alpha': [0.1, 0.5, 1.0]
+        #'clf__alpha': [0.1, 0.5, 1.0]#,
+        'svm__C': [0.001, 0.01, 0.1, 1, 10, 100, 1000],
+        'svm__gamma': ['scale', 'auto', 0.001, 0.01, 0.1, 1, 10, 100]
     }
     
     # Inicializar a busca em grade com validação cruzada
@@ -43,7 +46,7 @@ if __name__ == "__main__":
     print(f'Melhor Pontuação de Acurácia: {grid_search.best_score_:.4f}')
     
     # Persistindo o classificador que melhor se ajustou aos dados
-    gtc = GpelTexClassifier()
+    gtc = GpelTextClassifier()
     gtc.classifier = grid_search.best_estimator_
     gtc.save()
     

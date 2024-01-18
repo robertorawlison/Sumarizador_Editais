@@ -2,7 +2,7 @@
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import classification_report
 
-from gpel_text_dataset import GpelTextDataset
+from classifier import GpelTextDataset
 
 
 def vectorization(dataset : GpelTextDataset):

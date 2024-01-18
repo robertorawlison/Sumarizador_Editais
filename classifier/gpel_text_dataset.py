@@ -3,7 +3,7 @@ from typing import Iterable
 import os
 from sklearn.model_selection import train_test_split
 
-from gpel_text_preprocessor import GpelTextPreprocessor
+from .gpel_text_preprocessor import GpelTextPreprocessor
 
 class GpelTextDataset:
     '''
@@ -25,7 +25,7 @@ class GpelTextDataset:
         self._preprocessing()
         
     def save_preprocessing(self)  -> None:
-        with open("dataset/data.pre", 'w') as arquivo:
+        with open("classifier/dataset/data.pre", 'w') as arquivo:
             for lista, label, filename in zip(self.X, self.y, self.file_names):
                 linha = filename + '\t' + str(label) + '\t'
                 linha += '\t'.join(lista)  # Use '\t' para separar os elementos, mas você pode escolher outro caractere
@@ -33,7 +33,7 @@ class GpelTextDataset:
         
     
     def load_preprocessing(self, size_test : float = 0.25) -> None:
-        with open("dataset/data.pre", 'r', encoding="ISO-8859-1", errors="ignore") as arquivo:
+        with open("classifier/dataset/data.pre", 'r', encoding="ISO-8859-1", errors="ignore") as arquivo:
             for linha in arquivo:
                 elementos = linha.strip().split('\t')
                 self.y.append(int(elementos[1])) #Ignora o nome do arquivo original que está na primeira posição
@@ -54,8 +54,8 @@ class GpelTextDataset:
         None.
 
         '''
-        cover_dir = 'dataset/cover'
-        non_cover_dir = 'dataset/non-cover'
+        cover_dir = 'classifier/dataset/cover'
+        non_cover_dir = 'classifier/dataset/non-cover'
         
         self.file_names = [] #Nome do arquivo de cada instância do dataset
         # Process files in the cover directory
@@ -125,7 +125,7 @@ class GpelTextDataset:
 
         for text, label, filename in zip(self.X, self.y, self.file_names):
             lista = preprocessor.process_text(text)
-            with open("dataset/data.pre", 'a') as arquivo:
+            with open("classifier/dataset/data.pre", 'a') as arquivo:
                 linha = filename + '\t' + str(label) + '\t'
                 linha += '\t'.join(lista)  # Use '\t' para separar os elementos, mas você pode escolher outro caractere
                 arquivo.write(f"{linha}\n")
