@@ -83,7 +83,7 @@ class CertidaoSummarizer(Summarizer):
         elif aparicoes2:
             #print("tipo 2")
             aparicoes2[0] += "dias"
-            return aparicoes2
+            return aparicoes2[0]
         elif aparicoes3:
            #print("tipo 3")
             return aparicoes3[0]
