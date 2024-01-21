@@ -31,13 +31,13 @@ class CertidaoSummarizer(Summarizer):
         correspondencia_certidao_regular = re.search(padrao_certidao_regular, total_text, re.IGNORECASE)
 
         if correspondencia_certidao_positiva and correspondencia_efetiva_negativa:  
-            return "Certidão positiva com efeito de negativa"
+            return "positiva com efeito de negativa"
 
         elif correspondencia_certidao_negativa:
-            return "Certidão negativa"
+            return "negativa"
         
         elif correspondencia_certidao_regular:
-            return "Certidão regular"
+            return "regular"
         
         else:
             return "||Tipo não encontrado||"
@@ -79,14 +79,14 @@ class CertidaoSummarizer(Summarizer):
 
         if aparicoes1:
             print("tipo 1")
-            return aparicoes1
+            return aparicoes1[0]
         elif aparicoes2:
             print("tipo 2")
-            return aparicoes2
+            return aparicoes2[0]
         elif aparicoes3:
             print("tipo 3")
-            return aparicoes3
+            return aparicoes3[0]
         elif aparicoes4:
             print("tipo 4")
-            return aparicoes4
+            return aparicoes4[0]
         
