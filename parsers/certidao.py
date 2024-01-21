@@ -78,17 +78,17 @@ class CertidaoSummarizer(Summarizer):
         aparicoes4 = re.findall(padrao_4, total_text, re.IGNORECASE|re.DOTALL|re.MULTILINE)
 
         if aparicoes1:
-            print("tipo 1")
+            #print("tipo 1")
             return aparicoes1[0]
         elif aparicoes2:
-            print("tipo 2")
+            #print("tipo 2")
             aparicoes2[0] += "dias"
             return aparicoes2
         elif aparicoes3:
-            print("tipo 3")
+           #print("tipo 3")
             return aparicoes3[0]
         elif aparicoes4:
-            print("tipo 4")
+            #print("tipo 4")
             return aparicoes4[0]
         else:
             return "||Validade não encontrada||"
