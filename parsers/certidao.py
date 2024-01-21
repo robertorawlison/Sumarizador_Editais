@@ -54,13 +54,18 @@ class CertidaoSummarizer(Summarizer):
 
 
         if aparicoes1:
+            aparicoes1 = aparicoes1[0].replace("\n", "").strip()
             return aparicoes1
         elif aparicoes2:
+            aparicoes2 = aparicoes2[0].replace("\n", "").strip()
             return aparicoes2
         elif aparicoes3:
+            aparicoes3 = aparicoes3[0].replace("\n", "").strip()
             return aparicoes3
         elif aparicoes4:
-            return aparicoes4.group(1) 
+            return aparicoes4.group(1)
+        else:
+            return "||Empresa não encontrada"
         
     def _encontra_validade(self, total_text):
         padrao_1 = r'(?:(?:vá|va)lida até|validade: ).*?(\d{2}/\d{2}/\d{4}).*$'
