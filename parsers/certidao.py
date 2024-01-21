@@ -15,7 +15,7 @@ class CertidaoSummarizer(Summarizer):
         else:
             data = date.strftime("%d/%m/%Y")
 
-        summary = f"""Certidão {tipo}, com data de validade de/até {validade}], em nome da empresa {empresa}.""" 
+        summary = f"""Certidão {tipo}, com data de validade de/até {validade}, em nome da empresa {empresa}.""" 
         return (summary, date)
 
     def _encontra_tipo_cetidao(self, total_text):
