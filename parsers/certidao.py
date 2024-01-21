@@ -82,11 +82,14 @@ class CertidaoSummarizer(Summarizer):
             return aparicoes1[0]
         elif aparicoes2:
             print("tipo 2")
-            return aparicoes2[0]
+            aparicoes2[0] += "dias"
+            return aparicoes2
         elif aparicoes3:
             print("tipo 3")
             return aparicoes3[0]
         elif aparicoes4:
             print("tipo 4")
             return aparicoes4[0]
+        else:
+            return "||Validade não encontrada||"
         
