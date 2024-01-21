@@ -37,7 +37,7 @@ class CertidaoSummarizer(Summarizer):
             return "negativa"
         
         elif correspondencia_certidao_regular:
-            return "regular"
+            return "regularidade"
         
         else:
             return "||Tipo não encontrado||"
