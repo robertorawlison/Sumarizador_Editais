@@ -239,5 +239,10 @@ class TypeDocument:
         'plural' : 'procurações',
         'id' : 5
     }
-    list = [NON_CLASS, DESCONHECIDO, EDITAL, CONTRATO, ADITIVO]
+    CERTIDAO  = {
+        'label' : 'certidão',
+        'plural' : 'certidões',
+        'id' : 6
+    }
+    list = [NON_CLASS, DESCONHECIDO, EDITAL, CONTRATO, ADITIVO, CERTIDAO]
     map = {f'{_type["label"]}' : _type for _type in list}
