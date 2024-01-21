@@ -5,7 +5,7 @@ from .unknown import UnknownSummarizer
 from .edital import EditalSummarizer
 from .contrato import ContratoSummarizer
 from .aditivo import AditivoSummarizer
-
+from .certidao import CertidaoSummarizer
 
 class Parser:
     """
@@ -19,6 +19,8 @@ class Parser:
             return ContratoSummarizer()
         elif doc.type['id'] == TypeDocument.ADITIVO['id']:
             return AditivoSummarizer()
+        elif doc.type['id'] == TypeDocument.CERTIDAO['id']:
+            return CertidaoSummarizer()
         else:
             return UnknownSummarizer()
         
